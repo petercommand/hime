@@ -86,7 +86,7 @@ struct {
 #endif
 
 
-static GtkWidget *spinner_hime_font_size, *spinner_hime_font_size_tsin_presel,
+static GtkWidget *spinner_hime_font_size_tsin_presel,
                  *spinner_hime_font_size_symbol,*spinner_hime_font_size_pho_near,
                  *spinner_hime_font_size_win_kbm,
                  *spinner_hime_font_size_win_kbm_en,
@@ -99,7 +99,18 @@ static gboolean cb_appearance_conf_ok( GtkWidget *widget,
                                    GdkEvent  *event,
                                    gpointer   data )
 {
-  int font_size = (int) gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinner_hime_font_size));
+  char fsize[128];
+  strcpy(fsize, gtk_font_button_get_font_name(GTK_FONT_BUTTON(font_sel)));
+  int len1 = strlen(fsize)-1;
+  int len2 = 1;
+ 
+  while (len1 >= len2 && !isdigit(fsize[len2])) {
+        fsize[len2++]=0;
+}
+  while (len1 >= len2 && fsize[len2]==' ') {
+        fsize[len2++]=0;
+}
+  int font_size = atoi(fsize);
   save_hime_conf_int(HIME_FONT_SIZE, font_size);
 
   char fname[128];
@@ -388,15 +399,6 @@ void create_appearance_conf_window()
   GtkWidget *vbox_top = gtk_vbox_new (FALSE, 0);
   gtk_orientable_set_orientation(GTK_ORIENTABLE(vbox_top), GTK_ORIENTATION_VERTICAL);
   gtk_container_add (GTK_CONTAINER (hime_appearance_conf_window), vbox_top);
-
-  GtkWidget *hbox_hime_font_size = gtk_hbox_new (FALSE, 10);
-  gtk_box_pack_start (GTK_BOX (vbox_top), hbox_hime_font_size, FALSE, FALSE, 0);
-  GtkWidget *label_hime_font_size = gtk_label_new(_("字型大小"));
-  gtk_box_pack_start (GTK_BOX (hbox_hime_font_size), label_hime_font_size, FALSE, FALSE, 0);
-  GtkAdjustment *adj_hime_font_size =
-   (GtkAdjustment *) gtk_adjustment_new (hime_font_size, 8.0, 32.0, 1.0, 1.0, 0.0);
-  spinner_hime_font_size = gtk_spin_button_new (adj_hime_font_size, 0, 0);
-  gtk_box_pack_start (GTK_BOX (hbox_hime_font_size), spinner_hime_font_size, FALSE, FALSE, 0);
 
 
   GtkWidget *hbox_hime_font_size_symbol = gtk_hbox_new (FALSE, 10);
