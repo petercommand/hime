@@ -58,7 +58,7 @@ COLORSEL colorsel[4] =
   { {&hime_win_gcolor_fg, &hime_win_color_fg, NULL, N_("前景顏色")},
     {&hime_win_gcolor_bg, &hime_win_color_bg, NULL, N_("背景顏色")},
     {&hime_sel_key_gcolor, &hime_sel_key_color, NULL, N_("選擇鍵顏色")},
-    {&tsin_cursor_gcolor, &tsin_cursor_color, NULL, N_("游標顏色")}
+    {&tsin_cursor_gcolor, &hime_cursor_color, NULL, N_("游標顏色")}
   };
 
 struct {
@@ -160,7 +160,7 @@ void save_appearance_conf()
   save_hime_conf_str(HIME_WIN_COLOR_FG, hime_win_color_fg);
   save_hime_conf_str(HIME_WIN_COLOR_BG, hime_win_color_bg);
   save_hime_conf_str(HIME_SEL_KEY_COLOR, hime_sel_key_color);
-  save_hime_conf_str(TSIN_CURSOR_COLOR, tsin_cursor_color);
+  save_hime_conf_str(TSIN_CURSOR_COLOR, hime_cursor_color);
 
   save_hime_conf_int(HIME_ON_THE_SPOT_KEY, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_button_hime_on_the_spot_key)));
   save_hime_conf_int(KBM_TOGGLE, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_button_hime_show_win_kbm)));
@@ -242,11 +242,12 @@ void disp_win_sample()
 #if PANGO_VERSION_CHECK(1,22,0)
   sprintf
 (tt, _("<span foreground=\"%s\" font=\"%d\">7</span><span foreground=\"%s\" font=\"%d\">測</span><span font=\"%d\" foreground=\"white\" background=\"%s\">試</span>"), hime_sel_key_color,
-hime_font_size_tsin_presel, hime_win_color_fg, hime_font_size_tsin_presel, hime_font_size_tsin_presel, tsin_cursor_color);
+hime_font_size_tsin_presel, hime_win_color_fg, hime_font_size_tsin_presel, hime_font_size_tsin_presel,
+ hime_cursor_color);
 #else
   sprintf
 (tt, _("<span foreground=\"%s\" font_desc=\"%d\">7</span><span foreground=\"%s\" font_desc=\"%d\">測</span><span font_desc=\"%d\" foreground=\"white\" background=\"%s\">試</span>"), hime_sel_key_color,
-hime_font_size_tsin_presel, hime_win_color_fg, hime_font_size_tsin_presel, hime_font_size_tsin_presel, tsin_cursor_color);
+hime_font_size_tsin_presel, hime_win_color_fg, hime_font_size_tsin_presel, hime_font_size_tsin_presel, hime_cursor_color);
 #endif
   } else {
 #if !GTK_CHECK_VERSION(2,91,6)
@@ -570,7 +571,7 @@ GtkWidget *create_appearance_widget()
   gtk_widget_set_halign (button_tsin_cursor_color, GTK_ALIGN_FILL);
   g_signal_connect (G_OBJECT (button_tsin_cursor_color), "clicked",
                     G_CALLBACK (cb_hime_win_color), &colorsel[3]);
-  gdk_color_parse(tsin_cursor_color, &tsin_cursor_gcolor);
+  gdk_color_parse(hime_cursor_color, &tsin_cursor_gcolor);
   gtk_box_pack_start (GTK_BOX(hbox_win_color_fbg), button_tsin_cursor_color, TRUE, TRUE, 0);
 
   disp_win_sample();

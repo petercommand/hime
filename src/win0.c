@@ -453,7 +453,7 @@ static void create_cursor_attr()
 
   GdkColor color_bg, color_fg;
   if (hime_win_color_use)
-    gdk_color_parse(tsin_cursor_color, &color_bg);
+    gdk_color_parse(hime_cursor_color, &color_bg);
   else
     gdk_color_parse(TSIN_CURSOR_COLOR_DEFAULT, &color_bg);
   gdk_color_parse("white", &color_fg);

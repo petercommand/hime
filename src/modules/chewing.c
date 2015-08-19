@@ -89,7 +89,7 @@ hime_label_show (char *pszPho, int nPos)
 
     if (*g_himeModMainFuncs.mf_hime_win_color_use)
       sprintf (szTmp, "<span background=\"%s\" foreground=\"white\">%s</span>",
-             *g_himeModMainFuncs.mf_tsin_cursor_color,
+             *g_himeModMainFuncs.mf_hime_cursor_color,
              pszPho);
     else
       sprintf (szTmp, "<span background=\""TSIN_CURSOR_COLOR_DEFAULT"\">%s</span>",

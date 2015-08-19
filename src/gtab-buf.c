@@ -202,7 +202,7 @@ static char *gen_buf_str_disp()
 
     if (i==ggg.gbuf_cursor) {
       if (hime_win_color_use)
-        sprintf(www, "<span foreground=\"white\" background=\"%s\">%s</span>", tsin_cursor_color, spec);
+        sprintf(www, "<span foreground=\"white\" background=\"%s\">%s</span>", hime_cursor_color, spec);
       else
         sprintf(www, "<span foreground=\"white\" background=\""TSIN_CURSOR_COLOR_DEFAULT"\">%s</span>", spec);
       t = www;

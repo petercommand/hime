@@ -264,7 +264,7 @@ void set_sele_text(int tN, int i, char *text, int len)
 #endif
   if (tss.sel_pho && i==tss.pho_menu_idx) {
     if (hime_win_color_use)
-      sprintf(ul, "foreground=\"white\" background=\"%s\"", tsin_cursor_color);
+      sprintf(ul, "foreground=\"white\" background=\"%s\"", hime_cursor_color);
     else
       strcpy(ul, "foreground=\"white\" background=\""TSIN_CURSOR_COLOR_DEFAULT"\"");
   } else {
