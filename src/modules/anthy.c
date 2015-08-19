@@ -1381,10 +1381,10 @@ int module_feedkey_release(KeySym xkey, int kbstate)
      case XK_Shift_L:
      case XK_Shift_R:
         if (
-(  (*gmf.mf_tsin_chinese_english_toggle_key == TSIN_CHINESE_ENGLISH_TOGGLE_KEY_Shift) ||
-   (*gmf.mf_tsin_chinese_english_toggle_key == TSIN_CHINESE_ENGLISH_TOGGLE_KEY_ShiftL
+(  (*gmf.mf_tsin_chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_Shift) ||
+   (*gmf.mf_tsin_chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_ShiftL
      && xkey == XK_Shift_L) ||
-   (*gmf.mf_tsin_chinese_english_toggle_key == TSIN_CHINESE_ENGLISH_TOGGLE_KEY_ShiftR
+   (*gmf.mf_tsin_chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_ShiftR
      && xkey == XK_Shift_R))
           && key_press_alt) {
           module_flush_input();

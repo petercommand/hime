@@ -127,7 +127,7 @@ extern int hime_status_tray, hime_show_win_kbm, hime_tray_hf_win_kbm;
 extern int hime_punc_auto_send;
 
 extern int tsin_phrase_pre_select;
-extern int tsin_chinese_english_toggle_key;
+extern int chinese_english_toggle_key;
 extern int tsin_tab_phrase_end, tsin_tail_select_key;
 extern int tsin_buffer_editing_mode;
 extern int tsin_use_pho_near;

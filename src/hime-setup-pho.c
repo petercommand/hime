@@ -59,12 +59,12 @@ static struct {
   unich_t *name;
   int key;
 } tsin_eng_ch_sw[]={
-  {N_("(關閉)"), TSIN_CHINESE_ENGLISH_TOGGLE_KEY_None},
-  {N_("CapsLock"), TSIN_CHINESE_ENGLISH_TOGGLE_KEY_CapsLock},
-//  {N_("Tab"), TSIN_CHINESE_ENGLISH_TOGGLE_KEY_Tab},
-  {N_("Shift"), TSIN_CHINESE_ENGLISH_TOGGLE_KEY_Shift},
-  {N_("左 Shift"), TSIN_CHINESE_ENGLISH_TOGGLE_KEY_ShiftL},
-  {N_("右 Shift"), TSIN_CHINESE_ENGLISH_TOGGLE_KEY_ShiftR},
+  {N_("(關閉)"), CHINESE_ENGLISH_TOGGLE_KEY_None},
+  {N_("CapsLock"), CHINESE_ENGLISH_TOGGLE_KEY_CapsLock},
+//  {N_("Tab"), CHINESE_ENGLISH_TOGGLE_KEY_Tab},
+  {N_("Shift"), CHINESE_ENGLISH_TOGGLE_KEY_Shift},
+  {N_("左 Shift"), CHINESE_ENGLISH_TOGGLE_KEY_ShiftL},
+  {N_("右 Shift"), CHINESE_ENGLISH_TOGGLE_KEY_ShiftR},
 };
 int tsin_eng_ch_swN = sizeof(tsin_eng_ch_sw) / sizeof(tsin_eng_ch_sw[0]);
 
@@ -229,10 +229,10 @@ static int get_currnet_eng_ch_sw_idx()
 {
   int i;
   for(i=0; i < tsin_eng_ch_swN; i++)
-    if (tsin_eng_ch_sw[i].key == tsin_chinese_english_toggle_key)
+    if (tsin_eng_ch_sw[i].key == chinese_english_toggle_key)
       return i;
 
-  p_err("tsin-chinese-english-switch->%d is not valid", tsin_chinese_english_toggle_key);
+  p_err("tsin-chinese-english-switch->%d is not valid", chinese_english_toggle_key);
   return -1;
 }
 

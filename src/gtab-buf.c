@@ -1121,9 +1121,9 @@ int feedkey_gtab_release(KeySym xkey, int kbstate)
      case XK_Shift_L:
      case XK_Shift_R:
 // dbg("release xkey %x\n", xkey);
-        if (((tsin_chinese_english_toggle_key == TSIN_CHINESE_ENGLISH_TOGGLE_KEY_Shift) ||
-             (tsin_chinese_english_toggle_key == TSIN_CHINESE_ENGLISH_TOGGLE_KEY_ShiftL && xkey == XK_Shift_L) ||
-             (tsin_chinese_english_toggle_key == TSIN_CHINESE_ENGLISH_TOGGLE_KEY_ShiftR && xkey == XK_Shift_R)) &&
+        if (((chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_Shift) ||
+             (chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_ShiftL && xkey == XK_Shift_L) ||
+             (chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_ShiftR && xkey == XK_Shift_R)) &&
 	     key_press_alt) {
           if (!test_mode) {
             tsin_toggle_eng_ch();

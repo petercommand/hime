@@ -1526,7 +1526,7 @@ int feedkey_pp(KeySym xkey, int kbstate)
   int ctrl_m=kbstate&ControlMask;
   int jj,kk, idx;
   char kno;
-  int caps_eng_tog = tsin_chinese_english_toggle_key == TSIN_CHINESE_ENGLISH_TOGGLE_KEY_CapsLock;
+  int caps_eng_tog = chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_CapsLock;
   int status=0;
 
 
@@ -1658,7 +1658,7 @@ int feedkey_pp(KeySym xkey, int kbstate)
           return 0;
      case XK_Tab:
         close_selection_win();
-        if (tsin_chinese_english_toggle_key == TSIN_CHINESE_ENGLISH_TOGGLE_KEY_Tab) {
+        if (chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_Tab) {
           tsin_toggle_eng_ch();
           return 1;
         }
@@ -2103,9 +2103,9 @@ int feedkey_pp_release(KeySym xkey, int kbstate)
      case XK_Shift_L:
      case XK_Shift_R:
 // dbg("release xkey %x\n", xkey);
-        if (((tsin_chinese_english_toggle_key == TSIN_CHINESE_ENGLISH_TOGGLE_KEY_Shift) ||
-             (tsin_chinese_english_toggle_key == TSIN_CHINESE_ENGLISH_TOGGLE_KEY_ShiftL && xkey == XK_Shift_L) ||
-             (tsin_chinese_english_toggle_key == TSIN_CHINESE_ENGLISH_TOGGLE_KEY_ShiftR && xkey == XK_Shift_R)) &&
+        if (((chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_Shift) ||
+             (chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_ShiftL && xkey == XK_Shift_L) ||
+             (chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_ShiftR && xkey == XK_Shift_R)) &&
 	    key_press_alt) {
           if (!test_mode) {
             close_selection_win();
