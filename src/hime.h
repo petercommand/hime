@@ -48,7 +48,7 @@ typedef enum {
 
 
 #include "IC.h"
-
+#include "hime-client-state.h"
 #if CLIENT_LIB
 #define p_err __hime_p_err
 #define zmalloc __hime_zmalloc

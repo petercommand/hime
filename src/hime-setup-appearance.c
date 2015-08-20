@@ -160,7 +160,7 @@ void save_appearance_conf()
   save_hime_conf_str(HIME_WIN_COLOR_FG, hime_win_color_fg);
   save_hime_conf_str(HIME_WIN_COLOR_BG, hime_win_color_bg);
   save_hime_conf_str(HIME_SEL_KEY_COLOR, hime_sel_key_color);
-  save_hime_conf_str(TSIN_CURSOR_COLOR, hime_cursor_color);
+  save_hime_conf_str(HIME_CURSOR_COLOR, hime_cursor_color);
 
   save_hime_conf_int(HIME_ON_THE_SPOT_KEY, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_button_hime_on_the_spot_key)));
   save_hime_conf_int(KBM_TOGGLE, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_button_hime_show_win_kbm)));

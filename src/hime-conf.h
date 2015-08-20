@@ -79,7 +79,7 @@
 #define TSIN_SPACE_OPT "tsin-space-opt"
 #define TSIN_BUFFER_SIZE "tsin-buffer-size"
 #define TSIN_PHRASE_LINE_COLOR "tsin-phrase-line-color"
-#define TSIN_CURSOR_COLOR "tsin-cursor-color"
+#define HIME_CURSOR_COLOR "hime-cursor-color"
 #define TSIN_TONE_CHAR_INPUT "tsin-tone-char-input"
 #define TSIN_TAB_PHRASE_END "tsin-tab-phrase-end"
 #define TSIN_TAIL_SELECT_KEY "tsin-tail-select-key"

@@ -194,7 +194,7 @@ void load_settings()
   pho_in_row1 = get_hime_conf_int(PHO_IN_ROW1, 1);
 
   get_hime_conf_str(TSIN_PHRASE_LINE_COLOR, &tsin_phrase_line_color, "blue");
-  get_hime_conf_str(TSIN_CURSOR_COLOR, &hime_cursor_color, HIME_CURSOR_COLOR_DEFAULT);
+  get_hime_conf_str(HIME_CURSOR_COLOR, &hime_cursor_color, HIME_CURSOR_COLOR_DEFAULT);
   get_hime_conf_str(HIME_SEL_KEY_COLOR, &hime_sel_key_color, HIME_SEL_KEY_COLOR_DEFAULT);
 
   if (eng_color_full_str) {
