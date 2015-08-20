@@ -638,7 +638,7 @@ static void cursor_markup(int idx, char *s)
   if (*gmf.mf_hime_win_color_use)
     sprintf(cur, "<span foreground=\"white\" background=\"%s\">%s</span>", *gmf.mf_hime_cursor_color, s);
   else
-    sprintf(cur, "<span foreground=\"white\" background=\""TSIN_CURSOR_COLOR_DEFAULT"\">%s</span>", s);
+    sprintf(cur, "<span foreground=\"white\" background=\""HIME_CURSOR_COLOR_DEFAULT"\">%s</span>", s);
   gtk_label_set_markup(GTK_LABEL(lab), cur);
 }
 
@@ -1381,10 +1381,10 @@ int module_feedkey_release(KeySym xkey, int kbstate)
      case XK_Shift_L:
      case XK_Shift_R:
         if (
-(  (*gmf.mf_tsin_chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_Shift) ||
-   (*gmf.mf_tsin_chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_ShiftL
+(  (*gmf.mf_hime_chinese_english_toggle_key == HIME_CHINESE_ENGLISH_TOGGLE_KEY_Shift) ||
+   (*gmf.mf_hime_chinese_english_toggle_key == HIME_CHINESE_ENGLISH_TOGGLE_KEY_ShiftL
      && xkey == XK_Shift_L) ||
-   (*gmf.mf_tsin_chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_ShiftR
+   (*gmf.mf_hime_chinese_english_toggle_key == HIME_CHINESE_ENGLISH_TOGGLE_KEY_ShiftR
      && xkey == XK_Shift_R))
           && key_press_alt) {
           module_flush_input();

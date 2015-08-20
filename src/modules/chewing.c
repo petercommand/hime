@@ -92,7 +92,7 @@ hime_label_show (char *pszPho, int nPos)
              *g_himeModMainFuncs.mf_hime_cursor_color,
              pszPho);
     else
-      sprintf (szTmp, "<span background=\""TSIN_CURSOR_COLOR_DEFAULT"\">%s</span>",
+      sprintf (szTmp, "<span background=\""HIME_CURSOR_COLOR_DEFAULT"\">%s</span>",
              pszPho);
 
     gtk_label_set_markup (GTK_LABEL (g_pSeg[nPos].label),
