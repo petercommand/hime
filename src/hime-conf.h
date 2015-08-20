@@ -35,6 +35,7 @@
 #define HIME_SINGLE_STATE "hime-single-state"
 #define HIME_PUNC_AUTO_SEND "hime-punc-auto-send"
 
+
 #define HIME_IM_TOGGLE_KEYS "hime-im-toggle-keys"
 #define DEFAULT_INPUT_METHOD "default-input-method"
 // #define LEFT_RIGHT_BUTTON_TIPS "left-right-button-tips"
@@ -50,6 +51,7 @@
 #define HIME_WIN_SYM_CLICK_CLOSE "hime-win-sym-click-close"
 #define HIME_SEL_KEY_COLOR "hime-sel-key-color"
 #define HIME_TRAY_DISPLAY "hime-tray-display"
+#define HIME_CHINESE_ENGLISH_TOGGLE_KEY "hime-chinese-english-toggle_key"
 
 #define GTAB_DUP_SELECT_BELL "gtab-dup-select-bell"
 #define GTAB_SPACE_AUTO_FIRST "gtab-space-auto-first"
@@ -74,7 +76,6 @@
 
 
 #define TSIN_PHRASE_PRE_SELECT "tsin-phrase-pre-select"
-#define TSIN_CHINESE_ENGLISH_TOGGLE_KEY "tsin-chinese-english-toggle_key"
 #define TSIN_SPACE_OPT "tsin-space-opt"
 #define TSIN_BUFFER_SIZE "tsin-buffer-size"
 #define TSIN_PHRASE_LINE_COLOR "tsin-phrase-line-color"
@@ -127,7 +128,7 @@ extern int hime_status_tray, hime_show_win_kbm, hime_tray_hf_win_kbm;
 extern int hime_punc_auto_send;
 
 extern int tsin_phrase_pre_select;
-extern int chinese_english_toggle_key;
+extern int hime_chinese_english_toggle_key;
 extern int tsin_tab_phrase_end, tsin_tail_select_key;
 extern int tsin_buffer_editing_mode;
 extern int tsin_use_pho_near;

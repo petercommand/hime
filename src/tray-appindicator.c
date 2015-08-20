@@ -103,7 +103,7 @@ static gboolean tray_appindicator_load_icon(char fallback[], char iconfile[], ch
   }
 }
 
-extern gboolean tsin_pho_mode();
+extern gboolean hime_pho_mode();
 
 static void tray_appindicator_update_icon()
 {
@@ -113,7 +113,7 @@ static void tray_appindicator_update_icon()
     strcpy(iconfile, inmd[current_CS->in_method].icon);
   }
 
-  if (current_CS && current_CS->im_state == HIME_STATE_CHINESE && !tsin_pho_mode()) {
+  if (current_CS && current_CS->im_state == HIME_STATE_CHINESE && !hime_pho_mode()) {
     char s[64];
     strcpy(s, "en-");
     strcat(s, iconfile);

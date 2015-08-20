@@ -204,7 +204,7 @@ static char *gen_buf_str_disp()
       if (hime_win_color_use)
         sprintf(www, "<span foreground=\"white\" background=\"%s\">%s</span>", hime_cursor_color, spec);
       else
-        sprintf(www, "<span foreground=\"white\" background=\""TSIN_CURSOR_COLOR_DEFAULT"\">%s</span>", spec);
+        sprintf(www, "<span foreground=\"white\" background=\""HIME_CURSOR_COLOR_DEFAULT"\">%s</span>", spec);
       t = www;
     }
 
@@ -1121,9 +1121,9 @@ int feedkey_gtab_release(KeySym xkey, int kbstate)
      case XK_Shift_L:
      case XK_Shift_R:
 // dbg("release xkey %x\n", xkey);
-        if (((chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_Shift) ||
-             (chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_ShiftL && xkey == XK_Shift_L) ||
-             (chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_ShiftR && xkey == XK_Shift_R)) &&
+        if (((hime_chinese_english_toggle_key == HIME_CHINESE_ENGLISH_TOGGLE_KEY_Shift) ||
+             (hime_chinese_english_toggle_key == HIME_CHINESE_ENGLISH_TOGGLE_KEY_ShiftL && xkey == XK_Shift_L) ||
+             (hime_chinese_english_toggle_key == HIME_CHINESE_ENGLISH_TOGGLE_KEY_ShiftR && xkey == XK_Shift_R)) &&
 	     key_press_alt) {
           if (!test_mode) {
             tsin_toggle_eng_ch();

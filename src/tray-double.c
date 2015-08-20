@@ -25,7 +25,7 @@
 
 extern void destroy_other_tray();
 
-gboolean tsin_pho_mode();
+gboolean hime_pho_mode();
 extern int tsin_half_full;
 extern gboolean gb_output;
 GtkStatusIcon *icon_main=NULL, *icon_state=NULL;
@@ -339,10 +339,10 @@ void load_tray_icon_double()
     iconame=inmd[current_CS->in_method].icon;
   }
 
-//  dbg("tsin_pho_mode() %d\n", tsin_pho_mode());
+//  dbg("hime_pho_mode() %d\n", hime_pho_mode());
 
   char tt[32];
-  if (current_CS && current_CS->im_state == HIME_STATE_CHINESE && !tsin_pho_mode()) {
+  if (current_CS && current_CS->im_state == HIME_STATE_CHINESE && !hime_pho_mode()) {
     if ((current_method_type()==method_type_TSIN || current_method_type()==method_type_MODULE)) {
       strcpy(tt, "en-");
       strcat(tt, iconame);
@@ -418,7 +418,7 @@ void load_tray_icon_double()
     if (current_CS && inmd[current_CS->in_method].cname[0])
       strcpy(tt, inmd[current_CS->in_method].cname);
 
-    if (!iconame || !strcmp(iconame, HIME_TRAY_PNG) || !tsin_pho_mode())
+    if (!iconame || !strcmp(iconame, HIME_TRAY_PNG) || !hime_pho_mode())
       strcpy(tt, "English");
 #if GTK_CHECK_VERSION(2,16,0)
     gtk_status_icon_set_tooltip_text(icon_main, tt);

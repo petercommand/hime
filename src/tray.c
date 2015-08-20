@@ -75,7 +75,7 @@ static void get_text_w_h(char *s, int *w, int *h)
 
 static void draw_icon()
 {
-  gboolean tsin_pho_mode();
+  gboolean hime_pho_mode();
 
   if (!tray_icon)
     return;
@@ -107,7 +107,7 @@ static void draw_icon()
       cairo_move_to (cr, iw - w, ih - h);
       pango_cairo_show_layout (cr, pango);
     }
-    if (current_CS->im_state == HIME_STATE_CHINESE && !tsin_pho_mode()) {
+    if (current_CS->im_state == HIME_STATE_CHINESE && !hime_pho_mode()) {
       gdk_cairo_set_source_color (cr, &blue_color_fg);
       get_text_w_h(engst,  &w, &h);
       cairo_move_to (cr, 0, 0);

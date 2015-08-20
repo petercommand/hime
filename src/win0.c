@@ -455,7 +455,7 @@ static void create_cursor_attr()
   if (hime_win_color_use)
     gdk_color_parse(hime_cursor_color, &color_bg);
   else
-    gdk_color_parse(TSIN_CURSOR_COLOR_DEFAULT, &color_bg);
+    gdk_color_parse(HIME_CURSOR_COLOR_DEFAULT, &color_bg);
   gdk_color_parse("white", &color_fg);
 
   attr_list = pango_attr_list_new ();

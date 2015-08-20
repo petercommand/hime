@@ -266,7 +266,7 @@ void set_sele_text(int tN, int i, char *text, int len)
     if (hime_win_color_use)
       sprintf(ul, "foreground=\"white\" background=\"%s\"", hime_cursor_color);
     else
-      strcpy(ul, "foreground=\"white\" background=\""TSIN_CURSOR_COLOR_DEFAULT"\"");
+      strcpy(ul, "foreground=\"white\" background=\""HIME_CURSOR_COLOR_DEFAULT"\"");
   } else {
     if (hime_win_color_use)
       sprintf(ul, "foreground=\"%s\"", hime_sel_key_color);

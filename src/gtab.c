@@ -979,12 +979,12 @@ gboolean feedkey_gtab(KeySym key, int kbstate)
 
   gboolean is_dayi = !strncmp(cur_inmd->filename, "dayi", 4);
 
-  if ((chinese_english_toggle_key == CHINESE_ENGLISH_TOGGLE_KEY_CapsLock) &&
+  if ((hime_chinese_english_toggle_key == HIME_CHINESE_ENGLISH_TOGGLE_KEY_CapsLock) &&
       (key == XK_Caps_Lock)){
     // The CapLock status may be incorrect when XK_Caps_Lock is pressed.
     gboolean caps_lock_state = gdk_keymap_get_caps_lock_state(gdk_keymap_get_default());
-    if (current_CS->tsin_pho_mode == caps_lock_state) {
-      current_CS->tsin_pho_mode = !caps_lock_state;
+    if (current_CS->hime_pho_mode == caps_lock_state) {
+      current_CS->hime_pho_mode = !caps_lock_state;
       save_CS_current_to_temp();
       tsin_set_eng_ch(!caps_lock_state);
     }
@@ -1022,7 +1022,7 @@ gboolean feedkey_gtab(KeySym key, int kbstate)
     GTK_WIDGET_VISIBLE(gwin_pho))
      hide_win_pho();
 
-  if (!tsin_pho_mode()) {
+  if (!hime_pho_mode()) {
     if (key < 0x20 || key>=0x7f)
       goto shift_proc;
 

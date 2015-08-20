@@ -25,7 +25,7 @@
 #include "win-sym.h"
 
 void init_tsin_selection_win(),disp_selections(int x, int y),hide_selections_win();
-void disp_arrow_up(),disp_arrow_down(), set_tsin_pho_mode();
+void disp_arrow_up(),disp_arrow_down(), set_hime_pho_mode();
 void set_sele_text(int tN, int i, char *text, int len);
 void tsin_set_eng_ch(int nmod);
 int get_widget_xy(GtkWidget *win, GtkWidget *widget, int *rx, int *ry);
@@ -54,8 +54,8 @@ void init_HIME_module_main_functions(HIME_module_main_functions *func)
   func->mf_set_win1_cb = set_win1_cb;
 
   func->mf_tsin_set_eng_ch = tsin_set_eng_ch;
-  func->mf_tsin_pho_mode = tsin_pho_mode;
-  func->mf_set_tsin_pho_mode = set_tsin_pho_mode;
+  func->mf_hime_pho_mode = hime_pho_mode;
+  func->mf_set_hime_pho_mode = set_hime_pho_mode;
 
   func->mf_get_widget_xy = get_widget_xy;
   func->mf_get_win_size = get_win_size;
@@ -76,7 +76,7 @@ void init_HIME_module_main_functions(HIME_module_main_functions *func)
 
   func->mf_phkbm = &phkbm;
   func->mf_tss = &tss;
-  func->mf_tsin_chinese_english_toggle_key = &chinese_english_toggle_key;
+  func->mf_tsin_chinese_english_toggle_key = &hime_chinese_english_toggle_key;
 
   func->mf_hime_pop_up_win = &hime_pop_up_win;
   func->mf_hime_font_size = &hime_font_size;

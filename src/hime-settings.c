@@ -58,7 +58,7 @@ int phonetic_char_dynamic_sequence;
 int phonetic_huge_tab;
 int phonetic_speak;
 char *phonetic_speak_sel, *hime_str_im_cycle;
-int chinese_english_toggle_key;
+int hime_chinese_english_toggle_key;
 int hime_font_size_tsin_pho_in;
 int tsin_space_opt;
 int tsin_buffer_size, tsin_tail_select_key;
@@ -118,7 +118,8 @@ void load_settings()
   hime_show_win_kbm = get_hime_conf_int(KBM_TOGGLE, 0);
   hime_init_im_enabled = get_hime_conf_int(HIME_INIT_IM_ENABLED, 0);
   hime_init_full_mode = get_hime_conf_int(HIME_INIT_FULL_MODE, 0);
-
+  hime_chinese_english_toggle_key = get_hime_conf_int(HIME_CHINESE_ENGLISH_TOGGLE_KEY,
+                                                 HIME_CHINESE_ENGLISH_TOGGLE_KEY_Shift);
   hime_single_state = get_hime_conf_int(HIME_SINGLE_STATE, 0);
   hime_punc_auto_send = get_hime_conf_int(HIME_PUNC_AUTO_SEND, 0);
 
@@ -175,8 +176,6 @@ void load_settings()
   gtab_in_area_button = get_hime_conf_int(GTAB_IN_AREA_BUTTON, 0);
 
   tsin_phrase_pre_select = get_hime_conf_int(TSIN_PHRASE_PRE_SELECT, 1);
-  chinese_english_toggle_key = get_hime_conf_int(TSIN_CHINESE_ENGLISH_TOGGLE_KEY,
-                                                 CHINESE_ENGLISH_TOGGLE_KEY_Shift);
   tsin_tone_char_input = get_hime_conf_int(TSIN_TONE_CHAR_INPUT, 0);
 
   tsin_space_opt = get_hime_conf_int(TSIN_SPACE_OPT, TSIN_SPACE_OPT_SELECT_CHAR);
@@ -195,7 +194,7 @@ void load_settings()
   pho_in_row1 = get_hime_conf_int(PHO_IN_ROW1, 1);
 
   get_hime_conf_str(TSIN_PHRASE_LINE_COLOR, &tsin_phrase_line_color, "blue");
-  get_hime_conf_str(TSIN_CURSOR_COLOR, &hime_cursor_color, TSIN_CURSOR_COLOR_DEFAULT);
+  get_hime_conf_str(TSIN_CURSOR_COLOR, &hime_cursor_color, HIME_CURSOR_COLOR_DEFAULT);
   get_hime_conf_str(HIME_SEL_KEY_COLOR, &hime_sel_key_color, HIME_SEL_KEY_COLOR_DEFAULT);
 
   if (eng_color_full_str) {

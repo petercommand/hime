@@ -59,7 +59,7 @@ typedef struct {
     gboolean    b_hime_protocol; // TRUE : hime    FALSE: XIM
     gboolean    b_raise_window;
     gboolean    use_preedit;
-    gboolean    tsin_pho_mode;
+    gboolean    hime_pho_mode;
     short       fixed_x, fixed_y;
     short       in_method;
     XPoint	spot_location;	/* spot location, relative to client window */

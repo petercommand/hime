@@ -59,12 +59,12 @@ static struct {
   unich_t *name;
   int key;
 } tsin_eng_ch_sw[]={
-  {N_("(關閉)"), CHINESE_ENGLISH_TOGGLE_KEY_None},
-  {N_("CapsLock"), CHINESE_ENGLISH_TOGGLE_KEY_CapsLock},
-//  {N_("Tab"), CHINESE_ENGLISH_TOGGLE_KEY_Tab},
-  {N_("Shift"), CHINESE_ENGLISH_TOGGLE_KEY_Shift},
-  {N_("左 Shift"), CHINESE_ENGLISH_TOGGLE_KEY_ShiftL},
-  {N_("右 Shift"), CHINESE_ENGLISH_TOGGLE_KEY_ShiftR},
+  {N_("(關閉)"), HIME_CHINESE_ENGLISH_TOGGLE_KEY_None},
+  {N_("CapsLock"), HIME_CHINESE_ENGLISH_TOGGLE_KEY_CapsLock},
+//  {N_("Tab"), HIME_CHINESE_ENGLISH_TOGGLE_KEY_Tab},
+  {N_("Shift"), HIME_CHINESE_ENGLISH_TOGGLE_KEY_Shift},
+  {N_("左 Shift"), HIME_CHINESE_ENGLISH_TOGGLE_KEY_ShiftL},
+  {N_("右 Shift"), HIME_CHINESE_ENGLISH_TOGGLE_KEY_ShiftR},
 };
 int tsin_eng_ch_swN = sizeof(tsin_eng_ch_sw) / sizeof(tsin_eng_ch_sw[0]);
 
@@ -96,7 +96,7 @@ void save_tsin_eng_pho_key()
 {
   int idx;
   idx = gtk_combo_box_get_active (GTK_COMBO_BOX (opt_eng_ch_opts[0]));
-  save_hime_conf_int(TSIN_CHINESE_ENGLISH_TOGGLE_KEY,
+  save_hime_conf_int(HIME_CHINESE_ENGLISH_TOGGLE_KEY,
                      tsin_eng_ch_sw[idx].key);
 
   save_hime_conf_int(HIME_CAPSLOCK_LOWER,
@@ -229,10 +229,10 @@ static int get_currnet_eng_ch_sw_idx()
 {
   int i;
   for(i=0; i < tsin_eng_ch_swN; i++)
-    if (tsin_eng_ch_sw[i].key == chinese_english_toggle_key)
+    if (tsin_eng_ch_sw[i].key == hime_chinese_english_toggle_key)
       return i;
 
-  p_err("tsin-chinese-english-switch->%d is not valid", chinese_english_toggle_key);
+  p_err("tsin-chinese-english-switch->%d is not valid", hime_chinese_english_toggle_key);
   return -1;
 }
 

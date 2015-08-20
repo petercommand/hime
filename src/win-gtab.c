@@ -669,7 +669,7 @@ void show_input_method_name_on_gtab()
 {
   if (current_CS && (! hime_status_tray) && gtab_disp_im_name &&
       (current_CS->im_state == HIME_STATE_CHINESE) && (current_CS->b_half_full_char == 0) &&
-      (current_CS->tsin_pho_mode))
+      (current_CS->hime_pho_mode))
   {
     if ((current_method_type() == method_type_MODULE) ||
         (gtab_hide_row2 && (hime_edit_display == HIME_EDIT_DISPLAY_ON_THE_SPOT)))
@@ -748,7 +748,7 @@ void show_win_gtab()
 
   if (current_CS)
   {
-    if (current_CS->tsin_pho_mode==0)
+    if (current_CS->hime_pho_mode ==0)
       set_gtab_input_method_name(eng_half_str);
     else
       set_gtab_input_method_name(inmd[current_CS->in_method].cname);
@@ -839,7 +839,7 @@ static void set_disp_im_name()
 
 char *get_full_str()
 {
-  if (current_CS->tsin_pho_mode==0)
+  if (current_CS->hime_pho_mode ==0)
   {
     if (hime_win_color_use)
       return eng_color_half_str;
@@ -875,13 +875,13 @@ void win_gtab_disp_half_full()
     return;
   if (label_full) {
     if ((current_CS->im_state == HIME_STATE_CHINESE && (!current_CS->b_half_full_char)) ||
-        (current_CS->tsin_pho_mode == 0))
+        (current_CS->hime_pho_mode == 0))
       gtk_widget_hide(label_full);
     else
       gtk_widget_show(label_full);
   }
 
-  if (current_CS->tsin_pho_mode)
+  if (current_CS->hime_pho_mode)
   {
     if (label_gtab_sele) gtk_widget_show(label_gtab_sele);
     if (hime_status_tray || (! gtab_hide_row2))

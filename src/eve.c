@@ -127,7 +127,7 @@ void save_CS_current_to_temp()
   temp_CS.b_half_full_char = current_CS->b_half_full_char;
   temp_CS.im_state = current_CS->im_state;
   temp_CS.in_method = current_CS->in_method;
-  temp_CS.tsin_pho_mode = current_CS->tsin_pho_mode;
+  temp_CS.hime_pho_mode = current_CS->hime_pho_mode;
 }
 
 
@@ -140,7 +140,7 @@ void save_CS_temp_to_current()
   current_CS->b_half_full_char = temp_CS.b_half_full_char;
   current_CS->im_state = temp_CS.im_state;
   current_CS->in_method = temp_CS.in_method;
-  current_CS->tsin_pho_mode = temp_CS.tsin_pho_mode;
+  current_CS->hime_pho_mode = temp_CS.hime_pho_mode;
 }
 
 int current_shape_mode()
@@ -708,14 +708,14 @@ void disp_im_half_full()
 
 void flush_tsin_buffer();
 void reset_gtab_all();
-void set_tsin_pho_mode0(ClientState *cs);
+void set_hime_pho_mode0(ClientState *cs);
 
 //static u_int orig_caps_state;
 
 void init_state_chinese(ClientState *cs)
 {
   cs->im_state = HIME_STATE_CHINESE;
-  set_tsin_pho_mode0(cs);
+  set_hime_pho_mode0(cs);
   if (!cs->in_method)
     init_in_method(default_input_method);
 
@@ -946,7 +946,7 @@ gboolean init_in_method(int in_no)
   reset_current_in_win_xy();
 
 //  dbg("switch init_in_method %x %d\n", current_CS, in_no);
-  set_tsin_pho_mode0(current_CS);
+  set_hime_pho_mode0(current_CS);
   tsin_set_win1_cb();
 
   switch (inmd[in_no].method_type) {
