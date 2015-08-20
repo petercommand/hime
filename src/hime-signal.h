@@ -1,0 +1,9 @@
+#ifndef HIME_HIME_SIGNAL_H
+#define HIME_HIME_SIGNAL_H
+
+enum {
+  CLIENT_STATE_CHANGE=1,
+} HIME_SIGNAL;
+
+
+#endif //HIME_HIME_SIGNAL_H
