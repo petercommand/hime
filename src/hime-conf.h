@@ -22,6 +22,7 @@
 #define HIME_ROOT_X      "hime-root-x"
 #define HIME_ROOT_Y      "hime-root-y"
 #define HIME_POP_UP_WIN "hime-pop-up-win"
+#define HIME_ICON_DIR "hime-icon-dir"
 #define HIME_INNER_FRAME "hime-inner-frame"
 #define HIME_INIT_IM_ENABLED "hime-init-im-enabled"
 #define HIME_INIT_FULL_MODE "hime-init-full-mode"
@@ -137,6 +138,7 @@ extern int phonetic_char_dynamic_sequence;
 extern int phonetic_huge_tab, phonetic_speak;
 extern char *phonetic_speak_sel;
 extern int tsin_space_opt, tsin_tone_char_input;
+
 
 extern char *tsin_phrase_line_color, *hime_cursor_color, *hime_font_name, *hime_sel_key_color;
 extern unich_t eng_full_str[], eng_half_str[], cht_full_str[];
