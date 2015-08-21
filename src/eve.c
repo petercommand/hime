@@ -1021,7 +1021,7 @@ gboolean init_in_method(int in_no)
         win_sym_enabled=0;
 
         show_win_gtab();
-	show_input_method_name_on_gtab();
+        show_input_method_name_on_gtab();
       }
 
       // set_gtab_input_method_name(inmd[in_no].cname);

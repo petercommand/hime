@@ -26,6 +26,8 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   Author: Hidetoshi Tajima(tajima@Eng.Sun.COM) Sun Microsystems, Inc.
 
 ******************************************************************/
+#include "hime-client-state.h"
+
 typedef struct {
     XRectangle	area;		/* area */
     XRectangle	area_needed;	/* area needed */
