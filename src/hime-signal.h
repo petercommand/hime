@@ -16,7 +16,7 @@ typedef enum {
 
 typedef struct notify_list_item {
   struct notify_list_item *prev;
-  struct notify_list_item *next;\
+  struct notify_list_item *next;
   void (*func_cb) (HIME_SIGNAL signal, void* pointer);
   void* pointer;
 } notify_list_item;
