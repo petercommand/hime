@@ -17,13 +17,14 @@ OBJ_IMSRV = im-addr.o im-dispatch.o im-srv.o hime-crypt.o
 
 hime_pho_o  = win-pho.o pho.o pho-util.o pho-sym.o table-update.o pho-dbg.o
 hime_gtab_o = gtab.o win-gtab.o gtab-util.o gtab-list.o gtab-buf.o
-
+hime_signal_o = hime-signal.o
+hime_event_o = hime-event.o
 
 OBJS      = hime.o eve.o util.o hime-conf.o hime-settings.o locale.o \
 	hime-icon.o about.o \
 	hime-exec-script.o pho-play.o cache.o gtk_bug_fix.o \
 	phrase-save-menu.o \
-	$(hime_pho_o) $(hime_gtab_o) \
+	$(hime_pho_o) $(hime_gtab_o) $(hime_signal_o) $(hime_event_o)\
 	hime-common.o phrase.o t2s-lookup.o gtab-use-count.o \
 	win-save-phrase.o unix-exec.o pho-kbm-name.o statistic.o tsin-scan.o \
 	hime-module.o lang.o \
@@ -295,6 +296,7 @@ clean:
 	$(MAKE) -C IMdkit clean
 	$(MAKE) -C im-client clean
 	$(MAKE) -C modules clean
+	$(MAKE) -C tests clean
 	if [ $(GTK_IM) = 'Y' ]; then $(MAKE) -C gtk-im clean; fi
 	if [ $(GTK3_IM) = 'Y' ]; then $(MAKE) -C gtk3-im clean; fi
 	$(MAKE) -C qt-im clean

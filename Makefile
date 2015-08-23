@@ -21,6 +21,9 @@ all:
 	   $(MAKE) -C $$d || exit 1; \
 	done
 
+test: all
+	   $(MAKE) -C src/tests all || exit 1;
+
 install:
 	@for d in $(DIR); do $(ECHO) -e "\x1b[1;32m** installing $$d\x1b[0m"; \
 	   $(MAKE) -C $$d install || exit 1; \

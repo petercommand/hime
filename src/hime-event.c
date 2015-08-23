@@ -59,14 +59,14 @@ void event_list_free(event_list* list){
 void hime_event_connect(HIME_EVENT_TYPE event, void (*func_cb) (HIME_EVENT, void*), void* pointer){
   //This function connects func_cb and pointer with the given event
   // func_cb will be call with event and pointer when the event is emitted
-  if(!event_event_list[event]) {
-    event_event_list[event] = event_list_new();
+  if(!event_notify_list[event]) {
+    event_notify_list[event] = event_list_new();
   }
-  event_list_append(event_event_list[event], func_cb, pointer);
+  event_list_append(event_notify_list[event], func_cb, pointer);
 }
 
 
-void hime_event_emit(HIME_EVENT event) {
+void hime_event_dispatch(HIME_EVENT event) {
   if (event_notify_list[event.type]) {
     event_list_item *item = event_notify_list[event.type]->head;
     while (item) {
