@@ -13,6 +13,7 @@ typedef enum {
 } HIME_SIGNAL;
 
 
+#ifdef HIME_SIGNAL_C
 
 typedef struct notify_list_item {
   struct notify_list_item *prev;
@@ -26,9 +27,10 @@ typedef struct notify_list {
   notify_list_item *head;
   notify_list_item *tail;
 } notify_list;
-
 void notify_list_append(notify_list* list, void (*func_cb) (HIME_SIGNAL, void*), void* pointer);
 notify_list*notify_list_new();
+
+#endif
 void hime_signal_connect(HIME_SIGNAL signal, void (*func_cb) (HIME_SIGNAL, void*), void* pointer);
 void hime_signal_emit(HIME_SIGNAL signal);
 

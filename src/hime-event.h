@@ -10,6 +10,7 @@ typedef enum {
   INPUT_METHOD_CHANGED_EVENT,
   KEY_PRESSED_EVENT,
   KEY_RELEASED_EVENT,
+  PREEDIT_CHANGED_EVENT,
   HALF_FULL_CHANGED_EVENT,
   HIME_EVENT_N //HIME_EVENT_N should not be used as an event type, this is only used as a size indicator for HIME_EVENT_TYPE
 } HIME_EVENT_TYPE;
@@ -26,6 +27,10 @@ typedef struct HIME_KEY_RELEASED_EVENT {
   int type;
 } HIME_KEY_RELEASED_EVENT;
 
+typedef struct HIME_PREEDIT_CHANGED_EVENT {
+  int type;
+} HIME_PREEDIT_CHANGED_EVENT;
+
 typedef struct HIME_HALF_FULL_CHANGED_EVENT {
   int type;
 } HIME_HALF_FULL_CHANGED_EVENT;
@@ -40,6 +45,7 @@ typedef struct HIME_EVENT {
     HIME_ENGINE_CHANGED_EVENT engine_changed_event;
     HIME_KEY_PRESSED_EVENT key_pressed_event;
     HIME_KEY_RELEASED_EVENT key_released_event;
+    HIME_PREEDIT_CHANGED_EVENT preedit_changed_event;
     HIME_HALF_FULL_CHANGED_EVENT half_full_changed_event;
     HIME_CLIENT_STATE_CHANGED_EVENT client_state_changed_event;
   };

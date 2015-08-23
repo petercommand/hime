@@ -5,6 +5,7 @@
 static event_list* event_notify_list[HIME_EVENT_N];
 
 void event_list_append(event_list* list, void (*func_cb) (HIME_EVENT, void*), void* pointer){
+  //Add the callback function and the pointer to the event_list
   if(list->head == NULL){
     event_list_item *item = tzmalloc(event_list_item, 1);
     if(item == NULL){
@@ -34,6 +35,7 @@ void event_list_append(event_list* list, void (*func_cb) (HIME_EVENT, void*), vo
 }
 
 event_list* event_list_new(){
+  //Allocate heap for a new event_list
   event_list* list = tzmalloc(event_list, 1);
   if(list == NULL){
     perror("failed to tzmalloc");
@@ -44,6 +46,7 @@ event_list* event_list_new(){
 }
 
 void event_list_free(event_list* list){
+  //Free the entire event_list
   if(list){
     event_list_item* item = list->head;
     event_list_item* next = NULL;
@@ -67,6 +70,7 @@ void hime_event_connect(HIME_EVENT_TYPE event, void (*func_cb) (HIME_EVENT, void
 
 
 void hime_event_dispatch(HIME_EVENT event) {
+  //Dispatch a HIME_EVENT, triggers all corresponding registered callback function
   if (event_notify_list[event.type]) {
     event_list_item *item = event_notify_list[event.type]->head;
     while (item) {

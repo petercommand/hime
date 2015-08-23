@@ -1,3 +1,4 @@
+#define HIME_SIGNAL_C
 #include "hime-signal.h"
 #include "hime-client-state.h"
 

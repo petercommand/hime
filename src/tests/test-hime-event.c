@@ -2,8 +2,8 @@
 
 static int test_var = 5;
 
-void func(HIME_EVENT eve, void* pointer);
-
+void event_test_0_func(HIME_EVENT eve, void* pointer);
+void event_test_1_func(HIME_EVENT eve, void* pointer);
 TEST_FUNC list[] = {
     event_test_0,
     event_test_1
@@ -12,7 +12,7 @@ TEST_FUNC list[] = {
 
 void event_test_0() {
   int num = 10;
-  hime_event_connect(ENGINE_CHANGED_EVENT, func, GINT_TO_POINTER(num));
+  hime_event_connect(ENGINE_CHANGED_EVENT, event_test_0_func, &num);
   HIME_EVENT eve;
   eve.type = ENGINE_CHANGED_EVENT;
   hime_event_dispatch(eve);
@@ -22,12 +22,17 @@ void event_test_0() {
 }
 
 void event_test_1() {
-
+  int num = 11;
+  hime_event_connect(PREEDIT_CHANGED_EVENT, event_test_1_func, &num);
 }
 
-void func(HIME_EVENT eve, void* pointer) {
-  test_equal(GPOINTER_TO_INT(pointer) == 10);
+void event_test_0_func(HIME_EVENT eve, void* pointer) {
+  test_equal(*((int *)pointer) == 10);
   test_var++;
+}
+
+void event_test_1_func(HIME_EVENT eve, void* pointer) {
+  test_equal(*((int *)pointer) == 11);
 }
 
 void test_event(const char* name){
