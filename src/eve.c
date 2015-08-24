@@ -699,7 +699,7 @@ void set_hime_pho_mode0(ClientState *cs);
 
 //static u_int orig_caps_state;
 
-void init_state_chinese(ClientState *cs)
+void init_state_non_eng(ClientState *cs)
 {
   cs->im_state = HIME_STATE_ENABLED_NON_ENG;
   set_hime_pho_mode0(cs);
@@ -746,11 +746,12 @@ void toggle_im_enabled()
 #if TRAY_ENABLED
       disp_tray_icon();
 #endif
-    } else {
+
+    } else {// ENG -> NON-ENG input method
       if (!current_method_type())
         init_gtab(current_CS->in_method);
 
-      init_state_chinese(current_CS);
+      init_state_non_eng(current_CS);
       reset_current_in_win_xy();
 #if 1
       if ((inmd[current_CS->in_method].flag & FLAG_GTAB_SYM_KBM))
@@ -767,6 +768,12 @@ void toggle_im_enabled()
       show_in_win(current_CS);
 #endif
 
+      if(current_method_type() == method_type_MODULE) {
+        HIME_EVENT event;
+        event.type = HIME_INPUT_METHOD_ENGINE_EVENT_TYPE;
+        event.input_method_engine_event.type = HIME_SWITCH_TO_NON_ENG;
+        hime_event_module_dispatch(event, NULL);
+      }
 #if TRAY_ENABLED
       disp_tray_icon();
 #endif
@@ -1543,7 +1550,7 @@ int hime_FocusOut(ClientState *cs)
   return True;
 }
 
-int tsin_get_preedit(char *str, HIME_PREEDIT_ATTR attr[], int *cursor, int *sub_comp_len);
+
 int gtab_get_preedit(char *str, HIME_PREEDIT_ATTR attr[], int *pcursor, int *sub_comp_len);
 int int_get_preedit(char *str, HIME_PREEDIT_ATTR attr[], int *cursor, int *sub_comp_len);
 int pho_get_preedit(char *str, HIME_PREEDIT_ATTR attr[], int *cursor, int *sub_comp_len);
@@ -1583,7 +1590,6 @@ int hime_get_preedit(ClientState *cs, char *str, HIME_PREEDIT_ATTR attr[], int *
 }
 
 void pho_reset();
-int tsin_reset();
 void gtab_reset();
 
 void hime_reset()
@@ -1597,11 +1603,6 @@ void hime_reset()
     case method_type_PHO:
       pho_reset();
       return;
-#if USE_TSIN
-    case method_type_TSIN:
-      tsin_reset();
-      return;
-#endif
     case method_type_MODULE:
       if (inmd[current_CS->in_method].mod_cb_funcs)
         module_cb()->module_reset();

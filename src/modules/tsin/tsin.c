@@ -103,8 +103,12 @@ int module_event_handler(HIME_EVENT event)
 {
   switch(event.type) {
     case HIME_HALF_FULL_EVENT:
-      return 1;//not
+      return 0;//not handled
       break;
+    case HIME_INPUT_METHOD_ENGINE_EVENT_TYPE:
+      if(event.input_method_engine_event.type == HIME_SWITCH_TO_NON_ENG) {
+        tsin_toggle_ch_eng(1);
+      }
   }
   return 1;
 }

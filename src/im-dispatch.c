@@ -49,7 +49,7 @@ int hime_FocusIn(ClientState *cs);
 int hime_FocusOut(ClientState *cs);
 void update_in_win_pos();
 void hide_in_win(ClientState *cs);
-void init_state_chinese(ClientState *cs);
+void init_state_non_eng(ClientState *cs);
 void clear_output_buffer();
 void flush_edit_buffer();
 int hime_get_preedit(ClientState *cs, char *str, HIME_PREEDIT_ATTR attr[], int *cursor, int *sub_comp_len);
@@ -167,7 +167,7 @@ void process_client_req(int fd)
       is_init_im_enabled = TRUE;
       current_CS = cs;
       save_CS_temp_to_current();
-      init_state_chinese(cs);
+      init_state_non_eng(cs);
     }
   }
 
