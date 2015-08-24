@@ -318,7 +318,7 @@ void win_pho_disp_half_full()
   else
      gtk_label_set_text(GTK_LABEL(label_pho), get_full_str());
 
-  if (current_CS->im_state == HIME_STATE_CHINESE && (!current_CS->b_half_full_char))
+  if (current_CS->im_state == HIME_STATE_ENABLED_NON_ENG && (!current_CS->b_half_full_char))
     gtk_widget_hide(label_full);
   else
     gtk_widget_show(label_full);

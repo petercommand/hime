@@ -668,7 +668,7 @@ GtkWidget *get_cname_label();
 void show_input_method_name_on_gtab()
 {
   if (current_CS && (! hime_status_tray) && gtab_disp_im_name &&
-      (current_CS->im_state == HIME_STATE_CHINESE) && (current_CS->b_half_full_char == 0) &&
+      (current_CS->im_state == HIME_STATE_ENABLED_NON_ENG) && (current_CS->b_half_full_char == 0) &&
       (current_CS->hime_pho_mode))
   {
     if ((current_method_type() == method_type_MODULE) ||
@@ -848,7 +848,7 @@ char *get_full_str()
   }
 
   switch (current_CS->im_state) {
-    case HIME_STATE_CHINESE:
+    case HIME_STATE_ENABLED_NON_ENG:
       if (current_CS->b_half_full_char)
       {
         if (hime_win_color_use)
@@ -874,7 +874,7 @@ void win_gtab_disp_half_full()
   if (!gwin_gtab)
     return;
   if (label_full) {
-    if ((current_CS->im_state == HIME_STATE_CHINESE && (!current_CS->b_half_full_char)) ||
+    if ((current_CS->im_state == HIME_STATE_ENABLED_NON_ENG && (!current_CS->b_half_full_char)) ||
         (current_CS->hime_pho_mode == 0))
       gtk_widget_hide(label_full);
     else

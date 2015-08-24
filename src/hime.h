@@ -38,7 +38,7 @@
 typedef enum {
   HIME_STATE_DISABLED = 0,
   HIME_STATE_ENG_FULL = 1,
-  HIME_STATE_CHINESE = 2
+  HIME_STATE_ENABLED_NON_ENG = 2
 } HIME_STATE_E;
 
 /* change 3 to 4 if you want to use 4-byte UTF-8 characters, but you must

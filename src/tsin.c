@@ -26,6 +26,7 @@
 #include "gst.h"
 #include "gtab.h"
 #include "pho-status.h"
+#include "win1.h"
 
 extern int ph_key_sz;
 extern GtkWidget *gwin1;
@@ -73,6 +74,8 @@ gboolean tsin_cursor_end()
 {
   return tss.c_idx==tss.c_len;
 }
+
+
 
 gboolean tsin_has_input();
 static void clrin_pho_tsin()
@@ -377,25 +380,6 @@ void tsin_reset_in_pho()
 #endif
 
 
-void flush_tsin_buffer()
-{
-  tsin_reset_in_pho();
-
-  if (hime_pop_up_win)
-    hide_win0();
-
-  if (tss.c_len) {
-    putbuf(tss.c_len);
-    compact_win0();
-    clear_ch_buf_sel_area();
-    clear_tsin_buffer();
-    return;
-  }
-
-  return;
-}
-
-
 void disp_tsin_eng_pho(int eng_pho);
 #if TRAY_ENABLED
 void disp_tray_icon();
@@ -466,31 +450,6 @@ void init_pre_sel()
 {
   if (!tss.pre_sel)
     tss.pre_sel=tzmalloc(PRE_SEL, 10);
-}
-
-void init_tab_pp(gboolean init)
-{
-  if (!tss.chpho)
-    tss.chpho=tzmalloc(CHPHO, MAX_PH_BF_EXT);
-
-//  tss.ph_sta_last = -1;
-
-  init_pre_sel();
-
-  if (!ch_pho)
-    load_tab_pho_file();
-
-  load_tsin_db();
-
-  if (init)
-    clr_ch_buf();
-
-  show_tsin_stat();
-  if (init)
-    clear_ch_buf_sel_area();
-
-  if (!hime_pop_up_win)
-    show_win0();
 }
 
 
@@ -2211,14 +2170,3 @@ fin:
   return attrN;
 }
 
-int tsin_reset()
-{
-//  dbg("tsin_reset\n");
-  if (!gwin0)
-    return 0;
-  int v = tss.c_len > 0;
-  tsin_reset_in_pho0();
-  clear_tsin_buffer();
-
-  return v;
-}

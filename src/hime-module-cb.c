@@ -61,6 +61,7 @@ HIME_module_callback_functions *init_HIME_module_callback_functions(char *sofile
 
   SETUP_CB(module_init_win);
   SETUP_CB(module_get_win_geom);
+  SETUP_CB(module_set_win1_cb);
   SETUP_CB(module_reset);
   SETUP_CB(module_get_preedit);
   SETUP_CB(module_feedkey);
@@ -71,6 +72,7 @@ HIME_module_callback_functions *init_HIME_module_callback_functions(char *sofile
   SETUP_CB(module_hide_win);
   SETUP_CB(module_win_visible);
   SETUP_CB(module_flush_input);
+  SETUP_CB(module_event_handler);
   SETUP_CB(module_setup_window_create);
 
   return tmemdup(&st, HIME_module_callback_functions, 1);

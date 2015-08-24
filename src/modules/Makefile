@@ -12,7 +12,7 @@ endif
 ifeq ($(USE_CHEWING),Y)
 HIME_MODULE+=chewing-module.so
 CHEWING_DATADIR=$(shell pkg-config --variable=datadir chewing)
-CFLAGS += -DCHEWING_DATADIR=\"$(CHEWING_DATADIR)\" $(shell pkg-config --cflags chewing)
+CFLAGS += -g -DCHEWING_DATADIR=\"$(CHEWING_DATADIR)\" $(shell pkg-config --cflags chewing)
 endif
 
 all:	$(HIME_MODULE)
@@ -31,11 +31,11 @@ chewing_module_obj = chewing/chewing-conf.pico
 chewing_module_so = chewing/chewing.pico chewing/hime-setup-chewing.pico
 chewing-module.so: $(chewing_module_obj) $(chewing_module_so)
 	@echo "linking $@ ..."
-	@$(CCLD) $(SO_FLAGS) -o $@ $(chewing_module_obj) $(chewing_module_so) $(LDFLAGS) $(shell pkg-config --cflags --libs chewing)
+	@$(CCLD) -g $(SO_FLAGS) -o $@ $(chewing_module_obj) $(chewing_module_so) $(LDFLAGS) $(shell pkg-config --cflags --libs chewing)
 
 install:
 	install $(HIME_MODULE) $(himelibdir)
 
 clean:
 	@echo "clean up"
-	@rm -f *.pico *.so *.o
+	@rm -f chewing/*.pico chewing/*.so chewing*.o anthy/*.pico anthy/*.so anthoy/*.o intcode/*.pico intcode/*.so intcode/*.o

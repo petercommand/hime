@@ -29,8 +29,8 @@ void cb_update_menu_select(GtkWidget  *item,  gpointer data)
 
    int idx=GPOINTER_TO_INT(data);
 
-   if (current_CS->im_state != HIME_STATE_CHINESE)
-     current_CS->im_state = HIME_STATE_CHINESE;
+   if (current_CS->im_state != HIME_STATE_ENABLED_NON_ENG)
+     current_CS->im_state = HIME_STATE_ENABLED_NON_ENG;
 
    init_in_method(idx);
 }

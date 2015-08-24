@@ -349,14 +349,14 @@ static void reload_data()
   for(c=0;c<hime_clientsN;c++) {
     if (!hime_clients[c].cs)
       continue;
-    hime_clients[c].cs->im_state = HIME_STATE_CHINESE;
+    hime_clients[c].cs->im_state = HIME_STATE_ENABLED_NON_ENG;
     hime_clients[c].cs->in_method = get_in_method_by_filename(temp_inmd_filenames[c]);
     init_in_method(hime_clients[c].cs->in_method);
     if (temp_CS_im_states[c] == HIME_STATE_DISABLED)
       toggle_im_enabled();
     hime_clients[c].cs->im_state = temp_CS_im_states[c];
   }
-  current_CS->im_state = HIME_STATE_CHINESE;
+  current_CS->im_state = HIME_STATE_ENABLED_NON_ENG;
   init_in_method(get_in_method_by_filename(temp_current_CS_inmd_filename));
   if (temp_current_CS_im_state == HIME_STATE_DISABLED)
     toggle_im_enabled();

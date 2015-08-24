@@ -41,13 +41,15 @@ void module_show_win();
 void module_hide_win();
 void module_change_font_size();
 
-enum {
+typedef enum {
   STATE_hira=0,
   STATE_kata=1,
   STATE_half_kata=2
-};
+} ANTHY_STATE_TYPE;
 
 static int state_hira_kata=STATE_hira;
+
+
 
 struct {
   char *en;
@@ -457,38 +459,7 @@ struct {
 {"9",	"9", "９", "9"},
 };
 
-static char *idx_hira_kata(int idx, gboolean always_hira)
-{
-  char *s=NULL;
 
-  if (!always_hira) {
-    if (state_hira_kata==STATE_kata)
-      s = anthy_romaji_map[idx].kata;
-    else
-    if (state_hira_kata==STATE_half_kata)
-      s = anthy_romaji_map[idx].half_kata;
-  }
-
-  if (!s)
-    s = anthy_romaji_map[idx].hira;
-
-  return s;
-}
-
-
-static short int anthy_romaji_mapN = sizeof(anthy_romaji_map)/sizeof(anthy_romaji_map[0]);
-
-static int is_legal_char(int k)
-{
-  int i;
-
-  if (k==' ')
-    return 1;
-  for(i=0; i < anthy_romaji_mapN; i++)
-    if (strchr(anthy_romaji_map[i].en, k))
-      return 1;
-  return 0;
-}
 
 #define MAX_KEYS 32
 
@@ -522,9 +493,51 @@ enum {
   STATE_CONVERT=2,
   STATE_SELECT=4,
 };
-static char state = STATE_ROMANJI;
+
+typedef struct ANTHY_STATE {
+  ANTHY_STATE_TYPE type;
+  int menu_idx;
+  int sel_pho;
+} ANTHY_STATE;
+
+static ANTHY_STATE anthy_state = {STATE_ROMANJI, 0, 0};
+
+
 
 static GtkWidget *win_anthy;
+
+static char *idx_hira_kata(int idx, gboolean always_hira)
+{
+  char *s=NULL;
+
+  if (!always_hira) {
+    if (state_hira_kata==STATE_kata)
+      s = anthy_romaji_map[idx].kata;
+    else
+    if (state_hira_kata==STATE_half_kata)
+      s = anthy_romaji_map[idx].half_kata;
+  }
+
+  if (!s)
+    s = anthy_romaji_map[idx].hira;
+
+  return s;
+}
+
+
+static short int anthy_romaji_mapN = sizeof(anthy_romaji_map)/sizeof(anthy_romaji_map[0]);
+
+static int is_legal_char(int k)
+{
+  int i;
+
+  if (k==' ')
+    return 1;
+  for(i=0; i < anthy_romaji_mapN; i++)
+    if (strchr(anthy_romaji_map[i].en, k))
+      return 1;
+  return 0;
+}
 
 static gboolean is_empty()
 {
@@ -713,7 +726,7 @@ static void clear_all()
   keysN = 0;
   segN = 0;
   cursor=0;
-  gmf.mf_tss->sel_pho = FALSE;
+  anthy_state.sel_pho = FALSE;
   state_hira_kata = STATE_hira;
   auto_hide();
   sel_segN = 0;
@@ -833,7 +846,7 @@ static void load_seg()
           ofs += len;
         }
 
-        state=STATE_CONVERT;
+        anthy_state.type =STATE_CONVERT;
 //        cursor = 0;
         if (cursor >= acs.nr_segment)
           cursor = acs.nr_segment - 1;
@@ -865,7 +878,7 @@ int module_flush_input()
   gmf.mf_hide_selections_win();
 
   int val;
-  if (state==STATE_CONVERT) {
+  if (anthy_state.type == STATE_CONVERT) {
     val = TRUE;
     send_seg();
   } else {
@@ -913,7 +926,7 @@ static gboolean select_idx(int c)
     sel_seg[sidx].ofs = seg[cursor].ofs;
     sel_seg[sidx].len = len;
 
-    state = STATE_CONVERT;
+    anthy_state.type = STATE_CONVERT;
     gmf.mf_hide_selections_win();
     return (segN==1);
   }
@@ -946,7 +959,7 @@ gboolean module_feedkey(int kv, int kvstate)
     case XK_F7:
       if (is_empty())
         return FALSE;
-      state = STATE_ROMANJI;
+      anthy_state.type = STATE_ROMANJI;
       if (state_hira_kata != STATE_kata)
         state_hira_kata = STATE_kata;
       else
@@ -956,7 +969,7 @@ gboolean module_feedkey(int kv, int kvstate)
     case XK_F8:
       if (is_empty())
         return FALSE;
-      state = STATE_ROMANJI;
+      anthy_state.type = STATE_ROMANJI;
       if (state_hira_kata != STATE_half_kata)
         state_hira_kata = STATE_half_kata;
       else
@@ -972,26 +985,26 @@ gboolean module_feedkey(int kv, int kvstate)
     case XK_Up:
       if (b_is_empty)
         return FALSE;
-      if (state==STATE_SELECT) {
+      if (anthy_state.type == STATE_SELECT) {
         int N = page_N();
-        gmf.mf_tss->pho_menu_idx--;
-        if (gmf.mf_tss->pho_menu_idx < 0)
-          gmf.mf_tss->pho_menu_idx = N - 1;
+        anthy_state.menu_idx--;
+        if (anthy_state.menu_idx < 0)
+          anthy_state.menu_idx = N - 1;
         disp_select();
       }
       return TRUE;
     case XK_Down:
       if (b_is_empty)
         return FALSE;
-      if (state==STATE_CONVERT) {
-        state = STATE_SELECT;
-        gmf.mf_tss->sel_pho = TRUE;
+      if (anthy_state.type == STATE_CONVERT) {
+        anthy_state.type = STATE_SELECT;
+        anthy_state.sel_pho = TRUE;
   //      puts("STATE_SELECT");
         disp_select();
       } else
-      if (state==STATE_SELECT) {
+      if (anthy_state.type == STATE_SELECT) {
         int N = page_N();
-        gmf.mf_tss->pho_menu_idx=(gmf.mf_tss->pho_menu_idx+1)% N;
+        anthy_state.menu_idx=(anthy_state.menu_idx+1)% N;
         disp_select();
       }
       return TRUE;
@@ -999,21 +1012,21 @@ gboolean module_feedkey(int kv, int kvstate)
     case XK_KP_Enter:
       if (b_is_empty)
         return FALSE;
-      if (state==STATE_SELECT) {
-        if (select_idx(gmf.mf_tss->pho_menu_idx))
+      if (anthy_state.type == STATE_SELECT) {
+        if (select_idx(anthy_state.menu_idx))
           goto send;
         return TRUE;
       }
 send:
       return module_flush_input();
     case XK_Escape:
-        if (state==STATE_SELECT) {
-          state = STATE_CONVERT;
-          gmf.mf_tss->sel_pho = FALSE;
+        if (anthy_state.type == STATE_SELECT) {
+          anthy_state.type = STATE_CONVERT;
+          anthy_state.sel_pho = FALSE;
           gmf.mf_clear_sele();
         }
         else
-        if (state==STATE_CONVERT)
+        if (anthy_state.type == STATE_CONVERT)
           goto rom;
       return FALSE;
     case XK_BackSpace:
@@ -1024,10 +1037,10 @@ send:
 
       gmf.mf_hide_selections_win();
 
-      if (state&(STATE_CONVERT|STATE_SELECT)) {
+      if (anthy_state.type &(STATE_CONVERT|STATE_SELECT)) {
 rom:
 //        puts("romanji");
-        state = STATE_ROMANJI;
+        anthy_state.type = STATE_ROMANJI;
         cursor = jpN;
         segN = 0;
         disp_input();
@@ -1051,7 +1064,7 @@ rom:
     case XK_Delete:
       if (b_is_empty)
         return FALSE;
-      if (state&STATE_ROMANJI) {
+      if (anthy_state.type &STATE_ROMANJI) {
         if (keysN)
           return TRUE;
         delete_jpstr(cursor);
@@ -1062,7 +1075,7 @@ rom:
     case XK_Left:
       if (b_is_empty)
         return FALSE;
-      if (state&STATE_ROMANJI) {
+      if (anthy_state.type &STATE_ROMANJI) {
         if (keysN)
           keysN = 0;
         else {
@@ -1071,7 +1084,7 @@ rom:
         }
         disp_input();
       } else
-      if (state&STATE_CONVERT) {
+      if (anthy_state.type &STATE_CONVERT) {
         if (shift_m) {
           anthy_resize_segment(ac, cursor, -1);
           load_seg();
@@ -1087,14 +1100,14 @@ rom:
     case XK_Right:
       if (b_is_empty)
         return FALSE;
-      if (state&STATE_ROMANJI) {
+      if (anthy_state.type &STATE_ROMANJI) {
         if (cursor < jpN) {
           cursor++;
           pageidx = 0;
         }
         disp_input();
       } else
-      if (state&STATE_CONVERT) {
+      if (anthy_state.type &STATE_CONVERT) {
         if (shift_m) {
           anthy_resize_segment(ac, cursor, 1);
           load_seg();
@@ -1109,32 +1122,32 @@ rom:
       if (b_is_empty)
         return FALSE;
       cursor = 0;
-      if (state&STATE_ROMANJI) {
+      if (anthy_state.type &STATE_ROMANJI) {
         disp_input();
       } else
-      if (state&STATE_CONVERT) {
+      if (anthy_state.type &STATE_CONVERT) {
         disp_convert();
       }
       return TRUE;
     case XK_End:
       if (b_is_empty)
         return FALSE;
-      if (state&STATE_ROMANJI) {
+      if (anthy_state.type &STATE_ROMANJI) {
         cursor = jpN;
         disp_input();
       } else
-      if (state&STATE_CONVERT) {
+      if (anthy_state.type &STATE_CONVERT) {
         cursor = segN-1;
         disp_convert();
       }
       return TRUE;
     case XK_Prior:
-      if (state!=STATE_SELECT)
+      if (anthy_state.type !=STATE_SELECT)
         return FALSE;
       prev_page();
       return TRUE;
     case XK_Next:
-      if (state!=STATE_SELECT)
+      if (anthy_state.type !=STATE_SELECT)
         return FALSE;
       next_page();
       return TRUE;
@@ -1143,7 +1156,7 @@ rom:
         return FALSE;
       goto lab1;
     default:
-      if (state==STATE_SELECT) {
+      if (anthy_state.type == STATE_SELECT) {
         char *pp;
         if ((pp=strchr(*gmf.mf_pho_selkey, lkv))) {
           int c=pp-*gmf.mf_pho_selkey;
@@ -1160,13 +1173,13 @@ rom:
 
   kv = lkv;
 
-  if (state==STATE_CONVERT && kv!=' ') {
+  if (anthy_state.type == STATE_CONVERT && kv!=' ') {
     send_seg();
-    state = STATE_ROMANJI;
+    anthy_state.type = STATE_ROMANJI;
   }
 
 lab1:
-  if (state==STATE_ROMANJI) {
+  if (anthy_state.type == STATE_ROMANJI) {
     if (keysN < MAX_KEYS)
       keys[keysN++]=kv;
 
@@ -1178,7 +1191,7 @@ lab1:
   module_show_win();
 
   if (kv==' ') {
-    if (state==STATE_ROMANJI) {
+    if (anthy_state.type == STATE_ROMANJI) {
       char tt[512];
       clear_seg_label();
       merge_jp(tt, TRUE);
@@ -1186,13 +1199,13 @@ lab1:
       anthy_set_string(ac, tt);
       load_seg();
     } else
-    if (state==STATE_CONVERT) {
-      state = STATE_SELECT;
-      gmf.mf_tss->sel_pho = TRUE;
+    if (anthy_state.type == STATE_CONVERT) {
+      anthy_state.type = STATE_SELECT;
+      anthy_state.sel_pho = TRUE;
 //      puts("STATE_SELECT");
       disp_select();
     } else
-    if (state==STATE_SELECT) {
+    if (anthy_state.type == STATE_SELECT) {
       next_page();
     }
   }
@@ -1316,8 +1329,8 @@ void module_show_win()
 
 void module_hide_win()
 {
-  if (state == STATE_SELECT) {
-    state = STATE_CONVERT;
+  if (anthy_state.type == STATE_SELECT) {
+    anthy_state.type = STATE_CONVERT;
     gmf.mf_hide_selections_win();
   }
   gtk_widget_hide(win_anthy);
@@ -1404,7 +1417,7 @@ int module_get_preedit(char *str, HIME_PREEDIT_ATTR attr[], int *pcursor, int *c
 {
   int i;
 
-  dbg("anthy_get_preedit %d  state:%d\n", cursor, state);
+  dbg("anthy_get_preedit %d  state:%d\n", cursor, anthy_state.type);
   str[0]=0;
   *pcursor=0;
 
@@ -1413,7 +1426,7 @@ int module_get_preedit(char *str, HIME_PREEDIT_ATTR attr[], int *pcursor, int *c
   int attrN=0;
   int ch_N=0;
 
-  if (state&(STATE_CONVERT|STATE_SELECT)) {
+  if (anthy_state.type &(STATE_CONVERT|STATE_SELECT)) {
     dbg("state==STATE_CONVERT\n");
 
     if (segN)
@@ -1477,7 +1490,6 @@ int module_get_preedit(char *str, HIME_PREEDIT_ATTR attr[], int *pcursor, int *c
 
   return attrN;
 }
-
 
 int module_reset()
 {

@@ -174,8 +174,6 @@ dispIn:
   return 1;
 }
 
-extern GtkWidget *gwin_int;
-
 int module_get_preedit(char *str, HIME_PREEDIT_ATTR attr[], int *cursor, int *comp_flag)
 {
   *comp_flag = intcode_cin>0;
@@ -188,6 +186,7 @@ int module_get_preedit(char *str, HIME_PREEDIT_ATTR attr[], int *cursor, int *co
   *cursor=0;
   return 0;
 }
+
 
 int module_feedkey_release(KeySym xkey, int kbstate)
 {

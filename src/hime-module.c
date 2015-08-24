@@ -75,7 +75,6 @@ void init_HIME_module_main_functions(HIME_module_main_functions *func)
   func->mf_utf8_str_N = utf8_str_N;
 
   func->mf_phkbm = &phkbm;
-  func->mf_tss = &tss;
   func->mf_hime_chinese_english_toggle_key = &hime_chinese_english_toggle_key;
 
   func->mf_hime_pop_up_win = &hime_pop_up_win;

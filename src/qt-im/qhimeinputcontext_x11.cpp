@@ -80,12 +80,12 @@ bool QHIMEInputContext::x11FilterEvent( QWidget *keywidget, XEvent *event )
     XLookupString (keve, buffer, buffer_size, &keysym, NULL);
     int result;
     char *rstr = NULL;
-    unsigned int state = keve->state;
+    unsigned int state = keve->state_ANTHY_TEMP;
 
 
     if (event->type == KeyPress) {
         result = hime_im_client_forward_key_press(hime_ch,
-          keysym, state, &rstr);
+          keysym, state_ANTHY_TEMP, &rstr);
 
         if (rstr) {
             QString inputText = QString::fromUtf8(rstr);
@@ -95,7 +95,7 @@ bool QHIMEInputContext::x11FilterEvent( QWidget *keywidget, XEvent *event )
         }
     } else {
        result = hime_im_client_forward_key_release(hime_ch,
-         keysym, state, &rstr);
+         keysym, state_ANTHY_TEMP, &rstr);
     }
 
 

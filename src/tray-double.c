@@ -342,7 +342,7 @@ void load_tray_icon_double()
 //  dbg("hime_pho_mode() %d\n", hime_pho_mode());
 
   char tt[32];
-  if (current_CS && current_CS->im_state == HIME_STATE_CHINESE && !hime_pho_mode()) {
+  if (current_CS && current_CS->im_state == HIME_STATE_ENABLED_NON_ENG && !hime_pho_mode()) {
     if ((current_method_type()==method_type_TSIN || current_method_type()==method_type_MODULE)) {
       strcpy(tt, "en-");
       strcat(tt, iconame);

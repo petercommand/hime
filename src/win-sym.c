@@ -199,7 +199,7 @@ static void cb_button_sym(GtkButton *button, GtkWidget *label)
   char *str = (char *) gtk_label_get_text(GTK_LABEL(label));
 
 #if USE_TSIN
-  if (current_method_type() == method_type_TSIN && current_CS->im_state == HIME_STATE_CHINESE) {
+  if (current_method_type() == method_type_TSIN && current_CS->im_state == HIME_STATE_ENABLED_NON_ENG) {
     add_to_tsin_buf_str(str);
     if (hime_punc_auto_send && tsin_cursor_end()) {
       flush_tsin_buffer();

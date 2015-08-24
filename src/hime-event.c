@@ -1,6 +1,7 @@
 #define HIME_EVENT_C
 
 #include "hime-event.h"
+#include "hime-module-cb.h"
 
 static event_list* event_notify_list[HIME_EVENT_N];
 
@@ -68,6 +69,10 @@ void hime_event_connect(HIME_EVENT_TYPE event, void (*func_cb) (HIME_EVENT, void
   event_list_append(event_notify_list[event], func_cb, pointer);
 }
 
+
+void hime_event_module_dispatch(HIME_EVENT event, void (*default_func)()) {
+  module_cb()
+}
 
 void hime_event_dispatch(HIME_EVENT event) {
   //Dispatch a HIME_EVENT, triggers all corresponding registered callback function

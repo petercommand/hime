@@ -15,6 +15,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "hime-event.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -37,7 +39,9 @@ extern "C" {
 ///////// for hime main() only
 typedef struct _HIME_module_callback_functions {
   int (*module_init_win)(HIME_module_main_functions *funcs);
+  //Initialize the input method module & its corresponding window, do not show the input method window after this function is call (hide the window), wait for module_show_win() to show the input method window
   void (*module_get_win_geom)();
+  void (*module_set_win1_cb)();
   int (*module_reset)();
   int (*module_get_preedit)(char *str, HIME_PREEDIT_ATTR attr[], int *pcursor, int *compose_flag);
   gboolean (*module_feedkey)(int kv, int kvstate);
@@ -48,5 +52,9 @@ typedef struct _HIME_module_callback_functions {
   void (*module_hide_win)();
   int (*module_win_visible)();
   int (*module_flush_input)();
+  int (*module_event_handler)(HIME_EVENT eve);
+  //The event handler is used for handling events that has a default action.
+  // return true if the event is processed (ie: a custom handler is implemented for the event
+  // return false if the default behavior is desired
   void (*module_setup_window_create)();
 } HIME_module_callback_functions;

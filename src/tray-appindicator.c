@@ -113,7 +113,7 @@ static void tray_appindicator_update_icon()
     strcpy(iconfile, inmd[current_CS->in_method].icon);
   }
 
-  if (current_CS && current_CS->im_state == HIME_STATE_CHINESE && !hime_pho_mode()) {
+  if (current_CS && current_CS->im_state == HIME_STATE_ENABLED_NON_ENG && !hime_pho_mode()) {
     char s[64];
     strcpy(s, "en-");
     strcat(s, iconfile);

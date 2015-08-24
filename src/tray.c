@@ -81,7 +81,7 @@ static void draw_icon()
     return;
 
   GdkPixbuf *pix =  ((! current_CS) ||
-                     (current_CS->im_state != HIME_STATE_CHINESE)) ?
+                     (current_CS->im_state != HIME_STATE_ENABLED_NON_ENG)) ?
                     pixbuf : pixbuf_ch;
 
   int w = 0, h = 0;
@@ -107,7 +107,7 @@ static void draw_icon()
       cairo_move_to (cr, iw - w, ih - h);
       pango_cairo_show_layout (cr, pango);
     }
-    if (current_CS->im_state == HIME_STATE_CHINESE && !hime_pho_mode()) {
+    if (current_CS->im_state == HIME_STATE_ENABLED_NON_ENG && !hime_pho_mode()) {
       gdk_cairo_set_source_color (cr, &blue_color_fg);
       get_text_w_h(engst,  &w, &h);
       cairo_move_to (cr, 0, 0);

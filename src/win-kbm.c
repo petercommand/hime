@@ -399,7 +399,7 @@ void update_win_kbm()
 
   clear_kbm();
 
-  if (current_CS->im_state != HIME_STATE_CHINESE) {
+  if (current_CS->im_state != HIME_STATE_ENABLED_NON_ENG) {
     if (current_CS->im_state == HIME_STATE_DISABLED) {
       int i;
       for(i=0;i<keysN;i++) {
