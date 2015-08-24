@@ -42,7 +42,7 @@ static GtkWidget *check_button_root_style_use,
 static GtkWidget *appearance_widget;
 static GtkWidget *opt_hime_icon_dir_display;
 static GtkWidget *opt_hime_edit_display;
-static GdkColor hime_win_gcolor_fg, hime_win_gcolor_bg, hime_sel_key_gcolor, tsin_cursor_gcolor;
+static GdkColor hime_win_gcolor_fg, hime_win_gcolor_bg, hime_sel_key_gcolor, hime_cursor_gcolor;
 gboolean button_order;
 #if TRAY_ENABLED
 static GtkWidget *opt_hime_tray_display;
@@ -72,7 +72,7 @@ COLORSEL colorsel[4] =
   { {&hime_win_gcolor_fg, &hime_win_color_fg, NULL, N_("前景顏色")},
     {&hime_win_gcolor_bg, &hime_win_color_bg, NULL, N_("背景顏色")},
     {&hime_sel_key_gcolor, &hime_sel_key_color, NULL, N_("選擇鍵顏色")},
-    {&tsin_cursor_gcolor, &hime_cursor_color, NULL, N_("游標顏色")}
+    {&hime_cursor_gcolor, &hime_cursor_color, NULL, N_("游標顏色")}
   };
 
 struct {
@@ -612,13 +612,13 @@ GtkWidget *create_appearance_widget()
   gdk_color_parse(hime_sel_key_color, &hime_sel_key_gcolor);
   gtk_box_pack_start (GTK_BOX(hbox_win_color_fbg), button_hime_sel_key_color, TRUE, TRUE, 0);
 
-  GtkWidget *button_tsin_cursor_color = gtk_button_new_with_label(_("游標顏色"));
-  gtk_widget_set_hexpand (button_tsin_cursor_color, TRUE);
-  gtk_widget_set_halign (button_tsin_cursor_color, GTK_ALIGN_FILL);
-  g_signal_connect (G_OBJECT (button_tsin_cursor_color), "clicked",
+  GtkWidget *button_hime_cursor_color = gtk_button_new_with_label(_("游標顏色"));
+  gtk_widget_set_hexpand (button_hime_cursor_color, TRUE);
+  gtk_widget_set_halign (button_hime_cursor_color, GTK_ALIGN_FILL);
+  g_signal_connect (G_OBJECT (button_hime_cursor_color), "clicked",
                     G_CALLBACK (cb_hime_win_color), &colorsel[3]);
-  gdk_color_parse(hime_cursor_color, &tsin_cursor_gcolor);
-  gtk_box_pack_start (GTK_BOX(hbox_win_color_fbg), button_tsin_cursor_color, TRUE, TRUE, 0);
+  gdk_color_parse(hime_cursor_color, &hime_cursor_gcolor);
+  gtk_box_pack_start (GTK_BOX(hbox_win_color_fbg), button_hime_cursor_color, TRUE, TRUE, 0);
 
   disp_win_sample();
 
