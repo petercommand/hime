@@ -58,10 +58,8 @@ HIME_module_callback_functions *init_HIME_module_callback_functions(char *sofile
   }
 
   HIME_module_callback_functions st;
-  *(void **) (&st.module_init_win) = dlsym(handle, "module_init_win");
-  if (!st.module_init_win)
-    p_err("module_init_win() not found in %s", sofile);
 
+  SETUP_CB(module_init_win);
   SETUP_CB(module_get_win_geom);
   SETUP_CB(module_reset);
   SETUP_CB(module_get_preedit);

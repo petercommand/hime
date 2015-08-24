@@ -1,6 +1,7 @@
 #include "test-hime-event.h"
 
 static int test_var = 5;
+static int test_var2 = 1;
 
 void event_test_0_func(HIME_EVENT eve, void* pointer);
 void event_test_1_func(HIME_EVENT eve, void* pointer);
@@ -24,6 +25,10 @@ void event_test_0() {
 void event_test_1() {
   int num = 11;
   hime_event_connect(PREEDIT_CHANGED_EVENT, event_test_1_func, &num);
+  HIME_EVENT eve;
+  eve.type = INPUT_METHOD_CHANGED_EVENT;
+  hime_event_dispatch(eve);
+  test_equal(test_var2 == 2);
 }
 
 void event_test_0_func(HIME_EVENT eve, void* pointer) {
@@ -33,6 +38,7 @@ void event_test_0_func(HIME_EVENT eve, void* pointer) {
 
 void event_test_1_func(HIME_EVENT eve, void* pointer) {
   test_equal(*((int *)pointer) == 11);
+  test_var2++;
 }
 
 void test_event(const char* name){
