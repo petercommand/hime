@@ -1,11 +1,13 @@
 #define HIME_EVENT_C
 
 #include "hime-event.h"
+#include "
 #include "hime-module-cb.h"
+#include "eve.h"
 
 static event_list* event_notify_list[HIME_EVENT_N];
 
-void event_list_append(event_list* list, void (*func_cb) (HIME_EVENT, void*), void* pointer){
+void event_list_append(event_list* list, int (*func_cb) (HIME_EVENT, void*), void* pointer){
   //Add the callback function and the pointer to the event_list
   if(list->head == NULL){
     event_list_item *item = tzmalloc(event_list_item, 1);
@@ -60,7 +62,7 @@ void event_list_free(event_list* list){
 }
 
 
-void hime_event_connect(HIME_EVENT_TYPE event, void (*func_cb) (HIME_EVENT, void*), void* pointer){
+void hime_event_connect(HIME_EVENT_TYPE event, int (*func_cb) (HIME_EVENT, void*), void* pointer){
   //This function connects func_cb and pointer with the given event
   // func_cb will be call with event and pointer when the event is emitted
   if(!event_notify_list[event]) {
@@ -70,17 +72,48 @@ void hime_event_connect(HIME_EVENT_TYPE event, void (*func_cb) (HIME_EVENT, void
 }
 
 
-void hime_event_module_dispatch(HIME_EVENT event, void (*default_func)()) {
-  module_cb()
+
+int hime_event_module_dispatch(HIME_EVENT event, void (*default_handler)()) {
+  //This function uses module_cb() from eve.c, make sure that current_CS is valid, current input method is a module, and that the module has been initialized before using this function
+  //Dispatches the optional event to currently load module, if target returns false, default_handler is called
+  //default_handler can be null if there is no default action
+  //return false if the module want the default_handler to be evaluated, or the module does not implement module_event_handler()
+  //return true if the module return true from module_event_handler, which means that default_handler is not called
+  if(module_cb()->module_event_handler) {
+    if(!module_cb()->module_event_handler(event)) {//false
+      if (default_handler != NULL) {
+        default_handler();
+      }
+      return 0;
+    }
+    else {//true
+      return 1;
+    }
+  }
+  else {
+    if(default_handler != NULL) {
+      default_handler();
+    }
+    return 0;
+  }
 }
 
-void hime_event_dispatch(HIME_EVENT event) {
-  //Dispatch a HIME_EVENT, triggers all corresponding registered callback function
+int hime_event_dispatch(HIME_EVENT event) {
+  //Dispatch a HIME_EVENT, first, it triggers the first connected handler,
+  //If the handler returns true, no other handler is called
+  //If the handler returns false, the next handler will be evaluated, and so on, until one of the handler return true, or there is no more handlers in the list
+  //return false if the last triggered handler return false
+  //return true if the last triggered handler return true
+  int status;
   if (event_notify_list[event.type]) {
     event_list_item *item = event_notify_list[event.type]->head;
     while (item) {
-      item->func_cb(event, item->pointer);
+      status = item->func_cb(event, item->pointer);
+      if(status) {
+        return 1;
+      }
       item = item->next;
     }
   }
+  return 0;
 }

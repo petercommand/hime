@@ -983,18 +983,19 @@ gboolean init_in_method(int in_no)
       // set_gtab_input_method_name(inmd[in_no].cname);
       break;
   }
-
+  HIME_EVENT event;
+  event.type = HIME_HALF_FULL_EVENT_TYPE;
+  event.half_full_event.type = HIME_TO_FULL;
   if (hime_init_full_mode)
   {
-    if(current_CS->b_half_full_char == 0)
-
     switch (current_method_type())
     {
-
-      case method_type_TSIN:
-        if (tss.tsin_half_full==0) toggle_half_full_char();
-        break;
       case method_type_MODULE:
+        if(!hime_event_module_dispatch(event, NULL)) {
+          if(current_CS->b_half_full_char == 0) {
+            toggle_half_full_char();
+          }
+        }
       case method_type_SYMBOL_TABLE:
       case method_type_EN:
         break;
@@ -1063,7 +1064,6 @@ static void cycle_next_in_method()
   }
 }
 
-void add_to_tsin_buf_str(char *str);
 gboolean gtab_phrase_on();
 void insert_gbuf_nokey(char *s);
 
@@ -1099,7 +1099,7 @@ int feedkey_pho(KeySym xkey, int kbstate);
 int feedkey_pp(KeySym xkey, int state);
 int feedkey_gtab(KeySym key, int kbstate);
 int feed_phrase(KeySym ksym, int state);
-void tsin_set_eng_ch(int nmod);
+
 static KeySym last_keysym;
 
 gboolean timeout_raise_window(gpointer data)
@@ -1215,20 +1215,14 @@ gboolean ProcessKeyPress(KeySym keysym, u_int kev_state)
   }
 
   if (keysym == XK_space) {
-#if 0
-    dbg("state %x\n", kev->state);
-    dbg("%x\n", Mod4Mask);
-#endif
+
+
     if (
       ((kev_state & (ControlMask|Mod1Mask|ShiftMask))==ControlMask && hime_im_toggle_keys==Control_Space) ||
       ((kev_state & Mod1Mask) && hime_im_toggle_keys==Alt_Space) ||
       ((kev_state & ShiftMask) && hime_im_toggle_keys==Shift_Space) ||
       ((kev_state & Mod4Mask) && hime_im_toggle_keys==Windows_Space)
     ) {
-      if (current_method_type() == method_type_TSIN) {
-        tsin_set_eng_ch(1);
-      }
-
       toggle_im_enabled();
       return check_key_press(keysym, kev_state, TRUE);
     }
@@ -1654,11 +1648,6 @@ void flush_edit_buffer()
     return;
 //  dbg("hime_reset\n");
   switch(current_method_type()) {
-#if USE_TSIN
-    case method_type_TSIN:
-      flush_tsin_buffer();
-      break;
-#endif
     case method_type_MODULE:
       if (inmd[current_CS->in_method].mod_cb_funcs)
       module_cb()->module_flush_input();

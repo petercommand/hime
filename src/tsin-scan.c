@@ -44,7 +44,7 @@ static int qcmp_pre_sel_str(const void *aa, const void *bb)
 void extract_gtab_key(int start, int len, void *out);
 gboolean check_gtab_fixed_mismatch(int idx, char *mtch, int plen);
 void mask_tone(phokey_t *pho, int plen, char *tone_off);
-void init_pre_sel();
+void tsin_init_pre_sel();
 void mask_key_typ_pho(phokey_t *key);
 extern u_int64_t vmaskci;
 
@@ -92,7 +92,7 @@ u_char scanphr_e(int chpho_idx, int plen, gboolean pho_incr, int *rselN)
   gboolean is_pin_juyin = ph_key_sz==2 && pin_juyin;
 
   if (is_pin_juyin) {
-    get_chpho_pinyin_set(pinyin_set);
+    tsin_get_chpho_pinyin_set(pinyin_set);
     t_pinyin_set = pinyin_set + chpho_idx;
     mask_tone(pp, plen, t_pinyin_set);
   }
@@ -229,7 +229,7 @@ void tsin_scan_pre_select(gboolean b_incr)
   if (!tss.c_idx || !tss.c_len)
     return;
 
-  init_pre_sel();
+  tsin_init_pre_sel();
 
   int Maxlen = tss.c_len;
   if (Maxlen > MAX_PHRASE_LEN)

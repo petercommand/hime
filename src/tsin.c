@@ -446,14 +446,14 @@ static void dump_tsidx_all()
 void load_tab_pho_file();
 void show_win0();
 
-void init_pre_sel()
+void tsin_init_pre_sel()
 {
   if (!tss.pre_sel)
     tss.pre_sel=tzmalloc(PRE_SEL, 10);
 }
 
 
-static void move_cursor_end()
+static void tsin_move_cursor_end()
 {
   clrcursor();
   tss.c_idx=tss.c_len;
@@ -462,7 +462,7 @@ static void move_cursor_end()
 
 gboolean save_phrase_to_db2(CHPHO *chph, int len);
 
-void save_phrase(int save_frm, int len)
+void tsin_save_phrase(int save_frm, int len)
 {
   int save_to = save_frm + len -1;
   if (len <= 0 || len > MAX_PHRASE_LEN)
@@ -488,12 +488,12 @@ void save_phrase(int save_frm, int len)
   }
 
   tss.ph_sta=-1;
-  move_cursor_end();
+  tsin_move_cursor_end();
   return;
 }
 
 
-static void set_fixed(int idx, int len)
+static void tsin_set_fixed(int idx, int len)
 {
   int i;
   for(i=idx; i < idx+len; i++) {
@@ -504,7 +504,7 @@ static void set_fixed(int idx, int len)
 
 #define PH_SHIFT_N (tsin_buffer_size - 1)
 
-static void shift_ins()
+static void tsin_shift_ins()
 {
    int j;
 //   dbg("shift_ins()\n");
@@ -520,7 +520,7 @@ static void shift_ins()
      int fixedlen = tss.c_len - 10;
      if (fixedlen <= 0)
        fixedlen = 1;
-     set_fixed(0, fixedlen);
+     tsin_set_fixed(0, fixedlen);
 
      ofs = 1;
      putbuf(ofs);
@@ -563,9 +563,9 @@ static void shift_ins()
 }
 
 
-static void put_u8_char(int pho_idx, phokey_t key, gboolean b_tone)
+static void tsin_put_u8_char(int pho_idx, phokey_t key, gboolean b_tone)
 {
-   shift_ins();
+  tsin_shift_ins();
    int is_phrase;
    char *str = pho_idx_str2(pho_idx, &is_phrase);
 
@@ -621,7 +621,7 @@ static gboolean chpho_eq_pho(int idx, phokey_t *phos, int len)
 }
 
 
-char *get_chpho_pinyin_set(char *set_arr)
+char *tsin_get_chpho_pinyin_set(char *set_arr)
 {
   if (!pin_juyin)
     return NULL;
@@ -638,7 +638,7 @@ char *get_chpho_pinyin_set(char *set_arr)
 }
 
 
-static void get_sel_phrase0(int selidx, gboolean eqlen)
+static void tsin_get_sel_phrase0(int selidx, gboolean eqlen)
 {
   int sti,edi;
   u_char len, mlen;
@@ -658,7 +658,7 @@ static void get_sel_phrase0(int selidx, gboolean eqlen)
   char pinyin_set[MAX_PH_BF_EXT];
 
   if (pin_juyin)
-    pinyin_s = get_chpho_pinyin_set(pinyin_set) + selidx;
+    pinyin_s = tsin_get_chpho_pinyin_set(pinyin_set) + selidx;
 
   if (!tsin_seek(pp, 2, &sti, &edi, pinyin_s))
     return;
@@ -685,7 +685,7 @@ static void get_sel_phrase0(int selidx, gboolean eqlen)
   }
 }
 
-static void get_sel_phrase_end()
+static void tsin_get_sel_phrase_end()
 {
   int stidx = tss.c_idx - 5;
   if (stidx < 0)
@@ -694,17 +694,17 @@ static void get_sel_phrase_end()
   phrase_count = 0;
   int i;
   for(i=stidx; i < tss.c_len - 1; i++) {
-    get_sel_phrase0(i, TRUE);
+    tsin_get_sel_phrase0(i, TRUE);
   }
 }
 
-static void get_sel_phrase()
+static void tsin_get_sel_phrase()
 {
   phrase_count = 0;
-  get_sel_phrase0(tss.c_idx, FALSE);
+  tsin_get_sel_phrase0(tss.c_idx, FALSE);
 }
 
-static void get_sel_pho()
+static void tsin_get_sel_pho()
 {
   int idx = tss.c_idx==tss.c_len?tss.c_idx-1:tss.c_idx;
   phokey_t key = tss.chpho[idx].pho;
@@ -761,7 +761,7 @@ void set_sele_text(int tN, int i, char *text, int len);
 void disp_arrow_up(), disp_arrow_down();
 void disp_tsin_select(int index);
 
-static void disp_current_sel_page()
+static void tsin_disp_current_sel_page()
 {
   int i;
 
@@ -1016,7 +1016,7 @@ gboolean add_to_tsin_buf(char *str, phokey_t *pho, int len)
 
     prbuf();
 
-    set_fixed(tss.c_idx, len);
+  tsin_set_fixed(tss.c_idx, len);
 #if 1
     for(i=1;i < len; i++) {
       tss.chpho[tss.c_idx+i].psta= tss.c_idx;
@@ -1082,7 +1082,7 @@ gboolean add_to_tsin_buf_phsta(char *str, phokey_t *pho, int len)
 
     ch_pho_cpy(&tss.chpho[idx], str, pho, len);
     set_chpho_ch(&tss.chpho[idx], str, len, FALSE);
-    set_fixed(idx, len);
+  tsin_set_fixed(idx, len);
     tss.chpho[idx].flag |= FLAG_CHPHO_PHRASE_USER_HEAD;
     tss.c_idx=idx + len;
     tss.chpho[tss.c_idx - 1].flag |= FLAG_CHPHO_PHRASE_TAIL;
@@ -1393,7 +1393,7 @@ int tsin_pho_sel(int c)
 
   set_chpho_ch(&tss.chpho[sel_idx], sel_text, len, is_pho_phrase);
 
-  set_fixed(sel_idx, len);
+  tsin_set_fixed(sel_idx, len);
 
   call_tsin_parse();
 
@@ -1430,7 +1430,7 @@ gboolean tsin_page_up()
     tss.current_page = 0;
 
   tss.pho_menu_idx = 0;
-  disp_current_sel_page();
+  tsin_disp_current_sel_page();
   return TRUE;
 }
 
@@ -1444,7 +1444,7 @@ gboolean tsin_page_down()
   if (tss.current_page >= phrase_count + pho_count)
     tss.current_page = 0;
 
-  disp_current_sel_page();
+  tsin_disp_current_sel_page();
 
   return TRUE;
 }
@@ -1452,14 +1452,14 @@ gboolean tsin_page_down()
 void open_select_pho()
 {
   if (tss.c_idx==tss.c_len) {
-    get_sel_phrase_end();
+    tsin_get_sel_phrase_end();
   } else
-    get_sel_phrase();
+    tsin_get_sel_phrase();
 
-  get_sel_pho();
+  tsin_get_sel_pho();
   tss.sel_pho=1;
   tss.pho_menu_idx = tss.current_page = 0;
-  disp_current_sel_page();
+  tsin_disp_current_sel_page();
 }
 
 gboolean win_sym_page_up(), win_sym_page_down();
@@ -1570,7 +1570,7 @@ int feedkey_pp(KeySym xkey, int kbstate)
           if (len > MAX_PHRASE_LEN)
             return 0;
           tsin_create_win_save_phrase(idx0, len);
-          move_cursor_end();
+          tsin_move_cursor_end();
           return 1;
         } else {
           if (tss.sel_pho) {
@@ -1598,7 +1598,7 @@ int feedkey_pp(KeySym xkey, int kbstate)
         close_selection_win();
         if (!tss.c_len)
           return 0;
-        move_cursor_end();
+       tsin_move_cursor_end();
         return 1;
      case XK_Left:
      case XK_KP_Left:
@@ -1670,7 +1670,7 @@ tab_phrase_end:
          tss.pho_menu_idx--;
          if (tss.pho_menu_idx < 0)
            tss.pho_menu_idx = N-1;
-         disp_current_sel_page();
+         tsin_disp_current_sel_page();
        }
        return 1;
      case XK_Prior:
@@ -1732,7 +1732,7 @@ change_char:
            tsin_page_down();
          else {
            tss.pho_menu_idx = (tss.pho_menu_idx+1) % N;
-           disp_current_sel_page();
+           tsin_disp_current_sel_page();
          }
        }
        return 1;
@@ -1910,11 +1910,11 @@ asc_char:
           return 1;
         }
 
-        shift_ins();
+     tsin_shift_ins();
 
         memcpy(tss.chpho[tss.c_idx].ch, tstr, CH_SZ);
 
-        set_fixed(tss.c_idx, 1);
+     tsin_set_fixed(tss.c_idx, 1);
         phokey_t tphokeys[32];
         tphokeys[0]=0;
         utf8_pho_keys(tss.chpho[tss.c_idx].ch, tphokeys);
@@ -2034,7 +2034,7 @@ llll2:
    if (!tss.c_len && poo.typ_pho[0]==BACK_QUOTE_NO && poo.stop_idx - poo.start_idx == 1)
      send_text(pho_idx_str(poo.start_idx));  // it's ok since ,. are 3 byte, last one \0
    else
-     put_u8_char(poo.start_idx, key, (status&PHO_STATUS_TONE)>0);
+     tsin_put_u8_char(poo.start_idx, key, (status & PHO_STATUS_TONE) > 0);
 
    call_tsin_parse();
 

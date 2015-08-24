@@ -15,6 +15,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef HIME_MODULE_CB_H
+#define HIME_MODULE_CB_H
 #include "hime-event.h"
 
 #ifdef __cplusplus
@@ -55,6 +57,8 @@ typedef struct _HIME_module_callback_functions {
   int (*module_event_handler)(HIME_EVENT eve);
   //The event handler is used for handling events that has a default action.
   // return true if the event is processed (ie: a custom handler is implemented for the event
-  // return false if the default behavior is desired
+  // return false if you want hime to call the default handler
   void (*module_setup_window_create)();
 } HIME_module_callback_functions;
+
+#endif //HIME_MODULE_CB_H

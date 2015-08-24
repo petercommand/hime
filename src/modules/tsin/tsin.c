@@ -103,12 +103,7 @@ int module_event_handler(HIME_EVENT event)
 {
   switch(event.type) {
     case HIME_HALF_FULL_EVENT:
-      if(event.half_full_changed_event.type == HIME_TO_FULL) {
-
-      }
-      else if(event.half_full_changed_event == HIME_TO_HALF) {
-
-      }
+      return 1;//not
       break;
   }
   return 1;

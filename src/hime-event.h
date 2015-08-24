@@ -15,11 +15,16 @@ typedef enum {
 } HIME_EVENT_TYPE;
 
 
-
+typedef enum {
+  HIME_SWITCH_TO_NON_ENG,
+  HIME_SWITCH_TO_ENG
+} HIME_INPUT_METHOD_ENGINE_EVENT_SUBTYPE;
 
 typedef struct HIME_INPUT_METHOD_ENGINE_EVENT {
-  int type;
+  HIME_INPUT_METHOD_ENGINE_EVENT_SUBTYPE type;
 } HIME_INPUT_METHOD_ENGINE_EVENT;
+
+
 
 typedef struct HIME_KEY_EVENT {
   int type;
@@ -46,11 +51,11 @@ typedef struct HIME_CLIENT_STATE_EVENT {
 typedef struct HIME_EVENT {
   HIME_EVENT_TYPE type;
   union {
-    HIME_INPUT_METHOD_ENGINE_EVENT engine_changed_event;
-    HIME_KEY_EVENT key_pressed_event;
-    HIME_PREEDIT_EVENT preedit_changed_event;
-    HIME_HALF_FULL_CHANGED_EVENT half_full_changed_event;
-    HIME_CLIENT_STATE_EVENT client_state_changed_event;
+    HIME_INPUT_METHOD_ENGINE_EVENT input_method_engine_event;
+    HIME_KEY_EVENT key_event;
+    HIME_PREEDIT_EVENT preedit_event;
+    HIME_HALF_FULL_CHANGED_EVENT half_full_event;
+    HIME_CLIENT_STATE_EVENT client_state_event;
   };
 } HIME_EVENT;
 
@@ -58,7 +63,7 @@ typedef struct HIME_EVENT {
 typedef struct event_list_item {
   struct event_list_item *prev;
   struct event_list_item *next;
-  void (*func_cb) (HIME_EVENT, void*);
+  int (*func_cb) (HIME_EVENT, void*);
   void* pointer;
 } event_list_item;
 
@@ -70,14 +75,14 @@ typedef struct event_list {
 
 
 #ifdef HIME_EVENT_C
-void event_list_append(event_list* list, void (*func_cb) (HIME_EVENT, void*), void*);
+void event_list_append(event_list* list, int (*func_cb) (HIME_EVENT, void*), void*);
 event_list* event_list_new();
 void event_list_free(event_list* list);
 #endif //HIME_EVENT_C
 
-void hime_event_connect(HIME_EVENT_TYPE event, void (*func_cb) (HIME_EVENT, void*), void*);
-void hime_event_dispatch(HIME_EVENT event);
-
+void hime_event_connect(HIME_EVENT_TYPE event, int (*func_cb) (HIME_EVENT, void*), void*);
+int hime_event_dispatch(HIME_EVENT event);
+int hime_event_module_dispatch(HIME_EVENT event, void (*default_handler)());
 
 
 

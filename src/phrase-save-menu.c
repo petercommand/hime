@@ -31,7 +31,7 @@ void destroy_phrase_save_menu()
   phrase_save_win = NULL;
 }
 
-void save_phrase(int save_frm, int len);
+void tsin_save_phrase(int save_frm, int len);
 static void cb_clicked(GtkWidget *widget, gpointer data)
 {
   destroy_phrase_save_menu();
@@ -43,7 +43,7 @@ static void cb_clicked(GtkWidget *widget, gpointer data)
   if (!len)
     return;
 
-  save_phrase(idx, len);
+  tsin_save_phrase(idx, len);
 }
 
 void chpho_extract(CHPHO *chph, int len, phokey_t *pho, char *ch);

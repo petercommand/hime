@@ -963,7 +963,7 @@ void init_tsin_table()
 }
 
 extern u_char scanphr_e(int chpho_idx, int plen, gboolean pho_incr, int *rselN);
-void init_pre_sel();
+void tsin_init_pre_sel();
 void clear_sele();
 void set_sele_text(int tN, int i, char *text, int len);
 void get_win_gtab_geom();
@@ -991,7 +991,7 @@ void gtab_scan_pre_select(gboolean b_incr)
     return;
 
   init_tsin_table();
-  init_pre_sel();
+  tsin_init_pre_sel();
 
   int Maxlen = ggg.gbufN;
   if (Maxlen > MAX_PHRASE_LEN)

@@ -298,7 +298,7 @@ void tsin_parse()
 
   char pinyin_set[MAX_PH_BF_EXT];
   c_pinyin_set = pin_juyin?pinyin_set:NULL;
-  get_chpho_pinyin_set(pinyin_set);
+  tsin_get_chpho_pinyin_set(pinyin_set);
 
   short smatch_phr_N, sno_match_ch_N;
   tsin_parse_recur(0, out, &smatch_phr_N, &sno_match_ch_N);
