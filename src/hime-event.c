@@ -75,7 +75,7 @@ void hime_event_connect(HIME_EVENT_TYPE event, int (*func_cb) (HIME_EVENT, void*
 
 int hime_event_module_dispatch(HIME_EVENT event, void (*default_handler)()) {
   //This function uses module_cb() from eve.c, make sure that current_CS is valid, current input method is a module, and that the module has been initialized before using this function
-  //Dispatches the optional event to currently load module, if target returns false, default_handler is called
+  //Dispatches the optional event to currently loaded module, if target returns false, default_handler is called
   //default_handler can be null if there is no default action
   //return false if the module want the default_handler to be evaluated, or the module does not implement module_event_handler()
   //return true if the module return true from module_event_handler, which means that default_handler is not called
