@@ -15,9 +15,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "win1.h"
 
 // optional functions/data for hime module to use, please refer to anthy.cpp
+#include "pho.h"
+#include "hime-im-client-attr.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -35,7 +36,6 @@ typedef struct {
   void (*mf_disp_arrow_up)();
   void (*mf_disp_arrow_down)();
   void (*mf_set_sele_text)(int selN, int sel_idx, char *text, int len);
-  void (*mf_set_win1_cb)(cb_selec_by_idx_t selc_by_idx, cb_page_ud_t cb_page_up, cb_page_ud_t cb_page_down);
 
   void (*mf_tsin_set_eng_ch)(int nmod);
   void (*mf_set_hime_pho_mode)();
@@ -62,7 +62,6 @@ typedef struct {
   void (*mf_send_utf8_ch)(char *str);
 
   PHOKBM *mf_phkbm;
-  TSIN_ST *mf_tss;
   int *mf_hime_chinese_english_toggle_key;
   char **mf_pho_chars;
 

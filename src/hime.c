@@ -324,8 +324,6 @@ static void reload_data()
   }
   free_omni_config();
   load_settings();
-  if (current_method_type()==method_type_TSIN)
-    set_wselkey(pho_selkey);
 
 //  load_tsin_db();
   change_win0_style();
@@ -588,6 +586,7 @@ void screen_size_changed(GdkScreen *screen, gpointer user_data)
 }
 
 #include "lang.h"
+#include "eve.h"
 
 extern int destroy_window;
 
@@ -654,6 +653,7 @@ int main(int argc, char **argv)
 
   init_TableDir();
   load_settings();
+  set_engine_process_key_event_cb();
   load_gtab_list(TRUE);
 
 

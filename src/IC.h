@@ -26,6 +26,8 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   Author: Hidetoshi Tajima(tajima@Eng.Sun.COM) Sun Microsystems, Inc.
 
 ******************************************************************/
+#ifndef IC_H
+#define IC_H
 #include "hime-client-state.h"
 
 typedef struct {
@@ -69,3 +71,4 @@ typedef struct _IC {
     ClientState cs;
     struct _IC	*next;
 } IC;
+#endif

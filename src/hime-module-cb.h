@@ -18,6 +18,8 @@
 #ifndef HIME_MODULE_CB_H
 #define HIME_MODULE_CB_H
 #include "hime-event.h"
+#include "hime-module.h"
+
 
 #ifdef __cplusplus
 extern "C" {

@@ -91,6 +91,7 @@ void module_show_win()
 int module_init_win(HIME_module_main_functions *funcs)
 {
   gmf = *funcs;
+  set_wselkey(pho_selkey);
   if (!tss.chpho)
     tss.chpho=tzmalloc(CHPHO, MAX_PH_BF_EXT);
 
