@@ -45,7 +45,6 @@ typedef struct _HIME_module_callback_functions {
   int (*module_init_win)(HIME_module_main_functions *funcs);
   //Initialize the input method module & its corresponding window, do not show the input method window after this function is call (hide the window), wait for module_show_win() to show the input method window
   void (*module_get_win_geom)();
-  void (*module_set_win1_cb)();
   int (*module_reset)();
   int (*module_get_preedit)(char *str, HIME_PREEDIT_ATTR attr[], int *pcursor, int *compose_flag);
   gboolean (*module_feedkey)(KeySym keysym, int kvstate);

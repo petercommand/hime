@@ -61,7 +61,6 @@ HIME_module_callback_functions *init_HIME_module_callback_functions(char *sofile
 
   SETUP_CB(module_init_win);
   SETUP_CB(module_get_win_geom);
-  SETUP_CB(module_set_win1_cb);
   SETUP_CB(module_reset);
   SETUP_CB(module_get_preedit);
   SETUP_CB(module_feedkey);
