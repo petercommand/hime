@@ -35,6 +35,7 @@
 #include "../../hime-client-state.h"
 #include "../../hime-event.h"
 #include "../../win1.h"
+#include "../../eve.h"
 
 extern GtkWidget *gwin_int;
 HIME_module_main_functions gmf;
@@ -876,12 +877,29 @@ void moudule_set_win0_cb()
 }
 
 
+static void clrin_pho_tsin()
+{
+  clrin_pho();
+
+  if (!tsin_has_input() && hime_pop_up_win)
+    hide_win0();
+}
+
+void show_tsin_stat()
+;
 
 int module_event_handler(HIME_EVENT event)
 {
   switch(event.type) {
     case HIME_HALF_FULL_EVENT_TYPE:
       return 0;//not handled
+      break;
+    case HIME_INPUT_METHOD_ENGINE_EVENT_TYPE:
+      if (!gmf.mf_hime_pho_mode()) {
+        clrin_pho_tsin();
+      }
+      show_tsin_stat();
+      return 1;
       break;
     default:
       break;
@@ -914,10 +932,7 @@ void clrin_pho(), hide_win0();
 void show_tsin_stat();
 void save_CS_current_to_temp();
 
-gboolean hime_pho_mode()
-{
-  return current_CS && current_CS->hime_pho_mode;
-}
+
 
 void set_hime_pho_mode0(ClientState *cs)
 {
@@ -941,13 +956,6 @@ gboolean tsin_cursor_end()
 
 
 gboolean tsin_has_input();
-static void clrin_pho_tsin()
-{
-  clrin_pho();
-
-  if (!tsin_has_input() && hime_pop_up_win)
-    hide_win0();
-}
 
 gboolean pho_has_input();
 gboolean hime_edit_display_ap_only();

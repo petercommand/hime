@@ -5,4 +5,5 @@
 
 HIME_module_callback_functions *module_cb();
 void set_engine_process_key_event_cb();
+gboolean hime_pho_mode();
 #endif //HIME_EVE_H

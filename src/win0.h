@@ -3,6 +3,7 @@
 void show_win0();
 void move_win0(int x, int y);
 void show_button_pho(gboolean bshow);
+void compact_win0();
 typedef struct {
   struct PRE_SEL *pre_sel;
   int pre_selN;

@@ -1683,6 +1683,8 @@ int hime_get_preedit(ClientState *cs, char *str, HIME_PREEDIT_ATTR attr[], int *
 void pho_reset();
 void gtab_reset();
 
+void hime_set_eng_ch(int nmod) ;
+
 void hime_reset()
 {
 #if 1
@@ -1772,6 +1774,11 @@ void change_module_font_size()
   }
 }
 
+gboolean hime_pho_mode()
+{
+  return current_CS && current_CS->hime_pho_mode;
+}
+
 void hime_toggle_eng_ch()
 {
   compact_win0();
@@ -1785,9 +1792,13 @@ void hime_set_eng_ch(int nmod) {
     save_CS_current_to_temp();
   }
 
-  if (!hime_pho_mode()) {
-    clrin_pho_tsin();
+  if(current_CS->in_method == method_type_MODULE) {
+    HIME_EVENT event;
+    event.type = HIME_INPUT_METHOD_ENGINE_EVENT_TYPE;
+    event.input_method_engine_event.type = HIME_SET_EN_CH;
+    hime_event_module_dispatch(event, NULL);
   }
+
 
   show_button_pho(hime_pho_mode());
 
@@ -1795,5 +1806,5 @@ void hime_set_eng_ch(int nmod) {
     show_win_gtab();
   }
 
-  show_tsin_stat();
+
 }
