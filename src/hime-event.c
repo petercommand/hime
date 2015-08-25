@@ -1,7 +1,6 @@
 #define HIME_EVENT_C
 
 #include "hime-event.h"
-#include "
 #include "hime-module-cb.h"
 #include "eve.h"
 
@@ -100,19 +99,27 @@ int hime_event_module_dispatch(HIME_EVENT event, void (*default_handler)()) {
 
 int hime_event_dispatch(HIME_EVENT event) {
   //Dispatch a HIME_EVENT, first, it triggers the first connected handler,
-  //If the handler returns true, no other handler is called
-  //If the handler returns false, the next handler will be evaluated, and so on, until one of the handler return true, or there is no more handlers in the list
-  //return false if the last triggered handler return false
-  //return true if the last triggered handler return true
+  //If the handler returns HIME_EVENT_RETURN_PROCESSED, no other handler is called
+  //If the handler returns HIME_EVENT_RETURN_NOT_PROCESSED, the next handler will be evaluated, and so on, until one of the handler return true, or there is no more handlers in the list
+  //If the handler returns HIME_EVENT_RETURN_STOP_PROCESSING, no other handler is called, return this value when the event is processed, but wants to let this function return false
+  //return false if the last triggered handler returns HIME_EVENT_RETURN_NOT_PROCESSED or HIME_EVENT_RETURN_STOP_PROCESSING
+  //return true if the last triggered handler return HIME_EVENT_RETURN_PROCESSED
   int status;
   if (event_notify_list[event.type]) {
     event_list_item *item = event_notify_list[event.type]->head;
     while (item) {
       status = item->func_cb(event, item->pointer);
-      if(status) {
-        return 1;
+      switch (status) {
+        case HIME_EVENT_RETURN_NOT_PROCESSED:
+          item = item->next;
+          break;
+        case HIME_EVENT_RETURN_PROCESSED:
+          return 1;
+        case HIME_EVENT_RETURN_STOP_PROCESSING:
+          return 0;
+        default:
+          return 0;//other return value is invalid, treat it as not processed
       }
-      item = item->next;
     }
   }
   return 0;

@@ -33,7 +33,7 @@ gboolean b_hsu_kbm;
 extern PIN_JUYIN *pin_juyin;
 int pin_juyinN;
 
-gboolean full_char_proc(KeySym keysym);
+gboolean full_char_processor(KeySym keysym);
 void hide_win_pho();
 void ClrSelArea();
 
@@ -588,7 +588,7 @@ int feedkey_pho(KeySym xkey, int kbstate)
     case ' ':
       if (!poo.typ_pho[0] && !poo.typ_pho[1] && !poo.typ_pho[2]) {
         if (current_CS->b_half_full_char)
-          return full_char_proc(xkey);
+          return full_char_processor(xkey);
         return 0;
       }
 

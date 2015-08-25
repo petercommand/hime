@@ -902,7 +902,7 @@ static void proc_wild_disp()
    disp_selection(0);
 }
 
-gboolean full_char_proc(KeySym keysym);
+gboolean full_char_processor(KeySym keysym);
 void insert_gbuf_cursor_char(char ch);
 gboolean gtab_pre_select_shift(KeySym key, int kbstate);
 
@@ -925,7 +925,7 @@ gboolean shift_char_proc(KeySym key, int kbstate)
       return TRUE;
 
     if (current_CS->b_half_full_char)
-      return full_char_proc(key);
+      return full_char_processor(key);
 
     if (ggg.gbufN)
       insert_gbuf_cursor_char(key);
@@ -1248,7 +1248,7 @@ next_page:
       } else
       if (ggg.ci==0) {
         if (current_CS->b_half_full_char)
-          return full_char_proc(key);
+          return full_char_processor(key);
 
         if (ggg.gbufN) {
           output_gbuf();
@@ -1304,7 +1304,7 @@ direct_select:
           return 1;
         } else {
           if (current_CS->b_half_full_char)
-            return full_char_proc(key);
+            return full_char_processor(key);
 	  else
             return 0;
 	}
@@ -1313,7 +1313,7 @@ direct_select:
         return TRUE;
 
       // if (current_CS->b_half_full_char)
-      //  return full_char_proc(key);
+      //  return full_char_processor(key);
 
       inkey=cur_inmd->keymap[key];
       if ((inkey && (inkey!=cur_inmd->WILD_STAR && inkey!=cur_inmd->WILD_QUES)) || ptr_selkey(key)) {
@@ -1483,7 +1483,7 @@ keypad_proc:
       // for cj & boshiamy to input digits
       if (!ggg.ci && !inkey) {
         if (current_CS->b_half_full_char)
-          return full_char_proc(key);
+          return full_char_processor(key);
         else {
           if (ggg.gbufN && poo.same_pho_query_state != SAME_PHO_QUERY_gtab_input) {
             insert_gbuf_cursor_char(key);
@@ -1554,7 +1554,7 @@ keypad_proc:
       } else {
         if (!pselkey) {
           if (current_CS->b_half_full_char)
-            return full_char_proc(key);
+            return full_char_processor(key);
           else {
             if (key>=' ' && key<0x7f && AUTO_SELECT_BY_PHRASE && ggg.gbufN)
               insert_gbuf_cursor_char(key);

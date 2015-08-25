@@ -1074,7 +1074,7 @@ static void cycle_next_in_method()
 gboolean gtab_phrase_on();
 void insert_gbuf_nokey(char *s);
 
-gboolean full_char_proc(KeySym keysym)
+gboolean full_char_processor(KeySym keysym)
 {
   char *s = half_char_to_full_char(keysym);
 
@@ -1089,11 +1089,6 @@ gboolean full_char_proc(KeySym keysym)
     send_text(tt);
     return 1;
   }
-
-  if ((current_method_type() == method_type_TSIN) &&
-      (current_CS->im_state == HIME_STATE_ENABLED_NON_ENG))
-    add_to_tsin_buf_str(tt);
-  else
   if (gtab_phrase_on() && ggg.gbufN)
     insert_gbuf_nokey(tt);
   else
@@ -1196,6 +1191,207 @@ gboolean check_key_press(KeySym key, u_int kev_state, gboolean return_value)
   return return_value;
 }
 
+HIME_EVENT_HANDLER_RETURN_TYPE toggle_im_cb(HIME_EVENT event, void* pointer) {
+  if(event.type != HIME_KEY_EVENT_TYPE || event.key_event.type != HIME_KEY_PRESS) {
+    p_err("connected to event that is not a key press event");
+  }
+  KeySym keysym = event.key_event.keysym;
+  u_int kev_state = event.key_event.kev_state;
+  if (keysym == XK_space) {
+
+    //toggle im
+    if (
+        ((kev_state & (ControlMask|Mod1Mask|ShiftMask))==ControlMask && hime_im_toggle_keys==Control_Space) ||
+        ((kev_state & Mod1Mask) && hime_im_toggle_keys==Alt_Space) ||
+        ((kev_state & ShiftMask) && hime_im_toggle_keys==Shift_Space) ||
+        ((kev_state & Mod4Mask) && hime_im_toggle_keys==Windows_Space)
+        ) {
+      toggle_im_enabled();
+      return HIME_EVENT_RETURN_PROCESSED;
+    }
+  }
+  return HIME_EVENT_RETURN_NOT_PROCESSED;
+}
+HIME_EVENT_HANDLER_RETURN_TYPE toggle_half_full_char_cb(HIME_EVENT event, void* pointer) {
+  if(event.type != HIME_KEY_EVENT_TYPE || event.key_event.type != HIME_KEY_PRESS) {
+    p_err("connected to event that is not a key press event");
+  }
+  KeySym keysym = event.key_event.keysym;
+  u_int kev_state = event.key_event.kev_state;
+  //toggle half_full
+  if (keysym == XK_space && (kev_state & ShiftMask)) {
+    if (last_keysym != XK_Shift_L && last_keysym != XK_Shift_R) {
+      return HIME_EVENT_RETURN_NOT_PROCESSED;
+    }
+    toggle_half_full_char();
+    return HIME_EVENT_RETURN_PROCESSED;
+  }
+  return HIME_EVENT_RETURN_NOT_PROCESSED;
+}
+HIME_EVENT_HANDLER_RETURN_TYPE feed_phrase_cb(HIME_EVENT event, void* pointer) {
+  if(event.type != HIME_KEY_EVENT_TYPE || event.key_event.type != HIME_KEY_PRESS) {
+    p_err("connected to event that is not a key press event");
+  }
+  KeySym keysym = event.key_event.keysym;
+  u_int kev_state = event.key_event.kev_state;
+  //feed_phrase
+  if ((kev_state & (Mod1Mask|ShiftMask)) == (Mod1Mask|ShiftMask)) {
+    if (current_CS->im_state != HIME_STATE_DISABLED || hime_eng_phrase_enabled) {
+      if(feed_phrase(keysym, kev_state)) {
+        return HIME_EVENT_RETURN_PROCESSED;
+      }
+    }
+  }
+  return HIME_EVENT_RETURN_NOT_PROCESSED;
+
+}
+HIME_EVENT_HANDLER_RETURN_TYPE send_last_output_cb(HIME_EVENT event, void* pointer) {
+  if(event.type != HIME_KEY_EVENT_TYPE || event.key_event.type != HIME_KEY_PRESS) {
+    p_err("connected to event that is not a key press event");
+  }
+  KeySym keysym = event.key_event.keysym;
+  u_int kev_state = event.key_event.kev_state;
+  if ((kev_state & ControlMask) && (kev_state&(Mod1Mask|Mod5Mask))) {
+    //send last output
+    if (keysym == 'g' || keysym == 'r') {
+      send_output_buffer_bak();
+      return HIME_EVENT_RETURN_PROCESSED;
+    }
+  }
+  return HIME_EVENT_RETURN_NOT_PROCESSED;
+
+}
+HIME_EVENT_HANDLER_RETURN_TYPE ctrl_alt_switch_cb(HIME_EVENT event, void* pointer) {
+  if(event.type != HIME_KEY_EVENT_TYPE || event.key_event.type != HIME_KEY_PRESS) {
+    p_err("connected to event that is not a key press event");
+  }
+  KeySym keysym = event.key_event.keysym;
+  u_int kev_state = event.key_event.kev_state;
+  if ((kev_state & ControlMask) && (kev_state&(Mod1Mask|Mod5Mask))) {
+
+    //ctrl-alt input method switch
+    if (!hime_enable_ctrl_alt_switch)
+      return HIME_EVENT_RETURN_STOP_PROCESSING;
+
+    int kidx = hime_switch_keys_lookup(keysym);
+    if (kidx < 0)
+      return HIME_EVENT_RETURN_STOP_PROCESSING;
+
+    if (inmd[kidx].method_type == method_type_SYMBOL_TABLE) {
+      toggle_symbol_table();
+      return HIME_EVENT_RETURN_PROCESSED;
+    }
+
+    if (!inmd[kidx].cname)
+      return HIME_EVENT_RETURN_STOP_PROCESSING;
+
+    current_CS->im_state = HIME_STATE_ENABLED_NON_ENG;
+    init_in_method(kidx);
+
+    return HIME_EVENT_RETURN_PROCESSED;
+  }
+  return HIME_EVENT_RETURN_NOT_PROCESSED;
+}
+
+HIME_EVENT_HANDLER_RETURN_TYPE set_last_keysym_cb(HIME_EVENT event, void* pointer) {
+  if(event.type != HIME_KEY_EVENT_TYPE || event.key_event.type != HIME_KEY_PRESS) {
+    p_err("connected to event that is not a key press event");
+  }
+  last_keysym = event.key_event.keysym;
+  return HIME_EVENT_RETURN_NOT_PROCESSED;
+}
+
+HIME_EVENT_HANDLER_RETURN_TYPE full_char_processor_cb(HIME_EVENT event, void* pointer) {
+  if(event.type != HIME_KEY_EVENT_TYPE || event.key_event.type != HIME_KEY_PRESS) {
+    p_err("connected to event that is not a key press event");
+  }
+  KeySym keysym = event.key_event.keysym;
+  u_int kev_state = event.key_event.kev_state;
+  //full char processing
+  //should dispatch a HIME_HALF_FULL_EVENT event to currently loaded module for event processing
+  if (current_CS->im_state == HIME_STATE_ENG_FULL && !(kev_state & (ControlMask|Mod1Mask))) {
+    if(full_char_processor(keysym)) {
+      return HIME_EVENT_RETURN_PROCESSED;
+    }
+  }
+  return HIME_EVENT_RETURN_NOT_PROCESSED;
+}
+HIME_EVENT_HANDLER_RETURN_TYPE is_hime_disabled_cb(HIME_EVENT event, void* pointer) {
+  if(event.type != HIME_KEY_EVENT_TYPE || event.key_event.type != HIME_KEY_PRESS) {
+    p_err("connected to event that is not a key press event");
+  }
+  KeySym keysym = event.key_event.keysym;
+  u_int kev_state = event.key_event.kev_state;
+  //do not process key press if it is disabled or in ENG_FULL mode
+  if (current_CS->im_state == HIME_STATE_DISABLED || current_CS->im_state == HIME_STATE_ENG_FULL) {
+    return HIME_EVENT_RETURN_STOP_PROCESSING;
+  }
+  return HIME_EVENT_RETURN_NOT_PROCESSED;
+
+}
+
+HIME_EVENT_HANDLER_RETURN_TYPE cycle_next_in_method_cb(HIME_EVENT event, void* pointer) {
+  if(event.type != HIME_KEY_EVENT_TYPE || event.key_event.type != HIME_KEY_PRESS) {
+    p_err("connected to event that is not a key press event");
+  }
+  KeySym keysym = event.key_event.keysym;
+  u_int kev_state = event.key_event.kev_state;
+  //cycle_next_in_method
+  if (!current_CS->b_hime_protocol) {
+    if (((keysym == XK_Control_L || keysym == XK_Control_R)
+         && (kev_state & ShiftMask)) ||
+        ((keysym == XK_Shift_L || keysym == XK_Shift_R)
+         && (kev_state & ControlMask))) {
+      cycle_next_in_method();
+      return HIME_EVENT_RETURN_PROCESSED;
+    }
+  }
+  return HIME_EVENT_RETURN_NOT_PROCESSED;
+}
+
+HIME_EVENT_HANDLER_RETURN_TYPE raise_window_cb(HIME_EVENT event, void* pointer) {
+  if(event.type != HIME_KEY_EVENT_TYPE || event.key_event.type != HIME_KEY_PRESS) {
+    p_err("connected to event that is not a key press event");
+  }
+  KeySym keysym = event.key_event.keysym;
+  u_int kev_state = event.key_event.kev_state;
+  //raise window
+  if (current_CS->b_raise_window && keysym>=' ' && keysym < 127) {
+    if (timeout_handle)
+      g_source_remove(timeout_handle);
+    timeout_handle = g_timeout_add(200, timeout_raise_window, NULL);
+  }
+  return HIME_EVENT_RETURN_NOT_PROCESSED;
+}
+HIME_EVENT_HANDLER_RETURN_TYPE feed_phrase_ctrl_cb(HIME_EVENT event, void* pointer) {
+  if(event.type != HIME_KEY_EVENT_TYPE || event.key_event.type != HIME_KEY_PRESS) {
+    p_err("connected to event that is not a key press event");
+  }
+  KeySym keysym = event.key_event.keysym;
+  u_int kev_state = event.key_event.kev_state;
+  //Ctrl-key (phrase-ctrl.table feed_phrase)
+  if (kev_state & ControlMask) {
+    if (feed_phrase(keysym, kev_state))
+      return HIME_EVENT_RETURN_PROCESSED;
+  }
+  return HIME_EVENT_RETURN_NOT_PROCESSED;
+}
+
+void set_engine_process_key_event_cb() {
+  //This method set up hime's main engine key event handler in sequence (sequence is important)
+  hime_event_connect(HIME_KEY_EVENT_TYPE, toggle_im_cb, NULL);
+  hime_event_connect(HIME_KEY_EVENT_TYPE, toggle_half_full_char_cb, NULL);
+  hime_event_connect(HIME_KEY_EVENT_TYPE, feed_phrase_cb, NULL);
+  hime_event_connect(HIME_KEY_EVENT_TYPE, send_last_output_cb, NULL);
+  hime_event_connect(HIME_KEY_EVENT_TYPE, ctrl_alt_switch_cb, NULL);
+  hime_event_connect(HIME_KEY_EVENT_TYPE, full_char_processor_cb, NULL);
+  hime_event_connect(HIME_KEY_EVENT_TYPE, is_hime_disabled_cb, NULL);//this is a special handler, no other handler will be triggered beyond this handler if the handler decides that the key should not be processed
+  hime_event_connect(HIME_KEY_EVENT_TYPE, cycle_next_in_method_cb, NULL);
+  hime_event_connect(HIME_KEY_EVENT_TYPE, raise_window_cb, NULL);
+  hime_event_connect(HIME_KEY_EVENT_TYPE, feed_phrase_ctrl_cb, NULL);
+}
+
+
 // return TRUE if the key press is processed
 gboolean ProcessKeyPress(KeySym keysym, u_int kev_state)
 {
@@ -1220,114 +1416,40 @@ gboolean ProcessKeyPress(KeySym keysym, u_int kev_state)
     force_preedit=0;
     return check_key_press(keysym, kev_state, FALSE);
   }
+  check_key_press(keysym, kev_state, TRUE);
 
-  if (keysym == XK_space) {
+///-----start engine key event callback -- dispatch key press event
 
-
-    if (
-      ((kev_state & (ControlMask|Mod1Mask|ShiftMask))==ControlMask && hime_im_toggle_keys==Control_Space) ||
-      ((kev_state & Mod1Mask) && hime_im_toggle_keys==Alt_Space) ||
-      ((kev_state & ShiftMask) && hime_im_toggle_keys==Shift_Space) ||
-      ((kev_state & Mod4Mask) && hime_im_toggle_keys==Windows_Space)
-    ) {
-      toggle_im_enabled();
-      return check_key_press(keysym, kev_state, TRUE);
-    }
-  }
-
-  if (keysym == XK_space && (kev_state & ShiftMask)) {
-    if (last_keysym != XK_Shift_L && last_keysym != XK_Shift_R)
-      return check_key_press(keysym, kev_state, FALSE);
-
-    toggle_half_full_char();
-
-    return check_key_press(keysym, kev_state, TRUE);
+  HIME_EVENT key_press_event;
+  key_press_event.type = HIME_KEY_EVENT_TYPE;
+  key_press_event.key_event.type = HIME_KEY_PRESS;
+  key_press_event.key_event.keysym = keysym;
+  key_press_event.key_event.kev_state = kev_state;
+  if(hime_event_dispatch(key_press_event)) {
+    return TRUE;
   }
 
 
-  if ((kev_state & (Mod1Mask|ShiftMask)) == (Mod1Mask|ShiftMask)) {
-    if (current_CS->im_state != HIME_STATE_DISABLED || hime_eng_phrase_enabled)
-      return check_key_press(keysym, kev_state, feed_phrase(keysym, kev_state));
-    else
-      return check_key_press(keysym, kev_state, FALSE);
-  }
 
-//  dbg("state %x\n", kev_state);
-  if ((kev_state & ControlMask) && (kev_state&(Mod1Mask|Mod5Mask))) {
-    if (keysym == 'g' || keysym == 'r') {
-      send_output_buffer_bak();
-      return check_key_press(keysym, kev_state, TRUE);
-    }
 
-    if (!hime_enable_ctrl_alt_switch)
-      return check_key_press(keysym, kev_state, FALSE);
 
-    int kidx = hime_switch_keys_lookup(keysym);
-    if (kidx < 0)
-      return check_key_press(keysym, kev_state, FALSE);
 
-    if (inmd[kidx].method_type == method_type_SYMBOL_TABLE) {
-      toggle_symbol_table();
-      return check_key_press(keysym, kev_state, TRUE);
-    }
 
-    if (!inmd[kidx].cname)
-      return check_key_press(keysym, kev_state, FALSE);
 
-    current_CS->im_state = HIME_STATE_ENABLED_NON_ENG;
-    init_in_method(kidx);
-
-    return check_key_press(keysym, kev_state, TRUE);
-  }
-
-  last_keysym = keysym;
-
-  if (current_CS->im_state == HIME_STATE_ENG_FULL && !(kev_state & (ControlMask|Mod1Mask))) {
-    return check_key_press(keysym, kev_state, full_char_proc(keysym));
-  }
-
-  if (current_CS->im_state == HIME_STATE_DISABLED || current_CS->im_state == HIME_STATE_ENG_FULL) {
-    return check_key_press(keysym, kev_state, FALSE);
-  }
-
-  if (!current_CS->b_hime_protocol) {
-    if (((keysym == XK_Control_L || keysym == XK_Control_R)
-                     && (kev_state & ShiftMask)) ||
-        ((keysym == XK_Shift_L || keysym == XK_Shift_R)
-                     && (kev_state & ControlMask))) {
-       cycle_next_in_method();
-       return check_key_press(keysym, kev_state, TRUE);
-    }
-  }
-
-  if (current_CS->b_raise_window && keysym>=' ' && keysym < 127) {
-    if (timeout_handle)
-      g_source_remove(timeout_handle);
-    timeout_handle = g_timeout_add(200, timeout_raise_window, NULL);
-  }
-
-  if (kev_state & ControlMask) {
-    if (feed_phrase(keysym, kev_state))
-      return check_key_press(keysym, kev_state, TRUE);
-  }
 
   switch(current_method_type()) {
     case method_type_PHO:
-      return check_key_press(keysym, kev_state, feedkey_pho(keysym, kev_state));
-#if USE_TSIN
-    case method_type_TSIN:
-      return check_key_press(keysym, kev_state, feedkey_pp(keysym, kev_state));
-#endif
+      return feedkey_pho(keysym, kev_state);
     case method_type_MODULE:
     {
       if (!module_cb())
-        return check_key_press(keysym, kev_state, FALSE);
+        return FALSE;
       gboolean response = module_cb()->module_feedkey(keysym, kev_state);
       if (response)
 	hide_win_gtab();
       else
 	if (current_CS->b_half_full_char)
-	  return check_key_press(keysym, kev_state, full_char_proc(keysym));
+	  return check_key_press(keysym, kev_state, full_char_processor(keysym));
       return check_key_press(keysym, kev_state, response);
     }
     default:
@@ -1466,7 +1588,7 @@ int hime_FocusIn(ClientState *cs)
     } else
       hide_in_win(cs);
   }
-
+/* REFACTOR_TODO: REPLACE WITH module key processing
   if (inmd[cs->in_method].selkey)
     set_wselkey(inmd[cs->in_method].selkey);
   else {
@@ -1474,7 +1596,7 @@ int hime_FocusIn(ClientState *cs)
     gtab_set_win1_cb();
     tsin_set_win1_cb();
   }
-
+*/
   update_win_kbm();
 #if TRAY_ENABLED
   disp_tray_icon();
@@ -1574,10 +1696,6 @@ int hime_get_preedit(ClientState *cs, char *str, HIME_PREEDIT_ATTR attr[], int *
   switch(current_method_type()) {
     case method_type_PHO:
       return pho_get_preedit(str, attr, cursor, comp_flag);
-#if USE_TSIN
-    case method_type_TSIN:
-      return tsin_get_preedit(str, attr, cursor, comp_flag);
-#endif
     case method_type_MODULE:
       if (inmd[current_CS->in_method].mod_cb_funcs)
         return module_cb()->module_get_preedit(str, attr, cursor, comp_flag);

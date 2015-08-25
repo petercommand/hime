@@ -426,11 +426,11 @@ void kbm_toggle()
 
 void reload_tsin_db();
 void do_exit();
+void sim_output();
+void trad_output();
 
 void message_cb(char *message)
 {
-   void sim_output();  // FIXME
-   void trad_output(); // FIXME
 //   dbg("message '%s'\n", message);
 
    /* TODO: rewrite the mess with case() ? */

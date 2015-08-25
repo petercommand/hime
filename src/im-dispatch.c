@@ -26,6 +26,7 @@
 #include "hime-protocol.h"
 #include "hime-im-client.h"
 #include "im-srv.h"
+#include "hime-event.h"
 #include <gtk/gtk.h>
 
 #define DBG 0
@@ -206,28 +207,20 @@ void process_client_req(int fd)
       to_hime_endian_4(&req.keyeve.state);
 
 //	  dbg("serv key eve %x %x predit:%d\n",req.keyeve.key, req.keyeve.state, cs->use_preedit);
-
-#if DBG
-	  char *typ;
-      typ="press";
-#endif
-
-      if (req.req_no==HIME_req_key_press)
+      HIME_EVENT eve;
+      eve.type = HIME_KEY_EVENT_TYPE;
+      eve.key_event.type;
+      hime_event_dispatch(eve);
+      if (req.req_no==HIME_req_key_press) {
         status = ProcessKeyPress(req.keyeve.key, req.keyeve.state);
+      }
       else {
         status = ProcessKeyRelease(req.keyeve.key, req.keyeve.state);
-
-
-#if DBG
-        typ="rele";
-#endif
       }
 
       if (status)
         reply.flag |= HIME_reply_key_processed;
-#if DBG
-      dbg("%s srv flag:%x status:%d len:%d %x %c\n",typ, reply.flag, status, output_bufferN, req.keyeve.key,req.keyeve.key & 0x7f);
-#endif
+
       int datalen;
       datalen = reply.datalen =
         output_bufferN ? output_bufferN + 1 : 0; // include '\0'
