@@ -18,7 +18,7 @@
 #include "hime.h"
 #include "pho.h"
 #include "gst.h"
-#include "tsin.h"
+#include "tsin_orig.h"
 
 
 static GtkWidget *phrase_save_win;

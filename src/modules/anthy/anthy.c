@@ -935,7 +935,7 @@ static gboolean select_idx(int c)
 }
 
 
-gboolean module_feedkey(int kv, int kvstate)
+gboolean module_feedkey(unsigned long kv, unsigned int kvstate)
 {
   int lkv = tolower(kv);
   int shift_m=(kvstate&ShiftMask) > 0;

@@ -22,7 +22,7 @@
 #include <libintl.h>
 #endif
 #include "gst.h"
-#include "tsin.h"
+#include "tsin_orig.h"
 
 
 GtkWidget *hbox_buttons;

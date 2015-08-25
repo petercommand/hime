@@ -3,14 +3,89 @@
 #include "im-client/hime-im-client-attr.h"
 #include "hime-module.h"
 #include "hime-module-cb.h"
-#include "../../tsin.h"
+#include "tsin_orig.h"
 #include "../../hime-event.h"
 #include "../../pho.h"
 #include "../../gst.h"
+#include "../../hime-module.h"
 
 extern GtkWidget *gwin_int;
 HIME_module_main_functions gmf;
 
+void module_get_win_geom()
+{
+  if (!gwin0)
+    return;
+  gtk_window_get_position(GTK_WINDOW(gwin0), &win_x, &win_y);
+  get_win_size(gwin0, &win_xl, &win_yl);
+}
+
+int module_win_visible()
+{
+  return gwin0 && GTK_WIDGET_VISIBLE(gwin0);
+}
+
+void module_move_win(int x, int y)
+{
+//  dbg("--- gwin0:%x module_move_win %d,%d\n", gwin0, x,y);
+  best_win_x = x;
+  best_win_y = y;
+
+  if (gwin0)
+    gtk_window_get_size(GTK_WINDOW(gwin0), &win_xl, &win_yl);
+
+  if (x + win_xl > dpy_xl)
+    x = dpy_xl - win_xl;
+  if (x < 0)
+    x = 0;
+
+  if (y + win_yl > dpy_yl)
+    y = dpy_yl - win_yl;
+  if (y < 0)
+    y = 0;
+
+//  dbg("module_move_win %d,%d\n",x, y);
+
+  if (gwin0)
+    gtk_window_move(GTK_WINDOW(gwin0), x, y);
+
+//  dbg("module_move_win %d %d\n",x,y);
+  win_x = x;
+  win_y = y;
+}
+
+
+
+void module_show_win()
+{
+
+  dbg("show_win0 pop:%d in:%d for:%d \n", hime_pop_up_win, tsin_has_input(), force_show);
+
+  create_win0();
+  create_win0_gui();
+
+  if (hime_pop_up_win && !tsin_has_input() && !force_show) {
+//    dbg("show ret\n");
+    return;
+  }
+
+#if 0
+  if (!GTK_WIDGET_VISIBLE(gwin0))
+#endif
+  {
+//    dbg("gtk_widget_show %x\n", gwin0);
+    move_win0(win_x, win_y);
+    gtk_widget_show(gwin0);
+  }
+
+  show_win_sym();
+
+  if (current_CS->b_raise_window)
+  {
+    gtk_window_present(GTK_WINDOW(gwin0));
+    raise_tsin_selection_win();
+  }
+}
 
 
 int module_init_win(HIME_module_main_functions *funcs)
@@ -40,20 +115,92 @@ int module_init_win(HIME_module_main_functions *funcs)
   return TRUE;
 }
 
-gboolean module_feedkey(int key, int kvstate)
+
+void add_to_tsin_buf_str(char *str)
+{
+  char *pp = str;
+  char *endp = pp+strlen(pp);
+  int N = 0;
+
+
+  while (*pp) {
+    int u8sz = utf8_sz(pp);
+    N++;
+    pp += u8sz;
+
+    if (pp >= endp) // bad utf8 string
+      break;
+  }
+
+  dbg("add_to_tsin_buf_str %s %d\n",str, N);
+
+  phokey_t pho[MAX_PHRASE_LEN];
+  bzero(pho, sizeof(pho));
+  add_to_tsin_buf(str, pho, N);
+}
+
+
+gboolean add_to_tsin_buf(char *str, phokey_t *pho, int len)
+{
+  int i;
+
+  if (tss.c_idx < 0 || tss.c_len + len >= MAX_PH_BF_EXT)
+    return 0;
+
+  if (tss.c_idx < tss.c_len) {
+    for(i=tss.c_len-1; i >= tss.c_idx; i--) {
+      tss.chpho[i+len] = tss.chpho[i];
+    }
+  }
+
+  ch_pho_cpy(&tss.chpho[tss.c_idx], str, pho, len);
+
+  if (tss.c_idx == tss.c_len)
+    tss.c_idx +=len;
+
+  tss.c_len+=len;
+
+  clrin_pho_tsin();
+  disp_in_area_pho_tsin();
+
+  prbuf();
+
+  tsin_set_fixed(tss.c_idx, len);
+#if 1
+  for(i=1;i < len; i++) {
+    tss.chpho[tss.c_idx+i].psta= tss.c_idx;
+  }
+#endif
+#if 0
+    if (len > 0)
+      tss.chpho[tss.c_idx].flag |= FLAG_CHPHO_PHRASE_HEAD;
+#endif
+  drawcursor();
+  disp_ph_sta();
+  hide_pre_sel();
+  tss.ph_sta=-1;
+
+  if (hime_pop_up_win)
+    module_show_win();
+
+  return TRUE;
+}
+
+
+gboolean module_feedkey(KeySym keysym, u_int kvstate)
 {
   char ctyp=0;
   static u_int ii;
   static u_short key;
-  int shift_m=kbstate&ShiftMask;
-  int ctrl_m=kbstate&ControlMask;
+  int shift_m= kvstate &ShiftMask;
+  int ctrl_m= kvstate &ControlMask;
   int jj,kk, idx;
   char kno;
   int caps_eng_tog = hime_chinese_english_toggle_key == HIME_CHINESE_ENGLISH_TOGGLE_KEY_CapsLock;
   int status=0;
 
 
-//  dbg("feedkey_pp %x %x\n", xkey, kbstate);
+//  dbg("feedkey_pp %x %x\n", xkey, kvstate);
 //  if (xkey=='1')
 //    dbg("aaa\n");
 
@@ -65,7 +212,7 @@ gboolean module_feedkey(int key, int kvstate)
     }
   }
 
-  if (kbstate & (Mod1Mask|Mod4Mask|Mod5Mask)) {
+  if (kvstate & (Mod1Mask|Mod4Mask|Mod5Mask)) {
 //     dbg("ret\n");
     return 0;
   }
@@ -325,7 +472,7 @@ gboolean module_feedkey(int key, int kvstate)
         goto change_char;
     default:
     other_keys:
-      if ((kbstate & ControlMask)) {
+      if ((kvstate & ControlMask)) {
         if (xkey=='u') {
           if (tss.c_len) {
             clear_tsin_buffer();
@@ -447,7 +594,7 @@ gboolean module_feedkey(int key, int kvstate)
     if (shift_m && hime_pho_mode())  {
       char *ppp=strchr(ochars,xkey);
 
-      if (!(kbstate&LockMask) && ppp && !((ppp-ochars) & 1))
+      if (!(kvstate &LockMask) && ppp && !((ppp-ochars) & 1))
         xkey=*(ppp+1);
 
     } else {
@@ -530,9 +677,9 @@ gboolean module_feedkey(int key, int kvstate)
 
   disp_in_area_pho_tsin();
 
-  key = pho2key(poo.typ_pho);
+  keysym = pho2key(poo.typ_pho);
 
-  pho_play(key);
+  pho_play(keysym);
 
   int vv=hash_pho[poo.typ_pho[0]];
 
@@ -545,14 +692,13 @@ gboolean module_feedkey(int key, int kvstate)
       if (!poo.typ_pho[2]) ttt &= ~(15<<3);
       if (!poo.typ_pho[3]) ttt &= ~(7);
     }
-    if (ttt>=key) break;
+    if (ttt>= keysym) break;
     else
       vv++;
   }
-#if 0
-     printf("aaaa vv:%d  idxnum_pho:%d   ttt:%x key:%x\n",vv, idxnum_pho, ttt, key);
-#endif
-  if (!pin_juyin && (ttt > key || (poo.ityp3_pho && idx_pho[vv].key!=key))) {
+
+
+  if (!pin_juyin && (ttt > keysym || (poo.ityp3_pho && idx_pho[vv].key!= keysym))) {
     while (jj<4) {
       while(kk<3)
         if (phkbm.phokbm[(int)poo.inph[jj]][kk].num ) {
@@ -579,8 +725,8 @@ gboolean module_feedkey(int key, int kvstate)
   if (poo.typ_pho[0]==L_BRACKET_NO||poo.typ_pho[0]==R_BRACKET_NO || (poo.typ_pho[0]==BACK_QUOTE_NO && poo.typ_pho[1]))
     poo.ityp3_pho = 1;
 
-  if (key==0 || !poo.ityp3_pho) {
-    if (key)
+  if (keysym ==0 || !poo.ityp3_pho) {
+    if (keysym)
       tsin_scan_pre_select(TRUE);
 //       dbg("ret a\n");
     return 1;
@@ -598,7 +744,7 @@ gboolean module_feedkey(int key, int kvstate)
   if (!tss.c_len && poo.typ_pho[0]==BACK_QUOTE_NO && poo.stop_idx - poo.start_idx == 1)
     send_text(pho_idx_str(poo.start_idx));  // it's ok since ,. are 3 byte, last one \0
   else
-    tsin_put_u8_char(poo.start_idx, key, (status & PHO_STATUS_TONE) > 0);
+    tsin_put_u8_char(poo.start_idx, keysym, (status & PHO_STATUS_TONE) > 0);
 
   call_tsin_parse();
 

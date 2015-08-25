@@ -395,7 +395,7 @@ void hide_in_win(ClientState *cs)
 }
 
 void show_win_pho();
-void show_win0();
+void module_show_win();
 void show_win_gtab();
 #if TRAY_ENABLED
 void disp_tray_icon();
@@ -438,11 +438,6 @@ void show_in_win(ClientState *cs)
     case method_type_PHO:
       show_win_pho();
       break;
-#if USE_TSIN
-    case method_type_TSIN:
-      show_win0();
-      break;
-#endif
     case method_type_MODULE:
       if (!module_cb1(cs))
         return;
@@ -471,7 +466,7 @@ void show_in_win(ClientState *cs)
 
 
 void move_win_gtab(int x, int y);
-void move_win0(int x, int y);
+void module_move_win(int x, int y);
 void move_win_pho(int x, int y);
 
 void move_in_win(ClientState *cs, int x, int y)
@@ -500,11 +495,6 @@ void move_in_win(ClientState *cs, int x, int y)
     case method_type_PHO:
       move_win_pho(x, y);
       break;
-#if USE_TSIN
-    case method_type_TSIN:
-      move_win0(x, y);
-      break;
-#endif
     case method_type_MODULE:
       if (inmd[cs->in_method].mod_cb_funcs)
         module_cb1(cs)->module_move_win(x, y);
@@ -783,7 +773,7 @@ void toggle_im_enabled()
 }
 
 void get_win_gtab_geom();
-void get_win0_geom();
+void module_get_win_geom();
 void get_win_pho_geom();
 
 void update_active_in_win_geom()
@@ -794,11 +784,6 @@ void update_active_in_win_geom()
     case method_type_PHO:
       get_win_pho_geom();
       break;
-#if USE_TSIN
-    case method_type_TSIN:
-      get_win0_geom();
-      break;
-#endif
     case method_type_MODULE:
       mod_cbs = module_cb();
       if(mod_cbs && mod_cbs->module_get_win_geom)
@@ -819,10 +804,6 @@ gboolean win_is_visible()
   switch (current_method_type()) {
     case method_type_PHO:
       return gwin_pho && GTK_WIDGET_VISIBLE(gwin_pho);
-#if USE_TSIN
-    case method_type_TSIN:
-      return gwin0 && GTK_WIDGET_VISIBLE(gwin0);
-#endif
     case method_type_MODULE:
       if (!module_cb())
         return FALSE;
@@ -1459,7 +1440,7 @@ gboolean ProcessKeyPress(KeySym keysym, u_int kev_state)
   return check_key_press(keysym, kev_state, FALSE);
 }
 
-int feedkey_pp_release(KeySym xkey, int kbstate);
+
 int feedkey_gtab_release(KeySym xkey, int kbstate);
 
 // return TRUE if the key press is processed
@@ -1488,8 +1469,6 @@ gboolean ProcessKeyRelease(KeySym keysym, u_int kev_state)
 #endif
 
   switch(current_method_type()) {
-    case method_type_TSIN:
-      return feedkey_pp_release(keysym, kev_state);
     case method_type_MODULE:
       if (!module_cb())
         return FALSE;

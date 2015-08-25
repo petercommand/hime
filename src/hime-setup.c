@@ -206,7 +206,7 @@ void create_about_window();
 
 /* XXX */
 #include "pho.h"
-#include "tsin.h"
+#include "tsin_orig.h"
 #include "gst.h"
 #include "im-client/hime-im-client-attr.h"
 #include "hime-module.h"

@@ -22,7 +22,7 @@
 #include "pho.h"
 #include "hime-conf.h"
 #include "hime-endian.h"
-#include "tsin.h"
+#include "tsin_orig.h"
 #include "gst.h"
 
 GTAB_space_pressed_E _gtab_space_auto_first;

@@ -26,7 +26,7 @@ extern "C" {
   void module_win_geom();
   int module_reset();
   int module_get_preedit(char *str, HIME_PREEDIT_ATTR attr[], int *pcursor, int *compose_flag);
-  gboolean module_feedkey(int kv, int kvstate);
+  gboolean module_feedkey(KeySym kv, u_int kvstate);
   int module_feedkey_release(KeySym xkey, int kbstate);
   void module_move_win(int x, int y);
   void module_change_font_size();

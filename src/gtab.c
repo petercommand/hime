@@ -23,7 +23,7 @@
 #include "hime-conf.h"
 #include "hime-endian.h"
 #include "gtab-buf.h"
-#include "tsin.h"
+#include "tsin_orig.h"
 #include "gst.h"
 
 extern gboolean test_mode;

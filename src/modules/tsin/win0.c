@@ -40,8 +40,8 @@ static PangoAttrList* attr_list, *attr_list_blank;
 extern gboolean test_mode;
 
 void compact_win0();
-void move_win0(int x, int y);
-void get_win0_geom();
+void module_move_win(int x, int y);
+void module_get_win_geom();
 
 static struct {
   GtkWidget *vbox;
@@ -165,14 +165,14 @@ extern gboolean b_use_full_space;
 void set_label_space();
 void set_label_space(GtkWidget *label);
 
-void show_win0();
+void module_show_win();
 
 void disp_char(int index, char *ch)
 {
   if (hime_edit_display_ap_only())
     return;
   if (!top_bin)
-    show_win0();
+    module_show_win();
 
 //  dbg("disp_char %d %s\n", index, ch);
   create_char(index);
@@ -186,9 +186,9 @@ void disp_char(int index, char *ch)
     }
   }
 
-  get_win0_geom();
+  module_get_win_geom();
   if (win_x + win_xl >= dpy_xl)
-    move_win0(dpy_xl - win_xl, win_y);
+    module_move_win(dpy_xl - win_xl, win_y);
 
   gtk_widget_show_all(chars[index].vbox);
 }
@@ -325,7 +325,7 @@ void disp_tsin_select(int index)
 #else
 	get_widget_xy(gwin0, chars[index].vbox, &x, &y);
 #endif
-	get_win0_geom();
+    module_get_win_geom();
   }
   disp_selections(x, y);
 }
@@ -364,35 +364,9 @@ void compact_win0()
 gboolean tsin_has_input();
 GtkWidget *gwin_sym;
 
-void move_win0(int x, int y)
+void module_move_win(int x, int y)
 {
-//  dbg("--- gwin0:%x move_win0 %d,%d\n", gwin0, x,y);
-  best_win_x = x;
-  best_win_y = y;
 
-  if (gwin0)
-    gtk_window_get_size(GTK_WINDOW(gwin0), &win_xl, &win_yl);
-
-  if (x + win_xl > dpy_xl)
-    x = dpy_xl - win_xl;
-  if (x < 0)
-    x = 0;
-
-  if (y + win_yl > dpy_yl)
-    y = dpy_yl - win_yl;
-  if (y < 0)
-    y = 0;
-
-//  dbg("move_win0 %d,%d\n",x, y);
-
-  if (gwin0)
-    gtk_window_move(GTK_WINDOW(gwin0), x, y);
-
-//  dbg("move_win0 %d %d\n",x,y);
-  win_x = x;
-  win_y = y;
-
-  move_win_sym();
 }
 
 
@@ -583,19 +557,16 @@ void destroy_win0()
 }
 #endif
 
-void get_win0_geom()
+void module_get_win_geom()
 {
-  if (!gwin0)
-    return;
-  gtk_window_get_position(GTK_WINDOW(gwin0), &win_x, &win_y);
-  get_win_size(gwin0, &win_xl, &win_yl);
+
 }
 
 gboolean tsin_has_input();
 extern gboolean force_show;
 void raise_tsin_selection_win();
 
-void show_win0()
+void module_show_win()
 {
 #if _DEBUG && 1
 	dbg("show_win0 pop:%d in:%d for:%d \n", hime_pop_up_win, tsin_has_input(), force_show);
@@ -613,7 +584,7 @@ void show_win0()
 #endif
   {
 //    dbg("gtk_widget_show %x\n", gwin0);
-    move_win0(win_x, win_y);
+    module_move_win(win_x, win_y);
     gtk_widget_show(gwin0);
   }
 
@@ -704,7 +675,7 @@ char *get_full_str();
 void win_tsin_disp_half_full()
 {
   if (label_pho==NULL)
-    show_win0();
+    module_show_win();
 
   if (hime_win_color_use)
     gtk_label_set_markup(GTK_LABEL(label_pho), get_full_str());

@@ -21,7 +21,7 @@
 #include <libintl.h>
 #endif
 #include "gst.h"
-#include "tsin.h"
+#include "tsin_orig.h"
 
 static gboolean b_pinyin;
 PIN_JUYIN *pin_juyin;

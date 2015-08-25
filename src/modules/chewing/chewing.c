@@ -633,7 +633,7 @@ module_get_preedit (char *pszStr, HIME_PREEDIT_ATTR himePreeditAttr[],
 }
 
 gboolean
-module_feedkey (int nKeyVal, int nKeyState)
+module_feedkey(unsigned long nKeyVal, unsigned int nKeyState)
 {
     if (!g_pChewingCtx)
         return FALSE;

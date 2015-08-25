@@ -20,7 +20,7 @@
 #include "hime-conf.h"
 #include "hime-endian.h"
 #include "pho.h"
-#include "tsin.h"
+#include "tsin_orig.h"
 #include "tsin-parse.h"
 #include "win-save-phrase.h"
 #include "gtab-buf.h"

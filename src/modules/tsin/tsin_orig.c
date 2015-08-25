@@ -19,7 +19,9 @@
 
 #include "hime.h"
 #include "pho.h"
+#include "tsin_orig.h"
 #include "tsin.h"
+#include <gtk/gtk.h>
 #include "hime-conf.h"
 #include "tsin-parse.h"
 #include "win-save-phrase.h"
@@ -444,7 +446,7 @@ static void dump_tsidx_all()
 #endif
 
 void load_tab_pho_file();
-void show_win0();
+void module_show_win();
 
 void tsin_init_pre_sel()
 {
@@ -991,52 +993,6 @@ void set_chpho_ch(CHPHO *pchpho, char *utf8, int len, gboolean is_pho_phrase)
 }
 
 
-gboolean add_to_tsin_buf(char *str, phokey_t *pho, int len)
-{
-    int i;
-
-    if (tss.c_idx < 0 || tss.c_len + len >= MAX_PH_BF_EXT)
-      return 0;
-
-    if (tss.c_idx < tss.c_len) {
-      for(i=tss.c_len-1; i >= tss.c_idx; i--) {
-        tss.chpho[i+len] = tss.chpho[i];
-      }
-    }
-
-    ch_pho_cpy(&tss.chpho[tss.c_idx], str, pho, len);
-
-    if (tss.c_idx == tss.c_len)
-      tss.c_idx +=len;
-
-    tss.c_len+=len;
-
-    clrin_pho_tsin();
-    disp_in_area_pho_tsin();
-
-    prbuf();
-
-  tsin_set_fixed(tss.c_idx, len);
-#if 1
-    for(i=1;i < len; i++) {
-      tss.chpho[tss.c_idx+i].psta= tss.c_idx;
-    }
-#endif
-#if 0
-    if (len > 0)
-      tss.chpho[tss.c_idx].flag |= FLAG_CHPHO_PHRASE_HEAD;
-#endif
-    drawcursor();
-    disp_ph_sta();
-    hide_pre_sel();
-    tss.ph_sta=-1;
-
-    if (hime_pop_up_win)
-      show_win0();
-
-    return TRUE;
-}
-
 #if 1
 static void set_phrase_link(int idx, int len)
 {
@@ -1103,29 +1059,6 @@ gboolean add_to_tsin_buf_phsta(char *str, phokey_t *pho, int len)
     return 1;
 }
 
-
-void add_to_tsin_buf_str(char *str)
-{
-  char *pp = str;
-  char *endp = pp+strlen(pp);
-  int N = 0;
-
-
-  while (*pp) {
-    int u8sz = utf8_sz(pp);
-    N++;
-    pp += u8sz;
-
-    if (pp >= endp) // bad utf8 string
-      break;
-  }
-
-  dbg("add_to_tsin_buf_str %s %d\n",str, N);
-
-  phokey_t pho[MAX_PHRASE_LEN];
-  bzero(pho, sizeof(pho));
-  add_to_tsin_buf(str, pho, N);
-}
 
 int tsin_pho_sel(int c);
 
@@ -1477,11 +1410,6 @@ static void tsin_create_win_save_phrase(int idx0, int len)
 
 
 
-
-int feedkey_pp_release(KeySym xkey, int kbstate)
-{
-
-}
 
 
 void tsin_remove_last()

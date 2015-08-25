@@ -66,7 +66,7 @@ void module_get_win_geom (void);
 int module_reset (void);
 int module_get_preedit (char *pszStr, HIME_PREEDIT_ATTR attr[],
                         int *pnCursor, int *pCompFlag);
-gboolean module_feedkey (int nKeyVal, int nKeyState);
+gboolean module_feedkey(unsigned long nKeyVal, unsigned int kvstate);
 int module_feedkey_release (KeySym xkey, int nKbState);
 void module_move_win(int x, int y);
 void module_change_font_size (void);

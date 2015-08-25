@@ -94,15 +94,15 @@ static unich_t *dstr[] = { "０", "１", "２", "３", "４", "５", "６", "７
 void disp_int(int index, char *intcode);
 void clear_int_code_all();
 
-gboolean module_feedkey(int key, int kvstate)
+gboolean module_feedkey(unsigned long keysym, unsigned int kvstate)
 {
   int i;
 #if 0
   if (key <= XK_KP_9 && key >= XK_KP_0)
     key -= XK_KP_0 - '0';
 #endif
-  key=toupper(key);
-  if (key==XK_BackSpace||key==XK_Delete) {
+  keysym =toupper(keysym);
+  if (keysym ==XK_BackSpace|| keysym ==XK_Delete) {
     if (intcode_cin)
       intcode_cin--;
     else
@@ -111,25 +111,25 @@ gboolean module_feedkey(int key, int kvstate)
     goto dispIn;
   }
   else
-  if ((key<'0'||key>'F'||(key>'9' && key<'A')) && (key!=' ')){
+  if ((keysym <'0'|| keysym >'F'||(keysym >'9' && keysym <'A')) && (keysym !=' ')){
     return 0;
   }
 
   if (current_intcode==INTCODE_BIG5) {
-    if (intcode_cin==0 && key<'8')
+    if (intcode_cin==0 && keysym <'8')
       return 1;
-    if (intcode_cin==1 && inch[0]=='F' && key=='F')
+    if (intcode_cin==1 && inch[0]=='F' && keysym =='F')
       return 1;
-    if (intcode_cin==2 && (key<'4' || (key>'7' && key<'A')))
+    if (intcode_cin==2 && (keysym <'4' || (keysym >'7' && keysym <'A')))
       return 1;
-    if (intcode_cin==3 && (inch[2]=='7'||inch[2]=='F') && key=='F')
+    if (intcode_cin==3 && (inch[2]=='7'||inch[2]=='F') && keysym =='F')
       return 1;
   }
 
-  if (!intcode_cin && key==' ')
+  if (!intcode_cin && keysym ==' ')
     return 0;
-  if ((intcode_cin<MAX_INTCODE-1 || (current_intcode!=INTCODE_BIG5 && intcode_cin < MAX_INTCODE)) && key!=' ')
-    inch[intcode_cin++]=key;
+  if ((intcode_cin<MAX_INTCODE-1 || (current_intcode!=INTCODE_BIG5 && intcode_cin < MAX_INTCODE)) && keysym !=' ')
+    inch[intcode_cin++]= keysym;
 
 dispIn:
   clear_int_code_all();
@@ -144,7 +144,7 @@ dispIn:
   }
 
   if (((current_intcode==INTCODE_BIG5 && intcode_cin==4) ||
-       (current_intcode==INTCODE_UTF32 && intcode_cin==6)) || key==' ') {
+       (current_intcode==INTCODE_UTF32 && intcode_cin==6)) || keysym ==' ') {
     u_char utf8[CH_SZ+1];
 
     if (current_intcode==INTCODE_BIG5) {
