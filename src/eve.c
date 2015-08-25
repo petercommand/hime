@@ -27,6 +27,7 @@
 #include "win-sym.h"
 #include "hime-event.h"
 #include "hime-client-state.h"
+#include "win0.h"
 
 #define STRBUFLEN 64
 
@@ -773,7 +774,6 @@ void toggle_im_enabled()
 }
 
 void get_win_gtab_geom();
-void module_get_win_geom();
 void get_win_pho_geom();
 
 void update_active_in_win_geom()
@@ -971,18 +971,13 @@ gboolean init_in_method(int in_no)
       // set_gtab_input_method_name(inmd[in_no].cname);
       break;
   }
-  HIME_EVENT event;
-  event.type = HIME_HALF_FULL_EVENT_TYPE;
-  event.half_full_event.type = HIME_TO_FULL;
   if (hime_init_full_mode)
   {
     switch (current_method_type())
     {
       case method_type_MODULE:
-        if(!hime_event_module_dispatch(event, NULL)) {
-          if(current_CS->b_half_full_char == 0) {
-            toggle_half_full_char();
-          }
+        if(current_CS->b_half_full_char == 0) {
+          toggle_half_full_char();
         }
       case method_type_SYMBOL_TABLE:
       case method_type_EN:
@@ -1079,7 +1074,6 @@ gboolean full_char_processor(KeySym keysym)
 }
 
 int feedkey_pho(KeySym xkey, int kbstate);
-int feedkey_pp(KeySym xkey, int state);
 int feedkey_gtab(KeySym key, int kbstate);
 int feed_phrase(KeySym ksym, int state);
 
@@ -1776,4 +1770,30 @@ void change_module_font_size()
       continue;
     f->module_change_font_size();
   }
+}
+
+void hime_toggle_eng_ch()
+{
+  compact_win0();
+  hime_set_eng_ch(!hime_pho_mode());
+}
+
+void hime_set_eng_ch(int nmod) {
+//  dbg("hime_set_eng_ch %d\n", nmod);
+  if (current_CS) {
+    current_CS->hime_pho_mode = nmod;
+    save_CS_current_to_temp();
+  }
+
+  if (!hime_pho_mode()) {
+    clrin_pho_tsin();
+  }
+
+  show_button_pho(hime_pho_mode());
+
+  if (gtab_phrase_on()) {
+    show_win_gtab();
+  }
+
+  show_tsin_stat();
 }

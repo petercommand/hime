@@ -731,7 +731,7 @@ void show_win_gtab()
 //  init_gtab(current_CS->in_method);
 
   if (hime_pop_up_win && !gtab_has_input() &&
-      !force_show && poo.same_pho_query_state==SAME_PHO_QUERY_none && !tss.pre_selN)
+      !force_show && poo.same_pho_query_state==SAME_PHO_QUERY_none && !hime_preedit_win_state.pre_selN)
     return;
 
 //  dbg("show_win_gtab()\n");
@@ -919,9 +919,9 @@ void hide_gtab_pre_sel()
   if (use_tsin_sel_win())
     hide_selections_win();
 
-//  dbg("hide_gtab_pre_sel %d\n", tss.ctrl_pre_sel);
-  tss.pre_selN = 0;
-  tss.ctrl_pre_sel = FALSE;
+//  dbg("hide_gtab_pre_sel %d\n", hime_preedit_win_state.ctrl_pre_sel);
+  hime_preedit_win_state.pre_selN = 0;
+  hime_preedit_win_state.ctrl_pre_sel = FALSE;
   if (label_gtab_pre_sel)
     gtk_widget_hide(label_gtab_pre_sel);
 

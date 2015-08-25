@@ -238,6 +238,8 @@ void clear_sele()
 
 char *htmlspecialchars(char *s, char out[]);
 
+
+
 void set_sele_text(int tN, int i, char *text, int len)
 {
   if (len < 0)

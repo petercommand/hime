@@ -1,11 +1,8 @@
 #ifndef HIME_HIME_CLIENT_STATE_H
 #define HIME_HIME_CLIENT_STATE_H
 
-
-#ifdef HIME_CLIENT_STATE
-
-
-#endif
+#include <glib.h>
+void show_button_pho(gboolean bshow);
 
 typedef struct {
   Window	client_win;	/* client window */

@@ -105,7 +105,7 @@ empty:
     return 0;
   }
 
-  tss.pre_selN = 0;
+  hime_preedit_win_state.pre_selN = 0;
   int maxlen=0;
 
 #define selNMax 300
@@ -199,12 +199,12 @@ empty:
 
 //  dbg("selN:%d\n", selN);
   if (ph_key_sz==2)
-    tss.pre_selN = Min(selN, phkbm.selkeyN);
+    hime_preedit_win_state.pre_selN = Min(selN, phkbm.selkeyN);
   else
-    tss.pre_selN = Min(selN, strlen(cur_inmd->selkey));
+    hime_preedit_win_state.pre_selN = Min(selN, strlen(cur_inmd->selkey));
 
-//  dbg("tss.pre_selN %d\n", tss.pre_selN);
-  memcpy(tss.pre_sel, sel, sizeof(PRE_SEL) * tss.pre_selN);
+//  dbg("hime_preedit_win_state.pre_selN %d\n", hime_preedit_win_state.pre_selN);
+  memcpy(hime_preedit_win_state.pre_sel, sel, sizeof(PRE_SEL) * hime_preedit_win_state.pre_selN);
 
   if (rselN)
     *rselN = selN;
@@ -222,7 +222,7 @@ void tsin_scan_pre_select(gboolean b_incr)
     return;
 //  dbg("gtab_scan_pre_select %d\n", tss.c_len);
 
-  tss.pre_selN = 0;
+  hime_preedit_win_state.pre_selN = 0;
 
   hide_pre_sel();
 
@@ -254,21 +254,21 @@ void tsin_scan_pre_select(gboolean b_incr)
 //  dbg("max_len:%d  max_selN:%d\n", max_len, max_selN);
 
   if (max_len < 0 || max_selN >= strlen(pho_selkey) * 2) {
-    tss.pre_selN=0;
+    hime_preedit_win_state.pre_selN=0;
     return;
   }
 
   scanphr_e(tss.c_len - max_len, max_len, b_incr, &selN);
 
-//  dbg("selN:%d %d\n", selN, tss.pre_selN);
-  if (selN==1 && tss.pre_sel[0].len==max_len) {
+//  dbg("selN:%d %d\n", selN, hime_preedit_win_state.pre_selN);
+  if (selN==1 && hime_preedit_win_state.pre_sel[0].len==max_len) {
     char out[MAX_PHRASE_LEN * CH_SZ + 1];
     chpho_get_str(tss.c_len - max_len, max_len, out);
-    if (!strcmp(out, tss.pre_sel[0].str))
+    if (!strcmp(out, hime_preedit_win_state.pre_sel[0].str))
       return;
   }
 
-//  dbg("selN %d %d\n",selN, tss.pre_selN);
+//  dbg("selN %d %d\n",selN, hime_preedit_win_state.pre_selN);
   tss.ph_sta = tss.c_len - max_len;
   disp_pre_sel_page();
 }

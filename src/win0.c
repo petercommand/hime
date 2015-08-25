@@ -18,8 +18,7 @@
 #include "hime.h"
 #include "pho.h"
 #include "win-sym.h"
-#include "gst.h"
-
+#include "win0.h"
 /* "destroy_window = FALSE" should be ok with both GTK+ 2.x and 3.x
  * gcin use TRUE for GTK+ 3.x, but caleb- always patch it to FALSE
  */
@@ -34,7 +33,7 @@ extern GtkWidget *gwin1;
 extern Display *dpy;
 static GtkWidget *top_bin;
 int current_hime_inner_frame;
-
+HIME_PREEDIT_WIN_STATE hime_preedit_win_state;
 static GtkWidget *hbox_edit;
 static PangoAttrList* attr_list, *attr_list_blank;
 extern gboolean test_mode;
@@ -425,7 +424,7 @@ static void mouse_button_callback( GtkWidget *widget,GdkEventButton *event, gpoi
 }
 
 
-void tsin_toggle_eng_ch();
+void hime_toggle_eng_ch();
 void set_no_focus();
 
 

@@ -1,8 +1,26 @@
+/* Copyright (C) 2011 Edward Der-Hua Liu, Hsin-Chu, Taiwan
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 #ifndef HIME_TSIN_H
 #define HIME_TSIN_H
 
 #include <glib.h>
 
+extern int phcount;
+extern int hashidx[];
 typedef struct {
   struct CHPHO *chpho;
   int c_idx, c_len;
@@ -12,15 +30,43 @@ typedef struct {
   int current_page;
   int startf;
   gboolean full_match;
-  gboolean tsin_half_full;
   gboolean tsin_buffer_editing;
-  gboolean ctrl_pre_sel;
-  struct PRE_SEL *pre_sel;
-  int pre_selN;
+
   int last_cursor_idx;
   int pho_menu_idx;
-//  int pho_sel_menu_idx;
 } TSIN_ST;
 extern TSIN_ST tss;
+
+
+
+
+
+
+void extract_pho(int chpho_idx, int plen, phokey_t *pho);
+gboolean tsin_seek(void *pho, int plen, int *r_sti, int *r_edi, char *tone_off);
+void load_tsin_entry(int idx, char *len, usecount_t *usecount, void *pho, u_char *ch);
+gboolean check_fixed_mismatch(int chpho_idx, char *mtch, int plen);
+void show_button_pho(gboolean bshow)
+char *tsin_get_chpho_pinyin_set(char *set_arr);
+void show_tsin_stat();
+#define TSIN_GTAB_KEY "!!!!gtab-keys"
+
+typedef struct {
+  char signature[32];
+  int version, flag;
+  int keybits, maxkey;
+  char keymap[128];
+} TSIN_GTAB_HEAD;
+
+typedef struct PRE_SEL {
+  u_int64_t phkey[MAX_PHRASE_LEN];  // gtab 4-byte is actually stored as u_int not u_int64_t
+//  int phidx;
+  char str[MAX_PHRASE_LEN*CH_SZ+1];
+  int len;
+  usecount_t usecount;
+} PRE_SEL;
+
+extern gboolean tsin_is_gtab;
+extern int ph_key_sz;
 
 #endif //HIME_TSIN_H

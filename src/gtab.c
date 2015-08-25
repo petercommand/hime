@@ -314,7 +314,7 @@ void ClrIn()
   clear_gtab_in_area();
   ggg.last_idx = 0;
 
-  if (hime_pop_up_win && !gtab_has_input() && !tss.pre_selN)
+  if (hime_pop_up_win && !gtab_has_input() && !hime_preedit_win_state.pre_selN)
     hide_win_gtab();
 
   clear_gtab_input_error_color();
@@ -956,7 +956,7 @@ gboolean win_sym_page_up(), win_sym_page_down();
 u_int64_t vmaskci;
 gboolean gtab_pre_select_idx(int c);
 void save_CS_current_to_temp();
-void tsin_set_eng_ch(int nmod);
+void hime_set_eng_ch(int nmod);
 
 gboolean feedkey_gtab(KeySym key, int kbstate)
 {
@@ -986,7 +986,7 @@ gboolean feedkey_gtab(KeySym key, int kbstate)
     if (current_CS->hime_pho_mode == caps_lock_state) {
       current_CS->hime_pho_mode = !caps_lock_state;
       save_CS_current_to_temp();
-      tsin_set_eng_ch(!caps_lock_state);
+      hime_set_eng_ch(!caps_lock_state);
     }
   }
 
@@ -1002,7 +1002,7 @@ gboolean feedkey_gtab(KeySym key, int kbstate)
   if ((key==XK_Shift_L||key==XK_Shift_R) && !key_press_alt) {
     key_press_alt = TRUE;
     key_press_ctrl = FALSE;
-  } else if ((key==XK_Control_L||key==XK_Control_R) && !key_press_ctrl && tss.pre_selN) {
+  } else if ((key==XK_Control_L||key==XK_Control_R) && !key_press_ctrl && hime_preedit_win_state.pre_selN) {
     key_press_alt = FALSE;
     key_press_ctrl = TRUE;
     return TRUE;
@@ -1054,7 +1054,7 @@ shift_proc:
   if (shift_m && !strchr(cur_inmd->selkey, key) && !ggg.more_pg && key>=' ' && key < 0x7e &&
       key!='*' && (key!='?' || (gtab_shift_phrase_key && !ggg.ci))) {
     if (gtab_shift_phrase_key) {
-      if (tss.pre_selN && shift_char_proc(key, kbstate))
+      if (hime_preedit_win_state.pre_selN && shift_char_proc(key, kbstate))
         return TRUE;
       if (feed_phrase(key, kbstate))
         return TRUE;
@@ -1309,7 +1309,7 @@ direct_select:
             return 0;
 	}
       }
-      if (tss.pre_selN && shift_char_proc(key, kbstate))
+      if (hime_preedit_win_state.pre_selN && shift_char_proc(key, kbstate))
         return TRUE;
 
       // if (current_CS->b_half_full_char)
@@ -1376,8 +1376,8 @@ next:
       else
         inkey = 0;
 
-      if (shift_m && !inkey && !tss.ctrl_pre_sel &&
-        tss.pre_selN && shift_char_proc(key, kbstate))
+      if (shift_m && !inkey && !hime_preedit_win_state.ctrl_pre_sel &&
+        hime_preedit_win_state.pre_selN && shift_char_proc(key, kbstate))
         return TRUE;
 
       clear_gtab_input_error_color();
@@ -1433,7 +1433,7 @@ keypad_proc:
 
 #if 1 // for dayi, testcase :  6 space keypad6
       int vv = pselkey - cur_inmd->selkey;
-      if (pselkey && tss.pre_selN && !ggg.gtab_buf_select && (tss.ctrl_pre_sel||
+      if (pselkey && hime_preedit_win_state.pre_selN && !ggg.gtab_buf_select && (hime_preedit_win_state.ctrl_pre_sel||
           ((!inkey||ggg.spc_pressed||is_keypad)&&! gtab_disp_partial_match_on() && !gtab_pre_select_on()))) {
         if (gtab_pre_select_idx(vv))
           return TRUE;

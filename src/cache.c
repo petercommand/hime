@@ -18,7 +18,6 @@
 #include <string.h>
 #include "hime.h"
 #include "pho.h"
-#include "tsin_orig.h"
 #include "hime-conf.h"
 #include "tsin-parse.h"
 

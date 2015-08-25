@@ -20,11 +20,11 @@
 #include "hime-conf.h"
 #include "hime-endian.h"
 #include "pho.h"
-#include "tsin_orig.h"
 #include "tsin-parse.h"
 #include "win-save-phrase.h"
 #include "gtab-buf.h"
 #include "gst.h"
+#include "chpho.h"
 
 void disp_gbuf(), ClrIn(), clear_after_put();
 gboolean gtab_phrase_on();
@@ -810,6 +810,7 @@ void gbuf_next_pg()
 }
 
 #include "im-client/hime-im-client-attr.h"
+#include "win0.h"
 
 int get_DispInArea_str(char *out);
 
@@ -983,7 +984,7 @@ void gtab_scan_pre_select(gboolean b_incr)
     return;
 //  dbg("gtab_scan_pre_select\n");
 
-  tss.pre_selN = 0;
+  hime_preedit_win_state.pre_selN = 0;
 
   hide_gtab_pre_sel();
 
@@ -1012,7 +1013,7 @@ void gtab_scan_pre_select(gboolean b_incr)
 //  dbg("max_len:%d  max_selN:%d\n", max_len, max_selN);
 
   if (max_len < 0 || max_selN >= strlen(cur_inmd->selkey) * 2) {
-    tss.pre_selN = 0;
+    hime_preedit_win_state.pre_selN = 0;
     return;
   }
 
@@ -1020,16 +1021,16 @@ void gtab_scan_pre_select(gboolean b_incr)
 
   scanphr_e(ggg.gbufN - max_len, max_len, b_incr, &selN);
 
-//  dbg("selN:%d %d\n", selN, tss.pre_selN);
+//  dbg("selN:%d %d\n", selN, hime_preedit_win_state.pre_selN);
 
-  if (selN==1 && tss.pre_sel[0].len==max_len) {
+  if (selN==1 && hime_preedit_win_state.pre_sel[0].len==max_len) {
     char out[MAX_PHRASE_LEN * CH_SZ + 1];
     extract_gbuf_str(ggg.gbufN - max_len, max_len, out);
-    if (!strcmp(out, tss.pre_sel[0].str))
+    if (!strcmp(out, hime_preedit_win_state.pre_sel[0].str))
       return;
   }
 
-//  dbg("selN %d %d\n",selN, tss.pre_selN);
+//  dbg("selN %d %d\n",selN, hime_preedit_win_state.pre_selN);
 
   if (use_tsin_sel_win()) {
 	if (gwin1)
@@ -1038,8 +1039,8 @@ void gtab_scan_pre_select(gboolean b_incr)
       init_tsin_selection_win();
 
     int i;
-    for(i=0;i<tss.pre_selN; i++)
-       set_sele_text(tss.pre_selN,i,tss.pre_sel[i].str, -1);
+    for(i=0;i<hime_preedit_win_state.pre_selN; i++)
+       set_sele_text(hime_preedit_win_state.pre_selN,i,hime_preedit_win_state.pre_sel[i].str, -1);
     get_win_gtab_geom();
     disp_selections(-1, -1);
     return;
@@ -1049,15 +1050,15 @@ void gtab_scan_pre_select(gboolean b_incr)
   tt[0]=0;
   int i;
 
-  for(i=0;i<tss.pre_selN; i++) {
+  for(i=0;i<hime_preedit_win_state.pre_selN; i++) {
     char ts[(MAX_PHRASE_LEN+3) * CH_SZ + 1];
-    char *br= (i < tss.pre_selN-1 && gtab_vertical_select_on())?"\n":"";
+    char *br= (i < hime_preedit_win_state.pre_selN-1 && gtab_vertical_select_on())?"\n":"";
     if (hime_win_color_use)
-      sprintf(ts, "<span foreground=\"%s\">%c</span>%s%s", hime_sel_key_color, cur_inmd->selkey[i], tss.pre_sel[i].str, br);
+      sprintf(ts, "<span foreground=\"%s\">%c</span>%s%s", hime_sel_key_color, cur_inmd->selkey[i], hime_preedit_win_state.pre_sel[i].str, br);
     else
-      sprintf(ts, "<span foreground=\""HIME_SEL_KEY_COLOR_DEFAULT"\">%c</span>%s%s", cur_inmd->selkey[i], tss.pre_sel[i].str, br);
+      sprintf(ts, "<span foreground=\""HIME_SEL_KEY_COLOR_DEFAULT"\">%c</span>%s%s", cur_inmd->selkey[i], hime_preedit_win_state.pre_sel[i].str, br);
     strcat(tt, ts);
-    if (!gtab_vertical_select_on() && i < tss.pre_selN-1)
+    if (!gtab_vertical_select_on() && i < hime_preedit_win_state.pre_selN-1)
       strcat(tt, " ");
   }
 
@@ -1072,17 +1073,17 @@ gboolean gtab_pre_select_idx(int c)
 {
   if (c < 0)
     return FALSE;
-  if (c >= tss.pre_selN)
+  if (c >= hime_preedit_win_state.pre_selN)
     return TRUE;
 
 #if 0
-  dbg("c %d %s  ggg.gbuf_cursor:%d,%d\n", c, tss.pre_sel[c].str,
+  dbg("c %d %s  ggg.gbuf_cursor:%d,%d\n", c, hime_preedit_win_state.pre_sel[c].str,
     ggg.gbuf_cursor, ggg.gbufN);
 #endif
 
   gtab_buf_backspaceN(gtab_pre_select_phrase_len);
-  int len = tss.pre_sel[c].len;
-  insert_gbuf_cursor_phrase(tss.pre_sel[c].str, tss.pre_sel[c].phkey, len);
+  int len = hime_preedit_win_state.pre_sel[c].len;
+  insert_gbuf_cursor_phrase(hime_preedit_win_state.pre_sel[c].str, hime_preedit_win_state.pre_sel[c].phkey, len);
   gbuf[ggg.gbufN-1].flag |= FLAG_CHPHO_PHRASE_TAIL;
 
   hide_gtab_pre_sel();
@@ -1095,23 +1096,23 @@ gboolean gtab_pre_select_idx(int c)
 gboolean gtab_pre_select_shift(KeySym key, int kbstate)
 {
 //  dbg("gtab_pre_select_shift %c\n", key);
-  if (!gtab_phrase_pre_select || !tss.pre_selN)
+  if (!gtab_phrase_pre_select || !hime_preedit_win_state.pre_selN)
     return FALSE;
 
   int c = shift_key_idx(cur_inmd->selkey, key);
   return gtab_pre_select_idx(c);
 }
 
-void tsin_toggle_eng_ch();
+void hime_toggle_eng_ch();
 
 int feedkey_gtab_release(KeySym xkey, int kbstate)
 {
   switch (xkey) {
      case XK_Control_L:
      case XK_Control_R:
-       if (key_press_ctrl && tss.pre_selN) {
+       if (key_press_ctrl && hime_preedit_win_state.pre_selN) {
          if (!test_mode) {
-           tss.ctrl_pre_sel = TRUE;
+           hime_preedit_win_state.ctrl_pre_sel = TRUE;
          }
 	 key_press_ctrl = FALSE;
          return 1;
@@ -1126,7 +1127,7 @@ int feedkey_gtab_release(KeySym xkey, int kbstate)
              (hime_chinese_english_toggle_key == HIME_CHINESE_ENGLISH_TOGGLE_KEY_ShiftR && xkey == XK_Shift_R)) &&
 	     key_press_alt) {
           if (!test_mode) {
-            tsin_toggle_eng_ch();
+            hime_toggle_eng_ch();
           }
 	  key_press_alt = FALSE;
           return 1;
