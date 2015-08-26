@@ -19,7 +19,7 @@
 #include "pho.h"
 #include "gtab.h"
 // #include "gtab-phrase-db.h"
-#include "tsin_orig.h"
+
 #include "lang.h"
 
 #define MAX_K (500000)

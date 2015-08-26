@@ -20,7 +20,7 @@
 #include "hime-conf.h"
 #include "hime-endian.h"
 #include "pho.h"
-#include "tsin_orig.h"
+
 
 void get_hime_user_or_sys_fname(char *name, char fname[]);
 

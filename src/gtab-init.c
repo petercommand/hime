@@ -22,7 +22,6 @@
 #include "pho.h"
 #include "hime-conf.h"
 #include "hime-endian.h"
-#include "tsin_orig.h"
 #include "gst.h"
 
 GTAB_space_pressed_E _gtab_space_auto_first;
@@ -30,7 +29,7 @@ char **seltab;
 extern gboolean test_mode;
 extern unich_t *fullchar[];
 INMD *cur_inmd;
-GTAB_ST ggg = {.sel1st_i=MAX_SELKEY - 1};
+GTAB_ST gtab_st = {.sel1st_i=MAX_SELKEY - 1};
 
 /* for array30-like quick code */
 static char keyrow[]=
@@ -149,7 +148,7 @@ void init_gtab(int inmdno)
   INMD *inp=&inmd[inmdno];
   struct TableHead th;
 
-  ggg.sel1st_i=MAX_SELKEY - 1;
+  gtab_st.sel1st_i=MAX_SELKEY - 1;
   init_seltab(&seltab);
 
 //  current_CS->b_half_full_char = FALSE;

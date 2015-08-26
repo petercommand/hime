@@ -20,7 +20,7 @@
 #include <string.h>
 #include "hime.h"
 #include "pho.h"
-#include "tsin_orig.h"
+
 #include "gtab.h"
 #include "gst.h"
 

@@ -22,7 +22,7 @@
 #include <libintl.h>
 #endif
 #include "lang.h"
-#include "tsin_orig.h"
+
 #include "gtab.h"
 
 extern char *current_tsin_fname;

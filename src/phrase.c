@@ -75,8 +75,7 @@ FILE *watch_fopen(char *filename, time_t *pfile_modify_time);
 gboolean output_gbuf();
 gboolean gtab_cursor_end();
 gboolean gtab_phrase_on(), tsin_cursor_end();
-void flush_tsin_buffer();
-void add_to_tsin_buf_str(char *str);
+
 
 static time_t file_modify_time;
 static time_t ctrl_file_modify_time;
@@ -185,14 +184,6 @@ gboolean feed_phrase(KeySym ksym, int state)
 
     if (str) {
 //send_it:
-#if USE_TSIN
-      if (current_method_type() == method_type_TSIN && current_CS->im_state == HIME_STATE_ENABLED_NON_ENG) {
-        add_to_tsin_buf_str(str);
-        if (hime_punc_auto_send && tsin_cursor_end())
-          flush_tsin_buffer();
-      }
-      else
-#endif
       if (gtab_phrase_on()) {
         insert_gbuf_nokey(str);
         if (hime_punc_auto_send && gtab_cursor_end())

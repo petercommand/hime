@@ -19,6 +19,10 @@
 #include "pho.h"
 #include "win-sym.h"
 #include "win0.h"
+#include "hime-client-state.h"
+#include "gtab.h"
+#include "hime-event.h"
+#include "modules/tsin/tsin.h"
 /* "destroy_window = FALSE" should be ok with both GTK+ 2.x and 3.x
  * gcin use TRUE for GTK+ 3.x, but caleb- always patch it to FALSE
  */
@@ -82,8 +86,6 @@ void change_win0_style()
 #endif
 
 
-void set_label_font_size();
-
 /* there is a bug in gtk, if the widget is created and hasn't been processed by
    gtk_main(), the coodinate of the widget is sometimes invalid.
    We use pre-create to overcome this bug.
@@ -91,10 +93,10 @@ void set_label_font_size();
 
 void drawcursor();
 void open_select_pho();
-void create_phrase_save_menu(GdkEventButton * event);
 
 static void mouse_char_callback( GtkWidget *widget,GdkEventButton *event, gpointer data)
 {
+  /*REFACTOR_TODO: remove TSIN_ST tss dependence */
   tss.c_idx = GPOINTER_TO_INT(data);
   drawcursor();
 
@@ -105,7 +107,12 @@ static void mouse_char_callback( GtkWidget *widget,GdkEventButton *event, gpoint
       break;
     case 3:
     {
-      create_phrase_save_menu(event);
+      if(current_CS->in_method == method_type_MODULE) {
+        HIME_EVENT event;
+        event.type = HIME_INPUT_METHOD_ENGINE_EVENT_TYPE;
+        event.input_method_engine_event.type = HIME_CREATE_PHRASE_SAVE_MENU;
+        hime_event_module_dispatch(event, NULL);
+      }
       break;
     }
   }
@@ -161,7 +168,7 @@ static void create_char(int index)
 
 extern gboolean b_use_full_space;
 
-void set_label_space();
+
 void set_label_space(GtkWidget *label);
 
 void show_win0();
@@ -395,15 +402,7 @@ void move_win0(int x, int y)
 }
 
 
-void disp_tsin_eng_pho(int eng_pho)
-{
-  static unich_t *eng_pho_strs[] = { N_("英"), N_("注") };
 
-  if (!button_eng_ph)
-    return;
-
-  gtk_button_set_label(GTK_BUTTON(button_eng_ph), _(eng_pho_strs[eng_pho]));
-}
 
 void exec_hime_setup();
 

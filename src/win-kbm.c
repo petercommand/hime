@@ -429,6 +429,7 @@ void update_win_kbm()
   int i;
   switch (current_method_type()) {
     case method_type_PHO:
+      /* REFACTOR_TODO: need rework
     case method_type_TSIN:
       for(i=0; i < 128; i++) {
         int j;
@@ -451,6 +452,7 @@ void update_win_kbm()
       disp_shift_keys();
 
       break;
+       */
     case method_type_MODULE:
       break;
     default:

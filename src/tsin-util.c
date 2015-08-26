@@ -17,10 +17,11 @@
 
 #include "hime.h"
 #include "pho.h"
-#include "tsin_orig.h"
+
 #include "gtab.h"
 #include "gst.h"
 #include "lang.h"
+#include "modules/tsin/tsin.h"
 
 int hashidx[TSIN_HASH_N];
 //static int *phidx;

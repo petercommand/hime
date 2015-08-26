@@ -14,7 +14,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
+#ifndef PHO_H
+#define PHO_H
 typedef u_short phokey_t;
 
 typedef struct {
@@ -90,3 +91,4 @@ char *pho_idx_str2(int idx, int *is_phrase);
 
 #define PHO_PHRASE_ESCAPE 0x1b
 #define PHO_PINYIN_TONE1 -1
+#endif

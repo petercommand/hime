@@ -23,7 +23,6 @@ hime_event_o = hime-event.o
 OBJS      = hime.o eve.o util.o hime-conf.o hime-settings.o locale.o \
 	hime-icon.o about.o \
 	hime-exec-script.o pho-play.o cache.o gtk_bug_fix.o \
-	phrase-save-menu.o \
 	$(hime_pho_o) $(hime_gtab_o) $(hime_signal_o) $(hime_event_o)\
 	hime-common.o phrase.o t2s-lookup.o gtab-use-count.o \
 	win-save-phrase.o unix-exec.o pho-kbm-name.o statistic.o tsin-scan.o \
@@ -106,14 +105,14 @@ CFLAGS     += -DHIME_i18n_message=1
 endif
 
 ifeq ($(USE_TSIN),Y)
-hime_tsin_o = tsin.o tsin-util.o win0.o win1.o tsin-parse.o
+hime_tsin_o = tsin-util.o win0.o win1.o tsin-parse.o
 CFLAGS     += -DUSE_TSIN=1
 OBJS       += $(hime_tsin_o)
 endif
 
 # Temporary workaround to turn off Tsin, will be fixed later
 ifeq ($(USE_TSIN),N)
-OBJS       += tsin.o tsin-util.o win0.o win1.o tsin-parse.o
+OBJS       += tsin-util.o win0.o win1.o tsin-parse.o
 endif
 
 ifeq ($(MAC_OS),1)

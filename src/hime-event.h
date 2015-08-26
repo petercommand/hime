@@ -22,7 +22,8 @@ typedef enum {
 
 
 typedef enum {
-  HIME_SET_EN_CH
+  HIME_SET_EN_CH,
+  HIME_CREATE_PHRASE_SAVE_MENU
 } HIME_INPUT_METHOD_ENGINE_EVENT_SUBTYPE;
 
 typedef struct HIME_INPUT_METHOD_ENGINE_EVENT {
@@ -73,7 +74,7 @@ typedef struct HIME_EVENT {
 typedef struct event_list_item {
   struct event_list_item *prev;
   struct event_list_item *next;
-  int (*func_cb) (HIME_EVENT, void*);
+  HIME_EVENT_HANDLER_RETURN_TYPE (*func_cb) (HIME_EVENT, void*);
   void* pointer;
 } event_list_item;
 
@@ -85,12 +86,12 @@ typedef struct event_list {
 
 
 #ifdef HIME_EVENT_C
-void event_list_append(event_list* list, int (*func_cb) (HIME_EVENT, void*), void*);
+void event_list_append(event_list* list, HIME_EVENT_HANDLER_RETURN_TYPE (*func_cb) (HIME_EVENT, void*), void*);
 event_list* event_list_new();
 void event_list_free(event_list* list);
 #endif //HIME_EVENT_C
 
-void hime_event_connect(HIME_EVENT_TYPE event, int (*func_cb) (HIME_EVENT, void*), void*);
+void hime_event_connect(HIME_EVENT_TYPE event, HIME_EVENT_HANDLER_RETURN_TYPE (*func_cb) (HIME_EVENT, void*), void*);
 int hime_event_dispatch(HIME_EVENT event);
 int hime_event_module_dispatch(HIME_EVENT event, void (*default_handler)());
 

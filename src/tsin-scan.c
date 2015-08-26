@@ -17,9 +17,13 @@
 
 #include "hime.h"
 #include "pho.h"
-#include "tsin_orig.h"
+
 #include "gtab.h"
 #include "gst.h"
+#include "win0.h"
+#include "tsin-util.h"
+#include "modules/tsin/tsin.h"
+#include "chpho.h"
 
 static int qcmp_pre_sel_usecount(const void *aa, const void *bb)
 {
@@ -63,7 +67,7 @@ u_char scanphr_e(int chpho_idx, int plen, gboolean pho_incr, int *rselN)
       if (!tailpho)
         pho_incr = FALSE;
     } else {
-      if (!ggg.kval)
+      if (!gtab_st.kval)
         pho_incr = FALSE;
     }
   }
@@ -148,7 +152,7 @@ empty:
           continue;
       } else {
         u_int64_t v = ph_key_sz==4?mtk32[plen]:mtk64[plen];
-        if (ggg.kval != (v&vmaskci))
+        if (gtab_st.kval != (v&vmaskci))
           continue;
       }
     }

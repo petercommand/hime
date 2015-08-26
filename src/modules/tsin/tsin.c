@@ -19,7 +19,7 @@
 
 #include "hime.h"
 #include "pho.h"
-#include "tsin_orig.h"
+
 #include "tsin.h"
 #include <gtk/gtk.h>
 #include "hime-conf.h"
@@ -36,6 +36,8 @@
 #include "../../hime-event.h"
 #include "../../win1.h"
 #include "../../eve.h"
+#include "../../chpho.h"
+#include "../../phrase-save-menu.h"
 
 extern GtkWidget *gwin_int;
 HIME_module_main_functions gmf;
@@ -95,28 +97,6 @@ int module_init_win(HIME_module_main_functions *funcs)
 }
 
 
-void add_to_tsin_buf_str(char *str)
-{
-  char *pp = str;
-  char *endp = pp+strlen(pp);
-  int N = 0;
-
-
-  while (*pp) {
-    int u8sz = utf8_sz(pp);
-    N++;
-    pp += u8sz;
-
-    if (pp >= endp) // bad utf8 string
-      break;
-  }
-
-  dbg("add_to_tsin_buf_str %s %d\n",str, N);
-
-  phokey_t pho[MAX_PHRASE_LEN];
-  bzero(pho, sizeof(pho));
-  add_to_tsin_buf(str, pho, N);
-}
 
 
 gboolean add_to_tsin_buf(char *str, phokey_t *pho, int len)
@@ -367,7 +347,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
     case XK_KP_Prior:
     case XK_KP_Subtract:
       if (!tss.sel_pho && tss.c_len && xkey == XK_KP_Subtract) {
-        add_to_tsin_buf_str("-");
+        send_text("-");
         return TRUE;
       } else {
         if (tss.c_len && !tss.sel_pho)
@@ -430,7 +410,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
     case XK_KP_Next:
     case XK_KP_Add:
       if (!tss.sel_pho && tss.c_len && xkey == XK_KP_Add) {
-        add_to_tsin_buf_str("+");
+        send_text("+");
         return TRUE;
       } else {
         if (tss.c_len && !tss.sel_pho)
@@ -894,14 +874,21 @@ int module_event_handler(HIME_EVENT event)
     case HIME_HALF_FULL_EVENT_TYPE:
       return 0;//not handled
       break;
-    case HIME_INPUT_METHOD_ENGINE_EVENT_TYPE:
-      if (!gmf.mf_hime_pho_mode()) {
-        clrin_pho_tsin();
+    case HIME_INPUT_METHOD_ENGINE_EVENT_TYPE: {
+      switch (event.input_method_engine_event.type) {
+        case HIME_SET_EN_CH:
+          if (!gmf.mf_hime_pho_mode()) {
+            clrin_pho_tsin();
+          }
+          show_tsin_stat();
+          return 1;
+          break;
+        case HIME_CREATE_PHRASE_SAVE_MENU:
+          create_phrase_save_menu();
       }
-      show_tsin_stat();
-      return 1;
       break;
-    default:
+    }
+      default:
       break;
   }
   return 0;//default: not handled
@@ -909,7 +896,7 @@ int module_event_handler(HIME_EVENT event)
 
 
 
-extern int ph_key_sz;
+
 extern GtkWidget *gwin1;
 gboolean key_press_alt, key_press_ctrl;
 extern gboolean b_hsu_kbm;
@@ -1262,6 +1249,16 @@ void show_tsin_stat()
   disp_tray_icon();
 #endif
   disp_tsin_eng_pho(hime_pho_mode());
+}
+
+void disp_tsin_eng_pho(int eng_pho)
+{
+  static unich_t *eng_pho_strs[] = { N_("?"), N_("?") };
+
+  if (!button_eng_ph)
+    return;
+
+  gtk_button_set_label(GTK_BUTTON(button_eng_ph), _(eng_pho_strs[eng_pho]));
 }
 
 void load_tsin_db();
@@ -1848,8 +1845,9 @@ gboolean add_to_tsin_buf_phsta(char *str, phokey_t *pho, int len)
   if (idx < 0)
     return 0;
 
-  if (idx + len >= MAX_PH_BF_EXT)
-    flush_tsin_buffer();
+  if (idx + len >= MAX_PH_BF_EXT) {
+    module_flush_input();
+  }
 
   if (tss.c_idx < tss.c_len) {
     int avlen = tss.c_idx - tss.ph_sta;
@@ -1961,18 +1959,15 @@ static gboolean pre_punctuation_sub(KeySym xkey, char shift_punc[], unich_t *cha
     int c = p - shift_punc;
     char *pchar = _(chars[c]);
 
-    if (current_method_type() == method_type_PHO) {
-      char tt[CH_SZ+1];
-      utf8cpy(tt, pchar);
-      send_text(tt);
-    } else {
-      phokey_t keys[64];
-      keys[0]=0;
-      utf8_pho_keys(pchar, keys);
-      add_to_tsin_buf(pchar, &keys[0], 1);
-      if (hime_punc_auto_send && tsin_cursor_end())
-        flush_tsin_buffer();
+
+    phokey_t keys[64];
+    keys[0] = 0;
+    utf8_pho_keys(pchar, keys);
+    add_to_tsin_buf(pchar, &keys[0], 1);
+    if (hime_punc_auto_send && tsin_cursor_end()) {
+      module_flush_input();
     }
+
     return 1;
   }
 

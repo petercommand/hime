@@ -6,7 +6,7 @@
 
 static event_list* event_notify_list[HIME_EVENT_N];
 
-void event_list_append(event_list* list, int (*func_cb) (HIME_EVENT, void*), void* pointer){
+void event_list_append(event_list* list, HIME_EVENT_HANDLER_RETURN_TYPE (*func_cb) (HIME_EVENT, void*), void* pointer){
   //Add the callback function and the pointer to the event_list
   if(list->head == NULL){
     event_list_item *item = tzmalloc(event_list_item, 1);
@@ -61,7 +61,7 @@ void event_list_free(event_list* list){
 }
 
 
-void hime_event_connect(HIME_EVENT_TYPE event, int (*func_cb) (HIME_EVENT, void*), void* pointer){
+void hime_event_connect(HIME_EVENT_TYPE event, HIME_EVENT_HANDLER_RETURN_TYPE (*func_cb) (HIME_EVENT, void*), void* pointer){
   //This function connects func_cb and pointer with the given event
   // func_cb will be call with event and pointer when the event is emitted
   if(!event_notify_list[event]) {

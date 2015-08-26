@@ -18,6 +18,9 @@
 #define HIME_TSIN_H
 
 #include <glib.h>
+#include "../../hime.h"
+#include "../../pho.h"
+#define TSIN_GTAB_KEY "!!!!gtab-keys"
 
 extern int phcount;
 extern int hashidx[];
@@ -46,10 +49,10 @@ void extract_pho(int chpho_idx, int plen, phokey_t *pho);
 gboolean tsin_seek(void *pho, int plen, int *r_sti, int *r_edi, char *tone_off);
 void load_tsin_entry(int idx, char *len, usecount_t *usecount, void *pho, u_char *ch);
 gboolean check_fixed_mismatch(int chpho_idx, char *mtch, int plen);
-void show_button_pho(gboolean bshow)
+void show_button_pho(gboolean bshow);
 char *tsin_get_chpho_pinyin_set(char *set_arr);
 void show_tsin_stat();
-#define TSIN_GTAB_KEY "!!!!gtab-keys"
+
 
 typedef struct {
   char signature[32];
@@ -58,15 +61,8 @@ typedef struct {
   char keymap[128];
 } TSIN_GTAB_HEAD;
 
-typedef struct PRE_SEL {
-  u_int64_t phkey[MAX_PHRASE_LEN];  // gtab 4-byte is actually stored as u_int not u_int64_t
-//  int phidx;
-  char str[MAX_PHRASE_LEN*CH_SZ+1];
-  int len;
-  usecount_t usecount;
-} PRE_SEL;
 
 extern gboolean tsin_is_gtab;
-extern int ph_key_sz;
+
 
 #endif //HIME_TSIN_H

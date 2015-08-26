@@ -409,7 +409,7 @@ void putkey_pho(u_short key, int idx)
 {
   char *pho_str = pho_idx_str(idx);
 
-  if (poo.same_pho_query_state==SAME_PHO_QUERY_pho_select && ggg.gbufN)
+  if (poo.same_pho_query_state==SAME_PHO_QUERY_pho_select && gtab_st.gbufN)
     insert_gbuf_nokey(pho_str);
   else
     send_text(pho_str);

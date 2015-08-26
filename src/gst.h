@@ -42,4 +42,4 @@ typedef struct {
   short defselN, exa_match, ci, gbufN, gbuf_cursor;
   KeySym inch[MAX_TAB_KEY_NUM64_6];
 } GTAB_ST;
-extern GTAB_ST ggg;
+extern GTAB_ST gtab_st;

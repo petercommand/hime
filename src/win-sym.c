@@ -180,16 +180,14 @@ static gboolean read_syms()
 }
 
 
-gboolean add_to_tsin_buf(char *str, phokey_t *pho, int len);
+
 void send_text_call_back(char *text);
-void tsin_reset_in_pho(), reset_gtab_all(), clr_in_area_pho();
+void treset_gtab_all(), clr_in_area_pho();
 void force_preedit_shift();
 gboolean output_gbuf();
 void output_buffer_call_back();
 gboolean gtab_cursor_end(),gtab_phrase_on();
-void flush_tsin_buffer();
-gboolean tsin_cursor_end();
-void add_to_tsin_buf_str(char *str);
+
 
 extern int c_len;
 extern short gbufN;
@@ -198,18 +196,7 @@ static void cb_button_sym(GtkButton *button, GtkWidget *label)
 //  dbg("cb_button_sym\n");
   char *str = (char *) gtk_label_get_text(GTK_LABEL(label));
 
-#if USE_TSIN
-  if (current_method_type() == method_type_TSIN && current_CS->im_state == HIME_STATE_ENABLED_NON_ENG) {
-    add_to_tsin_buf_str(str);
-    if (hime_punc_auto_send && tsin_cursor_end()) {
-      flush_tsin_buffer();
-      output_buffer_call_back();
-    } else {
-      force_preedit_shift();
-    }
-  }
-  else
-#endif
+
   if (gtab_phrase_on()) {
     insert_gbuf_nokey(str);
     if (hime_punc_auto_send && gtab_cursor_end()) {
@@ -225,11 +212,11 @@ static void cb_button_sym(GtkButton *button, GtkWidget *label)
     case method_type_PHO:
        clr_in_area_pho();
        break;
-#if USE_TSIN
+/* REFACTOR_TODO: need rework
     case method_type_TSIN:
        tsin_reset_in_pho();
        break;
-#endif
+*/
     case method_type_MODULE:
        break;
     default:
@@ -319,9 +306,10 @@ void str_to_all_phokey_chars(char *b5_str, char *out);
 
 static void sym_lookup_key(char *instr, char *outstr)
 {
+  /* REFACTOR_TODO: need rework
   if (current_method_type() == method_type_PHO || current_method_type() == method_type_TSIN) {
     str_to_all_phokey_chars(instr, outstr);
-  } else {
+  } else {*/
     outstr[0]=0;
 
     while (*instr) {
@@ -335,7 +323,9 @@ static void sym_lookup_key(char *instr, char *outstr)
       if (*instr)
           strcat(outstr, " | ");
     }
+  /*
   }
+   */
 }
 
 static void destory_win()
@@ -415,7 +405,7 @@ void create_win_sym()
     p_err("bad current_CS %d\n", current_CS->in_method);
   }
 
-  if (current_method_type() != method_type_PHO && current_method_type() != method_type_TSIN && current_method_type() != method_type_MODULE && !cur_inmd)
+  if (current_method_type() != method_type_PHO && current_method_type() != method_type_MODULE && !cur_inmd)
     return;
 
   if (read_syms() || cur_in_method != current_CS->in_method) {

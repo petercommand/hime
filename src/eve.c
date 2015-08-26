@@ -694,8 +694,9 @@ void init_state_non_eng(ClientState *cs)
 {
   cs->im_state = HIME_STATE_ENABLED_NON_ENG;
   set_hime_pho_mode0(cs);
-  if (!cs->in_method)
+  if (!cs->in_method) {
     init_in_method(default_input_method);
+  }
 
   save_CS_current_to_temp();
 }
@@ -762,7 +763,7 @@ void toggle_im_enabled()
       if(current_method_type() == method_type_MODULE) {
         HIME_EVENT event;
         event.type = HIME_INPUT_METHOD_ENGINE_EVENT_TYPE;
-        event.input_method_engine_event.type = HIME_SWITCH_TO_NON_ENG;
+        event.input_method_engine_event.type = HIME_SET_EN_CH;
         hime_event_module_dispatch(event, NULL);
       }
 #if TRAY_ENABLED
@@ -920,7 +921,7 @@ gboolean init_in_method(int in_no)
           return FALSE;
         }
       }
-      inmd[in_no].mod_cb_funcs->module_set_win1_cb();
+
       if (inmd[in_no].mod_cb_funcs->module_init_win(&gmf)) {
         current_CS->in_method = in_no;
         module_cb()->module_show_win();
@@ -1065,7 +1066,7 @@ gboolean full_char_processor(KeySym keysym)
     send_text(tt);
     return 1;
   }
-  if (gtab_phrase_on() && ggg.gbufN)
+  if (gtab_phrase_on() && gtab_st.gbufN)
     insert_gbuf_nokey(tt);
   else
     send_text(tt);

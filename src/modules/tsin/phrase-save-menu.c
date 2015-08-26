@@ -17,8 +17,9 @@
 
 #include "hime.h"
 #include "pho.h"
+#include "chpho.h"
 #include "gst.h"
-#include "tsin_orig.h"
+
 
 
 static GtkWidget *phrase_save_win;
@@ -57,7 +58,7 @@ static void add_button(GtkWidget *vbox, char *s, int idx, int len)
   g_signal_connect (G_OBJECT (but), "clicked",  G_CALLBACK (cb_clicked), GINT_TO_POINTER(data));
 }
 
-void create_phrase_save_menu(GdkEventButton * event)
+void create_phrase_save_menu()
 {
   destroy_phrase_save_menu();
 

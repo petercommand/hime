@@ -18,11 +18,12 @@
 #include "hime.h"
 #include "gtab.h"
 #include "pho.h"
-#include "tsin_orig.h"
+
 #include "gst.h"
 #include "im-client/hime-im-client-attr.h"
 #include "hime-module.h"
 #include "win-sym.h"
+#include "eve.h"
 
 void init_tsin_selection_win(),disp_selections(int x, int y),hide_selections_win();
 void disp_arrow_up(),disp_arrow_down(), set_hime_pho_mode();

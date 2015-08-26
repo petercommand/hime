@@ -19,6 +19,7 @@
 #include "pho.h"
 #include "gst.h"
 #include "win1.h"
+#include "modules/tsin/tsin.h"
 
 GtkWidget *gwin1;
 static GtkWidget *frame;
@@ -258,12 +259,7 @@ void set_sele_text(int tN, int i, char *text, int len)
   char ul[128];
   ul[0]=0;
 
-#if 0
-  if (tss.sel_pho && i==tss.pho_menu_idx)
-    strcpy(ul, " foreground=\"yellow\" background=\"black\"");
-  else
-    sprintf(ul, "foreground=\"%s\"", hime_sel_key_color);
-#endif
+
   if (tss.sel_pho && i==tss.pho_menu_idx) {
     if (hime_win_color_use)
       sprintf(ul, "foreground=\"white\" background=\"%s\"", hime_cursor_color);

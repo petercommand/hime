@@ -25,8 +25,7 @@
 
 extern void destroy_other_tray();
 
-gboolean hime_pho_mode();
-extern int tsin_half_full;
+
 extern gboolean gb_output;
 GtkStatusIcon *icon_main=NULL, *icon_state=NULL;
 
@@ -103,6 +102,8 @@ gint inmd_switch_popup_handler (GtkWidget *widget, GdkEvent *event);
 extern gboolean win_kbm_inited;
 
 #include "mitem.h"
+#include "eve.h"
+
 extern gboolean win_kbm_on;
 
 static MITEM mitems_main[] = {
@@ -343,7 +344,7 @@ void load_tray_icon_double()
 
   char tt[32];
   if (current_CS && current_CS->im_state == HIME_STATE_ENABLED_NON_ENG && !hime_pho_mode()) {
-    if ((current_method_type()==method_type_TSIN || current_method_type()==method_type_MODULE)) {
+    if (current_method_type()==method_type_MODULE) {
       strcpy(tt, "en-");
       strcat(tt, iconame);
     } else {

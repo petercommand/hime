@@ -18,16 +18,18 @@
 #include <string.h>
 #include "hime.h"
 #include "pho.h"
-#include "tsin_orig.h"
+
 #include "hime-conf.h"
 #include <math.h>
 #include "tsin-parse.h"
 #include "gtab-buf.h"
 #include "gst.h"
+#include "chpho.h"
+#include "tsin-util.h"
+#include "modules/tsin/tsin.h"
 
 #define DBG (0)
 extern gboolean tsin_is_gtab;
-extern int ph_key_sz;
 void add_cache(int start, int usecount, TSIN_PARSE *out, short match_phr_N, short no_match_ch_N, int tc_len);
 void extract_gtab_key(int start, int len, void *out);
 gboolean check_gtab_fixed_mismatch(int idx, char *mtch, int plen);
@@ -73,7 +75,8 @@ int tsin_parse_recur(int start, TSIN_PARSE *out,
 #define MAXV 1000
     int maxusecount = 5-MAXV;
     int remlen;
-    short match_phr_N=0, no_match_ch_N = plen;
+    short match_phr_N = 0;
+    int no_match_ch_N = plen;
     void *ppp;
 
     if (ph_key_sz==2)

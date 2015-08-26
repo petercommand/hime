@@ -19,6 +19,7 @@
 #include "gtab.h"
 #include "win-sym.h"
 #include "gst.h"
+#include "win0.h"
 
 static int current_hime_inner_frame;
 static int current_gtab_in_row1;
@@ -251,7 +252,7 @@ void set_key_codes_label(char *s, int better)
   if (!label_key_codes)
     return;
   if (s && strlen(s)) {
-    if (hbox_row2 && (!gtab_hide_row2 || ggg.wild_mode || (str_key_codes[0]))) {
+    if (hbox_row2 && (!gtab_hide_row2 || gtab_st.wild_mode || (str_key_codes[0]))) {
       gtk_widget_show(hbox_row2);
     }
   } else {

@@ -22,7 +22,7 @@
 #include <libintl.h>
 #endif
 #include "lang.h"
-#include "tsin_orig.h"
+
 #include "gtab.h"
 #include <gdk/gdkkeysyms.h>
 #if GTK_CHECK_VERSION(2,90,7)
