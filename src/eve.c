@@ -55,9 +55,9 @@ void gtab_set_win1_cb();
 void toggle_symbol_table();
 
 gboolean old_capslock_on;
+gboolean key_press_ctrl;
+gboolean key_press_alt;
 
-extern gboolean key_press_alt;
-extern gboolean key_press_ctrl;
 
 #if TRAY_ENABLED
 int hime_tray_display;
@@ -469,7 +469,24 @@ void show_in_win(ClientState *cs)
 void move_win_gtab(int x, int y);
 void module_move_win(int x, int y);
 void move_win_pho(int x, int y);
+void set_hime_pho_mode0(ClientState *cs)
+{
+  if (!cs)
+    return;
+  cs->hime_pho_mode = 1;
+  save_CS_current_to_temp();
+}
 
+void set_hime_pho_mode()
+{
+  set_hime_pho_mode0(current_CS);
+  if(current_CS->in_method == method_type_MODULE) {
+    HIME_EVENT event;
+    event.type = HIME_INPUT_METHOD_ENGINE_EVENT_TYPE;
+    event.input_method_engine_event.type = HIME_SET_PHO_MODE;
+    hime_event_module_dispatch(event, NULL);
+  }
+}
 void move_in_win(ClientState *cs, int x, int y)
 {
   check_CS();
@@ -1153,7 +1170,7 @@ void toggle_symbol_table()
 void destroy_phrase_save_menu();
 int hime_switch_keys_lookup(int key);
 
-gboolean check_key_press(KeySym key, u_int kev_state, gboolean return_value)
+void check_key_press(KeySym key, u_int kev_state)
 {
   if ((key==XK_Shift_L || key==XK_Shift_R) && key_press_alt) {
     key_press_ctrl = FALSE;
@@ -1163,8 +1180,6 @@ gboolean check_key_press(KeySym key, u_int kev_state, gboolean return_value)
     key_press_alt = FALSE;
     key_press_ctrl = FALSE;
   }
-
-  return return_value;
 }
 
 HIME_EVENT_HANDLER_RETURN_TYPE toggle_im_cb(HIME_EVENT event, void* pointer) {
@@ -1378,21 +1393,20 @@ gboolean ProcessKeyPress(KeySym keysym, u_int kev_state)
 
   disp_win_kbm_capslock();
   check_CS();
-
+  check_key_press(keysym, kev_state);
   if (current_CS->client_win)
     focus_win = current_CS->client_win;
 
   if (callback_str_buffer && strlen(callback_str_buffer)) {
     send_text(callback_str_buffer);
     callback_str_buffer[0]=0;
-    return check_key_press(keysym, kev_state, TRUE);
+    return TRUE;
   }
 
   if (force_preedit) {
     force_preedit=0;
-    return check_key_press(keysym, kev_state, FALSE);
+    return FALSE;
   }
-  check_key_press(keysym, kev_state, TRUE);
 
 ///-----start engine key event callback -- dispatch key press event
 
@@ -1423,16 +1437,16 @@ gboolean ProcessKeyPress(KeySym keysym, u_int kev_state)
       gboolean response = module_cb()->module_feedkey(keysym, kev_state);
       if (response)
 	hide_win_gtab();
-      else
-	if (current_CS->b_half_full_char)
-	  return check_key_press(keysym, kev_state, full_char_processor(keysym));
-      return check_key_press(keysym, kev_state, response);
+      else if (current_CS->b_half_full_char) {
+        return full_char_processor(keysym);
+      }
+      return response;
     }
     default:
-      return check_key_press(keysym, kev_state, feedkey_gtab(keysym, kev_state));
+      return feedkey_gtab(keysym, kev_state);
   }
 
-  return check_key_press(keysym, kev_state, FALSE);
+  return FALSE;
 }
 
 

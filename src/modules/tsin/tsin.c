@@ -38,9 +38,14 @@
 #include "../../eve.h"
 #include "../../chpho.h"
 #include "../../phrase-save-menu.h"
+#include "../../gst.h"
+#include "../../pho-status.h"
+#include "phrase-save-menu.h"
 
 extern GtkWidget *gwin_int;
 HIME_module_main_functions gmf;
+static gboolean key_press_ctrl;
+static gboolean key_press_alt;
 
 void module_get_win_geom()
 {
@@ -145,6 +150,10 @@ gboolean add_to_tsin_buf(char *str, phokey_t *pho, int len)
   return TRUE;
 }
 
+
+static void disp_in_area_pho_tsin();
+
+static void clrin_pho_tsin();
 
 gboolean module_feedkey(KeySym keysym, u_int kvstate)
 {
@@ -883,6 +892,8 @@ int module_event_handler(HIME_EVENT event)
           show_tsin_stat();
           return 1;
           break;
+        case HIME_SET_PHO_MODE:
+          show_tsin_stat();
         case HIME_CREATE_PHRASE_SAVE_MENU:
           create_phrase_save_menu();
       }
@@ -921,19 +932,7 @@ void save_CS_current_to_temp();
 
 
 
-void set_hime_pho_mode0(ClientState *cs)
-{
-  if (!cs)
-    return;
-  cs->hime_pho_mode = 1;
-  save_CS_current_to_temp();
-}
 
-void set_hime_pho_mode()
-{
-  set_hime_pho_mode0(current_CS);
-  show_tsin_stat();
-}
 
 gboolean tsin_cursor_end()
 {

@@ -25,7 +25,7 @@ OBJS      = hime.o eve.o util.o hime-conf.o hime-settings.o locale.o \
 	hime-exec-script.o pho-play.o cache.o gtk_bug_fix.o \
 	$(hime_pho_o) $(hime_gtab_o) $(hime_signal_o) $(hime_event_o)\
 	hime-common.o phrase.o t2s-lookup.o gtab-use-count.o \
-	win-save-phrase.o unix-exec.o pho-kbm-name.o statistic.o tsin-scan.o \
+	unix-exec.o pho-kbm-name.o statistic.o \
 	hime-module.o lang.o \
 	hime-module-cb.o gtab-init.o fullchar.o gtab-tsin-fname.o \
 	win-message.o win-sym.o win-inmd-switch.o pinyin.o \
