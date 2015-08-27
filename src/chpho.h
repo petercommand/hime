@@ -1,5 +1,8 @@
 #ifndef HIME_CHPHO_H
 #define HIME_CHPHO_H
+
+#include "pho.h"
+typedef u_short phokey_t;
 typedef struct CHPHO {
   char *ch;
   char cha[CH_SZ+1];

@@ -64,7 +64,7 @@ static gboolean gtab_pre_select_or_partial_on()
 
 gboolean same_query_show_pho_win()
 {
-  return poo.same_pho_query_state != SAME_PHO_QUERY_none;
+  return pho_st.same_pho_query_state != SAME_PHO_QUERY_none;
 }
 
 gboolean hime_edit_display_ap_only();
@@ -332,7 +332,7 @@ void close_gtab_pho_win()
   if (test_mode)
     return;
   if (same_query_show_pho_win()) {
-    poo.same_pho_query_state = SAME_PHO_QUERY_none;
+    pho_st.same_pho_query_state = SAME_PHO_QUERY_none;
     hide_win_pho();
     if (hime_pop_up_win && (str_key_codes[0]!='\0'))
       hide_win_gtab();
@@ -350,7 +350,7 @@ static void DispInArea()
 
 //  dbg("sel1st:%d\n", ggg.sel1st_i);
   if (hime_display_on_the_spot_key()) {
-    if (hime_pop_up_win && gwin_gtab && GTK_WIDGET_VISIBLE(gwin_gtab) && poo.same_pho_query_state == SAME_PHO_QUERY_none)
+    if (hime_pop_up_win && gwin_gtab && GTK_WIDGET_VISIBLE(gwin_gtab) && pho_st.same_pho_query_state == SAME_PHO_QUERY_none)
       hide_win_gtab();
     return;
   }
@@ -446,8 +446,8 @@ static void putstr_inp(char *p)
     send_text(p);
   }
   else {
-    if (poo.same_pho_query_state == SAME_PHO_QUERY_gtab_input) {
-      poo.same_pho_query_state = SAME_PHO_QUERY_pho_select;
+    if (pho_st.same_pho_query_state == SAME_PHO_QUERY_gtab_input) {
+      pho_st.same_pho_query_state = SAME_PHO_QUERY_pho_select;
       start_gtab_pho_query(p);
 
       ClrIn();
@@ -862,7 +862,7 @@ void set_gtab_target_displayed()
 
 gboolean is_gtab_query_mode()
 {
-  return poo.same_pho_query_state == SAME_PHO_QUERY_pho_select;
+  return pho_st.same_pho_query_state == SAME_PHO_QUERY_pho_select;
 }
 
 void reset_gtab_all()
@@ -1008,10 +1008,10 @@ gboolean feedkey_gtab(KeySym key, int kbstate)
     return 0;
   }
 
-  if (poo.same_pho_query_state == SAME_PHO_QUERY_pho_select)
+  if (pho_st.same_pho_query_state == SAME_PHO_QUERY_pho_select)
     return feedkey_pho(key, 0);
 
-  if (poo.same_pho_query_state == SAME_PHO_QUERY_none && gwin_pho &&
+  if (pho_st.same_pho_query_state == SAME_PHO_QUERY_none && gwin_pho &&
     GTK_WIDGET_VISIBLE(gwin_pho))
      hide_win_pho();
 
@@ -1263,7 +1263,7 @@ next_page:
 //          dbg("ggg.last_full %d %d\n", ggg.last_full,ggg.spc_pressed);
           if (gtab_full_space_auto_first || gtab_st.spc_pressed) {
 direct_select:
-            if (AUTO_SELECT_BY_PHRASE && poo.same_pho_query_state != SAME_PHO_QUERY_gtab_input) {
+            if (AUTO_SELECT_BY_PHRASE && pho_st.same_pho_query_state != SAME_PHO_QUERY_gtab_input) {
 //              dbg("ins ggg.kval %x\n", ggg.kval);
               insert_gbuf_cursor1_cond(seltab[gtab_st.sel1st_i], gtab_st.kval, gtab_st.exa_match);
             }
@@ -1352,7 +1352,7 @@ direct_select:
       return 0;
     case '`':
       if (gtab_pho_query && !cur_inmd->keymap[key]) {
-        poo.same_pho_query_state = SAME_PHO_QUERY_gtab_input;
+        pho_st.same_pho_query_state = SAME_PHO_QUERY_gtab_input;
         reset_gtab_all();
         disp_gtab_sel(_("輸入要查的同音字，接著在注音視窗選字"));
         if (hime_pop_up_win)
@@ -1411,7 +1411,7 @@ keypad_proc:
       if (!pselkey && (key < 32 || key > 0x7e) && (gtab_full_space_auto_first || gtab_st.spc_pressed)) {
 //        dbg("%x %x ggg.sel1st_i:%d  '%c'\n", pselkey, key, ggg.sel1st_i, seltab[ggg.sel1st_i][0]);
         if (seltab[gtab_st.sel1st_i][0]) {
-          if (AUTO_SELECT_BY_PHRASE && poo.same_pho_query_state != SAME_PHO_QUERY_gtab_input)
+          if (AUTO_SELECT_BY_PHRASE && pho_st.same_pho_query_state != SAME_PHO_QUERY_gtab_input)
             insert_gbuf_cursor1_cond(seltab[gtab_st.sel1st_i], gtab_st.kval, gtab_st.exa_match);
           else
             putstr_inp(seltab[gtab_st.sel1st_i]);  /* select 1st */
@@ -1440,7 +1440,7 @@ keypad_proc:
 
         if (seltab[vv][0]) {
           if (AUTO_SELECT_BY_PHRASE && !same_query_show_pho_win()) {
-            if (gtab_st.gtab_buf_select && poo.same_pho_query_state != SAME_PHO_QUERY_gtab_input)
+            if (gtab_st.gtab_buf_select && pho_st.same_pho_query_state != SAME_PHO_QUERY_gtab_input)
               set_gbuf_c_sel(vv);
             else
               insert_gbuf_cursor1_cond(seltab[vv], gtab_st.kval, gtab_st.exa_match);
@@ -1460,7 +1460,7 @@ keypad_proc:
 //      dbg("iii %x sel1st_i:%d auto:%d\n", pselkey, ggg.sel1st_i, AUTO_SELECT_BY_PHRASE);
       if (seltab[gtab_st.sel1st_i][0] && !gtab_st.wild_mode &&
            (gtab_full_space_auto_first|| gtab_st.spc_pressed|| gtab_st.last_full) ) {
-        if (AUTO_SELECT_BY_PHRASE && poo.same_pho_query_state != SAME_PHO_QUERY_gtab_input)
+        if (AUTO_SELECT_BY_PHRASE && pho_st.same_pho_query_state != SAME_PHO_QUERY_gtab_input)
           insert_gbuf_cursor1_cond(seltab[gtab_st.sel1st_i], gtab_st.kval, gtab_st.exa_match);
         else
           putstr_inp(seltab[gtab_st.sel1st_i]);  /* select 1st */
@@ -1478,7 +1478,7 @@ keypad_proc:
         if (current_CS->b_half_full_char)
           return full_char_processor(key);
         else {
-          if (gtab_st.gbufN && poo.same_pho_query_state != SAME_PHO_QUERY_gtab_input) {
+          if (gtab_st.gbufN && pho_st.same_pho_query_state != SAME_PHO_QUERY_gtab_input) {
             insert_gbuf_cursor_char(key);
             return 1;
           }
@@ -1628,7 +1628,7 @@ YYYY:
         vv=9;
 
       if (seltab[vv][0]) {
-        if (AUTO_SELECT_BY_PHRASE && poo.same_pho_query_state != SAME_PHO_QUERY_gtab_input)
+        if (AUTO_SELECT_BY_PHRASE && pho_st.same_pho_query_state != SAME_PHO_QUERY_gtab_input)
           insert_gbuf_cursor1_cond(seltab[vv], gtab_st.kval, gtab_st.exa_match);
         else
           putstr_inp(seltab[vv]);
@@ -1727,7 +1727,7 @@ YYYY:
       }
 
       if (match_cnt==1 && first_str) {
-        if (AUTO_SELECT_BY_PHRASE && poo.same_pho_query_state != SAME_PHO_QUERY_gtab_input)
+        if (AUTO_SELECT_BY_PHRASE && pho_st.same_pho_query_state != SAME_PHO_QUERY_gtab_input)
           insert_gbuf_nokey(first_str);
         else
           putstr_inp(first_str);
@@ -1750,7 +1750,7 @@ next_pg:
 
 //    dbg("flag %d\n",!(pendkey && (cur_inmd->flag&FLAG_PHRASE_AUTO_SKIP_ENDKEY)));
     if (AUTO_SELECT_BY_PHRASE && !(pendkey && (cur_inmd->flag&FLAG_PHRASE_AUTO_SKIP_ENDKEY))
-        && poo.same_pho_query_state != SAME_PHO_QUERY_gtab_input &&
+        && pho_st.same_pho_query_state != SAME_PHO_QUERY_gtab_input &&
         (gtab_st.spc_pressed||full_send)) {
       j = gtab_st.S1;
       int selN=0;
@@ -1788,7 +1788,7 @@ next_pg:
 
     if (gtab_st.defselN==1 && !gtab_st.more_pg) {
       if (gtab_st.spc_pressed || full_send || gtab_unique_auto_send_on()) {
-        if (AUTO_SELECT_BY_PHRASE && poo.same_pho_query_state != SAME_PHO_QUERY_gtab_input)
+        if (AUTO_SELECT_BY_PHRASE && pho_st.same_pho_query_state != SAME_PHO_QUERY_gtab_input)
           insert_gbuf_cursor1_cond(seltab[0], gtab_st.kval, gtab_st.exa_match);
         else
           putstr_inp(seltab[0]);

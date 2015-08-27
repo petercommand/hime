@@ -28,14 +28,14 @@ gboolean pin2juyin(gboolean full_match)
   int i;
 
   char pin[8];
-  bzero(poo.typ_pho, sizeof(poo.typ_pho));
-  if (poo.inph[0]=='`') {
-    poo.typ_pho[0]=BACK_QUOTE_NO;
-    poo.typ_pho[1]=poo.inph[1];
+  bzero(pho_st.typ_pho, sizeof(pho_st.typ_pho));
+  if (pho_st.inph[0]=='`') {
+    pho_st.typ_pho[0]=BACK_QUOTE_NO;
+    pho_st.typ_pho[1]= pho_st.inph[1];
     return TRUE;
   }
 
-  int inphN = strlen(poo.inph);
+  int inphN = strlen(pho_st.inph);
   for(i=0; i < pin_juyinN; i++) {
     bzero(pin, sizeof(pin));
     memcpy(pin,  pin_juyin[i].pinyin, sizeof(pin_juyin[0].pinyin));
@@ -47,8 +47,8 @@ gboolean pin2juyin(gboolean full_match)
     if (full_match && pinN != inphN)
       continue;
 
-    if (!memcmp(pin, poo.inph, inphN)) {
-//      dbg("pin %s %s\n", pin, poo.inph);
+    if (!memcmp(pin, pho_st.inph, inphN)) {
+//      dbg("pin %s %s\n", pin, pho_st.inph);
 //      prph(pin_juyin[i].key);
       break;
     }
@@ -59,11 +59,11 @@ gboolean pin2juyin(gboolean full_match)
     return FALSE;
   }
 
-  bzero(poo.typ_pho, sizeof(poo.typ_pho));
+  bzero(pho_st.typ_pho, sizeof(pho_st.typ_pho));
 //  prph(pin_juyin[i].key); dbg(" %x ph\n", pin_juyin[i].key);
-  fake_key_typ_pho(pin_juyin[i].key, (u_char *)poo.typ_pho);
+  fake_key_typ_pho(pin_juyin[i].key, (u_char *) pho_st.typ_pho);
 
-//  dbg("pin2juyin found %d\n", poo.typ_pho[0]);
+//  dbg("pin2juyin found %d\n", pho_st.typ_pho[0]);
 
   return TRUE;
 }
@@ -83,37 +83,37 @@ gboolean inph_typ_pho_pinyin(int newkey)
 
     if (typ==3) {
       pin2juyin(TRUE);
-      poo.typ_pho[typ] = num;
+      pho_st.typ_pho[typ] = num;
 //      tss.chpho[tss.c_idx].flag |=FLAG_CHPHO_PINYIN_TONE;
 //      dbg("set %d\n",tss.c_idx);
 //      if (!num)
-//        poo.typ_pho[typ]= PHO_PINYIN_TONE1;
+//        pho_st.typ_pho[typ]= PHO_PINYIN_TONE1;
       return PHO_STATUS_OK_NEW | PHO_STATUS_TONE;
     }
 
 //    dbg("'%c' %d\n", newkey, typ);
 
     for(i=0; i < 7; i++)
-      if (!poo.inph[i])
+      if (!pho_st.inph[i])
         break;
     if (i==7)
       return FALSE;
-    poo.inph[i] = newkey;
+    pho_st.inph[i] = newkey;
   }
 
   if (pin2juyin(newkey==' ')) {
 //    dbg("zzzz\n");
     if (newkey==' ')
       return PHO_STATUS_OK_NEW;
-    if (poo.typ_pho[0]==BACK_QUOTE_NO && poo.typ_pho[1])
+    if (pho_st.typ_pho[0]==BACK_QUOTE_NO && pho_st.typ_pho[1])
       return PHO_STATUS_OK_NEW | PHO_STATUS_TONE;
-//    dbg("ok %d\n", poo.typ_pho[0]);
+//    dbg("ok %d\n", pho_st.typ_pho[0]);
     return PHO_STATUS_OK;
   }
 
 //  dbg("yyy %d\n", i);
 
-  poo.inph[i]=0;
+  pho_st.inph[i]=0;
   if (!i)
     return PHO_STATUS_REJECT;
 
@@ -127,8 +127,8 @@ gboolean inph_typ_pho_pinyin(int newkey)
   if (j==pin_juyinN)
     return PHO_STATUS_REJECT;
 
-  bzero(poo.inph, sizeof(poo.inph));
-  poo.inph[0]=newkey;
+  bzero(pho_st.inph, sizeof(pho_st.inph));
+  pho_st.inph[0]=newkey;
   return PHO_STATUS_OK_NEW|PHO_STATUS_PINYIN_LEFT;
 }
 

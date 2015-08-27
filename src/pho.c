@@ -23,7 +23,7 @@
 #include "gst.h"
 #include "pho-status.h"
 
-PHO_ST poo;
+PHO_ST pho_st;
 
 extern PHO_ITEM *ch_pho;
 
@@ -43,10 +43,10 @@ u_short hash_pho[MAX_HASH_PHO+1];
 static char typ_pho_len[]={5, 2, 4, 3};
 
 gboolean same_query_show_pho_win();
-
+PHO_ST pho_st;
 gboolean typ_pho_empty()
 {
-  return !poo.typ_pho[0] &&!poo.typ_pho[1] &&!poo.typ_pho[2] &&!poo.typ_pho[3];
+  return !pho_st.typ_pho[0] &&!pho_st.typ_pho[1] &&!pho_st.typ_pho[2] &&!pho_st.typ_pho[3];
 }
 
 gboolean pho_has_input()
@@ -83,12 +83,12 @@ void key_typ_pho(phokey_t phokey, u_char rtyp_pho[])
 
 void mask_key_typ_pho(phokey_t *key)
 {
-  if (poo.typ_pho[0] == BACK_QUOTE_NO)
+  if (pho_st.typ_pho[0] == BACK_QUOTE_NO)
     return;
-  if (!poo.typ_pho[0]) *key &= ~(31<<9);
-  if (!poo.typ_pho[1]) *key &= ~(3<<7);
-  if (!poo.typ_pho[2]) *key &= ~(15<<3);
-  if (!poo.typ_pho[3]) *key &= ~(7);
+  if (!pho_st.typ_pho[0]) *key &= ~(31<<9);
+  if (!pho_st.typ_pho[1]) *key &= ~(3<<7);
+  if (!pho_st.typ_pho[2]) *key &= ~(15<<3);
+  if (!pho_st.typ_pho[3]) *key &= ~(7);
 }
 
 #define TKBM 0
@@ -97,18 +97,18 @@ void mask_key_typ_pho(phokey_t *key)
 static void find_match_phos(u_char mtyp_pho[4], int *mcount, int newkey)
 {
       int vv;
-      phokey_t key = pho2key(poo.typ_pho);
+      phokey_t key = pho2key(pho_st.typ_pho);
 
       mask_key_typ_pho(&key);
 #if TKBM
-      dbg("-------------------- %d --", poo.typ_pho[3]);
+      dbg("-------------------- %d --", pho_st.typ_pho[3]);
       prph(key);
       dbg("\n");
 #endif
-      for (vv = hash_pho[poo.typ_pho[0]]; vv < hash_pho[poo.typ_pho[0]+1]; vv++) {
+      for (vv = hash_pho[pho_st.typ_pho[0]]; vv < hash_pho[pho_st.typ_pho[0]+1]; vv++) {
         phokey_t ttt=idx_pho[vv].key;
 
-        if (newkey!=' ' && !poo.typ_pho[3])
+        if (newkey!=' ' && !pho_st.typ_pho[3])
           mask_key_typ_pho(&ttt);
 
         if (ttt > key)
@@ -129,7 +129,7 @@ static void find_match_phos(u_char mtyp_pho[4], int *mcount, int newkey)
 
         if (*mcount < count) {
           *mcount = count;
-          memcpy(mtyp_pho, poo.typ_pho, sizeof(poo.typ_pho));
+          memcpy(mtyp_pho, pho_st.typ_pho, sizeof(pho_st.typ_pho));
 #if TKBM
           dbg("count %d\n", count);
 #endif
@@ -143,7 +143,7 @@ gboolean inph_typ_pho_pinyin(int newkey);
 
 static int typ_pho_status()
 {
-  return poo.typ_pho[3] ? PHO_STATUS_OK_NEW:PHO_STATUS_OK;
+  return pho_st.typ_pho[3] ? PHO_STATUS_OK_NEW:PHO_STATUS_OK;
 }
 
 int inph_typ_pho(KeySym newkey)
@@ -155,14 +155,14 @@ int inph_typ_pho(KeySym newkey)
     return inph_typ_pho_pinyin(newkey);
   }
 
-  if (poo.typ_pho[0]==BACK_QUOTE_NO) {
-    poo.typ_pho[1]=(char)newkey;
-    poo.inph[1]=newkey;
+  if (pho_st.typ_pho[0]==BACK_QUOTE_NO) {
+    pho_st.typ_pho[1]=(char)newkey;
+    pho_st.inph[1]=newkey;
     return PHO_STATUS_OK;
   }
 
   int max_in_idx;
-  for(max_in_idx=3; max_in_idx>=0 && !poo.typ_pho[max_in_idx]; max_in_idx--);
+  for(max_in_idx=3; max_in_idx>=0 && !pho_st.typ_pho[max_in_idx]; max_in_idx--);
 
   // try insert mode first
   if (insert < 0)
@@ -170,9 +170,9 @@ int inph_typ_pho(KeySym newkey)
     char num = phkbm.phokbm[(int)newkey][i].num;
     int typ = phkbm.phokbm[(int)newkey][i].typ;
 
-    if (num && !poo.inph[typ] && typ>max_in_idx) {
-      poo.inph[typ] = newkey;
-      poo.typ_pho[typ] = num;
+    if (num && !pho_st.inph[typ] && typ>max_in_idx) {
+      pho_st.inph[typ] = newkey;
+      pho_st.typ_pho[typ] = num;
 #if TKBM
       dbg("insert typ %d\n", typ);
 #endif
@@ -188,8 +188,8 @@ int inph_typ_pho(KeySym newkey)
       int typ = phkbm.phokbm[newkey][i].typ;
 
       if (num) {
-        poo.inph[typ] = newkey;
-        poo.typ_pho[typ] = num;
+        pho_st.inph[typ] = newkey;
+        pho_st.typ_pho[typ] = num;
         insert = typ;
         break;
       }
@@ -204,16 +204,16 @@ int inph_typ_pho(KeySym newkey)
   int a;
 
   for(a=0; a < 3; a++) {
-    char num = phkbm.phokbm[(int)poo.inph[0]][a].num;
-    char typ = phkbm.phokbm[(int)poo.inph[0]][a].typ;
+    char num = phkbm.phokbm[(int) pho_st.inph[0]][a].num;
+    char typ = phkbm.phokbm[(int) pho_st.inph[0]][a].typ;
 
     if (typ == 3)
       continue;
 
     if (num) {
-      if (typ==2 && poo.typ_pho[0] && !poo.typ_pho[2])
-        poo.typ_pho[0] = 0;
-      poo.typ_pho[(int)typ] = num;
+      if (typ==2 && pho_st.typ_pho[0] && !pho_st.typ_pho[2])
+        pho_st.typ_pho[0] = 0;
+      pho_st.typ_pho[(int)typ] = num;
 #if TKBM
       dbg("%d num %d\n",a, num);
 #endif
@@ -221,8 +221,8 @@ int inph_typ_pho(KeySym newkey)
     }
 
     for(i=0; i < 3; i++) {
-      char num = phkbm.phokbm[(int)poo.inph[2]][i].num;
-      char typ = phkbm.phokbm[(int)poo.inph[2]][i].typ;
+      char num = phkbm.phokbm[(int) pho_st.inph[2]][i].num;
+      char typ = phkbm.phokbm[(int) pho_st.inph[2]][i].typ;
 
       if (!num)
         break;
@@ -230,7 +230,7 @@ int inph_typ_pho(KeySym newkey)
       if (typ!=2)
         continue;
 
-      poo.typ_pho[(int)typ] = num;
+      pho_st.typ_pho[(int)typ] = num;
 
       find_match_phos(mtyp_pho, &mcount, newkey);
 
@@ -248,7 +248,7 @@ int inph_typ_pho(KeySym newkey)
   }
 
   if (mcount) {
-    memcpy(poo.typ_pho, mtyp_pho, sizeof(poo.typ_pho));
+    memcpy(pho_st.typ_pho, mtyp_pho, sizeof(pho_st.typ_pho));
     return typ_pho_status();
   }
 
@@ -258,10 +258,10 @@ int inph_typ_pho(KeySym newkey)
 
 void clrin_pho()
 {
-  bzero(poo.typ_pho,sizeof(poo.typ_pho));
-  bzero(poo.inph,sizeof(poo.inph));
-  poo.maxi=poo.ityp3_pho=0;
-  poo.cpg=0;
+  bzero(pho_st.typ_pho,sizeof(pho_st.typ_pho));
+  bzero(pho_st.inph,sizeof(pho_st.inph));
+  pho_st.maxi= pho_st.ityp3_pho=0;
+  pho_st.cpg=0;
 
   if (hime_pop_up_win && !same_query_show_pho_win())
     hide_win_pho();
@@ -285,15 +285,15 @@ static void disp_in_area_pho()
   text_pho_N = pin_juyin?7:4;
   if (pin_juyin) {
     for(i=0;i<text_pho_N;i++) {
-      disp_pho(i, &poo.inph[i]);
+      disp_pho(i, &pho_st.inph[i]);
     }
   } else {
     for(i=0;i<4;i++) {
-      if (i==1 && poo.typ_pho[0]==BACK_QUOTE_NO) {
-        disp_pho(i, &poo.inph[1]);
+      if (i==1 && pho_st.typ_pho[0]==BACK_QUOTE_NO) {
+        disp_pho(i, &pho_st.inph[1]);
       }
       else
-        disp_pho(i, &pho_chars[i][poo.typ_pho[i]*3]);
+        disp_pho(i, &pho_chars[i][pho_st.typ_pho[i]*3]);
     }
   }
 }
@@ -368,7 +368,7 @@ void inc_pho_count(phokey_t key, int ch_idx)
 
   get_start_stop_idx(key, &start_i, &stop_i);
 
-//  dbg("start_i %d %d    %d %d\n", start_i, stop_i, poo.start_idx, poo.stop_idx);
+//  dbg("start_i %d %d    %d %d\n", start_i, stop_i, pho_st.start_idx, pho_st.stop_idx);
 
   ch_pho[ch_idx].count++;
 //  dbg("count %d\n", ch_pho[ch_idx].count);
@@ -404,12 +404,13 @@ gboolean is_gtab_query_mode();
 void set_gtab_target_displayed();
 
 #include "gtab-buf.h"
+#include "win0.h"
 
 void putkey_pho(u_short key, int idx)
 {
   char *pho_str = pho_idx_str(idx);
 
-  if (poo.same_pho_query_state==SAME_PHO_QUERY_pho_select && gtab_st.gbufN)
+  if (pho_st.same_pho_query_state==SAME_PHO_QUERY_pho_select && gtab_st.gbufN)
     insert_gbuf_nokey(pho_str);
   else
     send_text(pho_str);
@@ -432,7 +433,7 @@ void load_tab_pho_file()
 {
   pho_load();
 
-  bzero(poo.typ_pho,sizeof(poo.typ_pho));
+  bzero(pho_st.typ_pho,sizeof(pho_st.typ_pho));
 
   u_int ttt=0;
   int i;
@@ -524,6 +525,94 @@ void close_gtab_pho_win();
 gboolean pre_punctuation_hsu(KeySym xkey);
 void case_inverse(KeySym *xkey, int shift_m);
 
+
+
+
+gboolean add_to_pho_buf(char *str, phokey_t *pho, int len)
+{
+  int i;
+
+  if (pho_st.c_idx < 0 || pho_st.c_len + len >= MAX_PH_BF_EXT)
+    return 0;
+
+  if (pho_st.c_idx < pho_st.c_len) {
+    for(i=pho_st.c_len-1; i >= pho_st.c_idx; i--) {
+      pho_st.chpho[i+len] = pho_st.chpho[i];
+    }
+  }
+
+  ch_pho_cpy(&pho_st.chpho[pho_st.c_idx], str, pho, len);
+
+  if (pho_st.c_idx == pho_st.c_len)
+    pho_st.c_idx +=len;
+
+  pho_st.c_len+=len;
+
+  clrin_pho_tsin();
+  disp_in_area_pho_tsin();
+
+  prbuf();
+
+  tsin_set_fixed(pho_st.c_idx, len);
+#if 1
+  for(i=1;i < len; i++) {
+    pho_st.chpho[pho_st.c_idx+i].psta= pho_st.c_idx;
+  }
+#endif
+#if 0
+    if (len > 0)
+      pho_st.chpho[pho_st.c_idx].flag |= FLAG_CHPHO_PHRASE_HEAD;
+#endif
+  drawcursor();
+  disp_ph_sta();
+  hide_pre_sel();
+  pho_st.ph_sta=-1;
+
+  if (hime_pop_up_win)
+    show_win0();
+
+  return TRUE;
+}
+static gboolean pre_punctuation_sub(KeySym xkey, char shift_punc[], unich_t *chars[])
+{
+  char *p;
+  if (xkey > 0x7e)
+    return FALSE;
+
+  if ((p=strchr(shift_punc, xkey))) {
+    int c = p - shift_punc;
+    char *pchar = _(chars[c]);
+
+
+    phokey_t keys[64];
+    keys[0] = 0;
+    utf8_pho_keys(pchar, keys);
+    add_to_pho_buf(pchar, &keys[0], 1);
+    if (hime_punc_auto_send && tsin_cursor_end()) {
+      pho_flush_input();
+    }
+
+    return 1;
+  }
+
+  return 0;
+}
+
+
+gboolean pre_punctuation(KeySym xkey)
+{
+  static char shift_punc[]="<>?:\"{}!_()";
+  static unich_t *chars[] = { "?", "?", "?", "?", "?", "?", "?", "?", "??", "?", "?" };
+  return pre_punctuation_sub(xkey, shift_punc, chars);
+}
+
+static char hsu_punc[]=",./;'";
+gboolean pre_punctuation_hsu(KeySym xkey)
+{
+  static unich_t *chars[] = { "?", "?", "?", "?", "?" };
+  return pre_punctuation_sub(xkey, hsu_punc, chars);
+}
+
 int feedkey_pho(KeySym xkey, int kbstate)
 {
   int ctyp = 0;
@@ -550,7 +639,7 @@ int feedkey_pho(KeySym xkey, int kbstate)
     return 1;
   }
 
-  if (xkey >= 'A' && xkey <='Z' && poo.typ_pho[0]!=BACK_QUOTE_NO)
+  if (xkey >= 'A' && xkey <='Z' && pho_st.typ_pho[0]!=BACK_QUOTE_NO)
     xkey+=0x20;
 
   switch (xkey) {
@@ -563,9 +652,9 @@ int feedkey_pho(KeySym xkey, int kbstate)
         close_gtab_pho_win();
       return 1;
     case XK_BackSpace:
-      poo.ityp3_pho=0;
-      for(j=3;j>=0;j--) if (poo.typ_pho[j]) {
-        poo.typ_pho[j]=0;
+      pho_st.ityp3_pho=0;
+      for(j=3;j>=0;j--) if (pho_st.typ_pho[j]) {
+        pho_st.typ_pho[j]=0;
         if (typ_pho_empty()) {
           ClrSelArea();
           clr_in_area_pho();
@@ -579,36 +668,36 @@ int feedkey_pho(KeySym xkey, int kbstate)
 
       goto llll3;
     case '<':
-       if (!poo.ityp3_pho) {
+       if (!pho_st.ityp3_pho) {
          return pre_punctuation(xkey);
        }
-       if (poo.cpg >= phkbm.selkeyN)
-         poo.cpg -= phkbm.selkeyN;
+       if (pho_st.cpg >= phkbm.selkeyN)
+         pho_st.cpg -= phkbm.selkeyN;
        goto proc_state;
     case ' ':
-      if (!poo.typ_pho[0] && !poo.typ_pho[1] && !poo.typ_pho[2]) {
+      if (!pho_st.typ_pho[0] && !pho_st.typ_pho[1] && !pho_st.typ_pho[2]) {
         if (current_CS->b_half_full_char)
           return full_char_processor(xkey);
         return 0;
       }
 
-//      dbg("poo.ityp3_pho %d\n", poo.ityp3_pho);
-      if (!poo.ityp3_pho) {
-        poo.ityp3_pho = TRUE;
+//      dbg("pho_st.ityp3_pho %d\n", pho_st.ityp3_pho);
+      if (!pho_st.ityp3_pho) {
+        pho_st.ityp3_pho = TRUE;
         goto lll1;
       }
 
-      ii = poo.start_idx+ poo.cpg + phkbm.selkeyN;
+      ii = pho_st.start_idx+ pho_st.cpg + phkbm.selkeyN;
 
-      if (ii < poo.stop_idx) {
-        poo.cpg += phkbm.selkeyN;
-        dbg("spc pool.cpg %d\n", poo.cpg);
+      if (ii < pho_st.stop_idx) {
+        pho_st.cpg += phkbm.selkeyN;
+        dbg("spc pool.cpg %d\n", pho_st.cpg);
       } else {
-        if (poo.cpg) {
-          poo.cpg=0;
-          ii=poo.start_idx;
+        if (pho_st.cpg) {
+          pho_st.cpg=0;
+          ii= pho_st.start_idx;
         } else {
-          putkey_pho(key, poo.start_idx);
+          putkey_pho(key, pho_st.start_idx);
           return 1;
         }
       }
@@ -625,47 +714,47 @@ int feedkey_pho(KeySym xkey, int kbstate)
         return 0;
       }
 
-//    dbg("poo.maxi:%d  %d\n", poo.maxi, poo.cpg);
+//    dbg("pho_st.maxi:%d  %d\n", pho_st.maxi, pho_st.cpg);
 
-      if ((pp=strchr(pho_selkey, xkey)) && poo.maxi && poo.ityp3_pho) {
+      if ((pp=strchr(pho_selkey, xkey)) && pho_st.maxi && pho_st.ityp3_pho) {
         int c=pp-pho_selkey;
 
-        if (c<poo.maxi) {
-          putkey_pho(key, poo.start_idx + poo.cpg + c);
+        if (c< pho_st.maxi) {
+          putkey_pho(key, pho_st.start_idx + pho_st.cpg + c);
         }
         return 1;
       }
 
-      if (poo.ityp3_pho && !poo.cpg) {
-//        dbg("poo.start_idx: %d\n", poo.start_idx);
-        putkey_pho(key, poo.start_idx);
+      if (pho_st.ityp3_pho && !pho_st.cpg) {
+//        dbg("pho_st.start_idx: %d\n", pho_st.start_idx);
+        putkey_pho(key, pho_st.start_idx);
       }
 
-//      poo.cpg=0;
+//      pho_st.cpg=0;
   }
 
 lll1:
   inph_typ_pho(xkey);
-//  dbg("typ_pho %x %x\n", poo.typ_pho[0], poo.typ_pho[1]);
+//  dbg("typ_pho %x %x\n", pho_st.typ_pho[0], pho_st.typ_pho[1]);
 
   if (hime_pop_up_win)
     show_win_pho();
 
-  if (poo.typ_pho[3])
+  if (pho_st.typ_pho[3])
     ctyp = 3;
 
   jj=0;
   kk=1;
 llll2:
   if (ctyp == 3) {
-       poo.ityp3_pho=1;  /* last key is entered */
+       pho_st.ityp3_pho=1;  /* last key is entered */
   }
 llll3:
 
-  key = pho2key(poo.typ_pho);
+  key = pho2key(pho_st.typ_pho);
 
 #if    0
-  dbg("poo.typ_pho %d %d %d %d\n", poo.typ_pho[0], poo.typ_pho[1], poo.typ_pho[2], poo.typ_pho[3]);
+  dbg("pho_st.typ_pho %d %d %d %d\n", pho_st.typ_pho[0], pho_st.typ_pho[1], pho_st.typ_pho[2], pho_st.typ_pho[3]);
 #endif
   if (!key) {
     return pre_punctuation_hsu(xkey);
@@ -673,7 +762,7 @@ llll3:
 
   pho_play(key);
 
-  vv=hash_pho[poo.typ_pho[0]];
+  vv=hash_pho[pho_st.typ_pho[0]];
   phokey_t ttt;
   ttt=0xffff;
 
@@ -689,20 +778,20 @@ llll3:
 
 //  dbg("vv %d %d\n", vv, idxnum_pho);
 
-  if (ttt > key || (poo.ityp3_pho && idx_pho[vv].key != key) ) {
+  if (ttt > key || (pho_st.ityp3_pho && idx_pho[vv].key != key) ) {
 //    dbg("not found\n");
     while (jj<4) {
       while(kk<3)
-        if (phkbm.phokbm[(int)poo.inph[jj]][kk].num ) {
+        if (phkbm.phokbm[(int) pho_st.inph[jj]][kk].num ) {
 
           if (kk) {
-            ctyp=phkbm.phokbm[(int)poo.inph[jj]][kk-1].typ;
-            poo.typ_pho[ctyp]=0;
+            ctyp=phkbm.phokbm[(int) pho_st.inph[jj]][kk-1].typ;
+            pho_st.typ_pho[ctyp]=0;
           }
 
-          kno=phkbm.phokbm[(int)poo.inph[jj]][kk].num;
-          ctyp=phkbm.phokbm[(int)poo.inph[jj]][kk].typ;
-          poo.typ_pho[ctyp]=kno;
+          kno=phkbm.phokbm[(int) pho_st.inph[jj]][kk].num;
+          ctyp=phkbm.phokbm[(int) pho_st.inph[jj]][kk].typ;
+          pho_st.typ_pho[ctyp]=kno;
           kk++;
           goto llll2;
         }
@@ -713,26 +802,26 @@ llll3:
     }
 
     bell();
-    poo.ityp3_pho=poo.typ_pho[3]=0;
+    pho_st.ityp3_pho= pho_st.typ_pho[3]=0;
     disp_in_area_pho();
     return 1;
   }
 
 proc_state:
   disp_in_area_pho();
-  poo.start_idx = ii = idx_pho[vv].start;
-  poo.stop_idx = idx_pho[vv+1].start;
+  pho_st.start_idx = ii = idx_pho[vv].start;
+  pho_st.stop_idx = idx_pho[vv+1].start;
 
-//  dbg("poo.start_idx: %d %d\n", poo.start_idx, poo.stop_idx);
+//  dbg("pho_st.start_idx: %d %d\n", pho_st.start_idx, pho_st.stop_idx);
 
-  if (poo.typ_pho[0]==L_BRACKET_NO||poo.typ_pho[0]==R_BRACKET_NO || (poo.typ_pho[0]==BACK_QUOTE_NO && poo.typ_pho[1]))
-     poo.ityp3_pho = 1;
+  if (pho_st.typ_pho[0]==L_BRACKET_NO|| pho_st.typ_pho[0]==R_BRACKET_NO || (pho_st.typ_pho[0]==BACK_QUOTE_NO && pho_st.typ_pho[1]))
+     pho_st.ityp3_pho = 1;
 
-  ii+=poo.cpg;
+  ii+= pho_st.cpg;
 
-  if (poo.ityp3_pho && poo.stop_idx - poo.start_idx==1) {
+  if (pho_st.ityp3_pho && pho_st.stop_idx - pho_st.start_idx==1) {
     putkey_pho(key, ii);
-    poo.maxi=poo.ityp3_pho=0;
+    pho_st.maxi= pho_st.ityp3_pho=0;
     return 1;
   }
 
@@ -741,10 +830,10 @@ disp:
   out_bufferN=0;
   out_buffer[0]=0;
 
-  if (poo.ityp3_pho) {
-//    dbg("poo.cpg %d\n", poo.cpg);
+  if (pho_st.ityp3_pho) {
+//    dbg("pho_st.cpg %d\n", pho_st.cpg);
 
-    while(i< phkbm.selkeyN  && ii < poo.stop_idx) {
+    while(i< phkbm.selkeyN  && ii < pho_st.stop_idx) {
       char tt[512];
       sprintf(tt, "<span foreground=\"%s\">%c</span>",
          hime_sel_key_color, pho_selkey[i]);
@@ -762,22 +851,22 @@ disp:
       i++;
     }
 
-    char *tt = poo.cpg ? "&lt;" : " ";
+    char *tt = pho_st.cpg ? "&lt;" : " ";
     int ttlen = strlen(tt);
     memcpy(out_buffer+out_bufferN, tt, ttlen);
     out_bufferN+=ttlen;
 
-    if (ii < poo.stop_idx) {
-      out_buffer[out_bufferN++] = poo.cpg ? '\\' : ' ';
+    if (ii < pho_st.stop_idx) {
+      out_buffer[out_bufferN++] = pho_st.cpg ? '\\' : ' ';
       tt = "&gt;";
       ttlen = strlen(tt);
       memcpy(out_buffer+out_bufferN, tt, ttlen);
       out_bufferN+=strlen(tt);
     }
 
-    poo.maxi=i;
+    pho_st.maxi=i;
   } else {
-    while(i<phkbm.selkeyN  && ii < poo.stop_idx) {
+    while(i<phkbm.selkeyN  && ii < pho_st.stop_idx) {
       char *pho_str = pho_idx_str_markup(ii);
       int len = strlen(pho_str);
       memcpy(&out_buffer[out_bufferN], pho_str, len);
@@ -786,7 +875,7 @@ disp:
       ii++;
       i++;
     }
-    poo.maxi=i;
+    pho_st.maxi=i;
   }
 
   out_buffer[out_bufferN]=0;
@@ -860,10 +949,10 @@ int pho_get_preedit(char *str, HIME_PREEDIT_ATTR attr[], int *cursor, int *sub_c
 static PHO_ST temp_pho_st;
 void pho_save_gst()
 {
-  temp_pho_st = poo;
+  temp_pho_st = pho_st;
 }
 
 void pho_restore_gst()
 {
-  poo = temp_pho_st;
+  pho_st = temp_pho_st;
 }

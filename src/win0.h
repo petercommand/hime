@@ -1,5 +1,6 @@
 #ifndef HIME_WIN0_H
 #define HIME_WIN0_H
+#include "pho.h"
 void show_win0();
 void move_win0(int x, int y);
 void show_button_pho(gboolean bshow);

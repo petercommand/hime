@@ -427,7 +427,7 @@ void gtab_parse()
   short smatch_phr_N, sno_match_ch_N;
   tsin_parse_recur(0, out, &smatch_phr_N, &sno_match_ch_N);
 #if 0
-  puts("vvvvvvvvvvvvvvvv");
+  puts("gtab_parse: ");
   for(i=0;  i < out[i].len; i++) {
     printf("%x %d:", out[i].str, out[i].len);
     utf8_putcharn(out[i].str, out[i].len);

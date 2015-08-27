@@ -63,7 +63,7 @@ u_char scanphr_e(int chpho_idx, int plen, gboolean pho_incr, int *rselN)
 
   if (pho_incr) {
     if (ph_key_sz==2) {
-      tailpho = pho2key(poo.typ_pho);
+      tailpho = pho2key(pho_st.typ_pho);
       if (!tailpho)
         pho_incr = FALSE;
     } else {

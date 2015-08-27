@@ -16,7 +16,10 @@
  */
 #ifndef PHO_H
 #define PHO_H
-typedef u_short phokey_t;
+#include "chpho.h"
+#include "gst.h"
+
+
 
 typedef struct {
   char selkeyN;
@@ -37,6 +40,29 @@ typedef struct {
   u_short start;
 } PHO_IDX;
 
+typedef struct {
+//original tsin state
+  int ityp3_pho;
+  int cpg, maxi;
+  int start_idx, stop_idx;
+  char typ_pho[4];
+  char inph[8];
+  SAME_PHO_QUERY same_pho_query_state;
+
+  struct CHPHO *chpho;
+  int c_idx, c_len;
+  int ph_sta;  // phrase start
+  int sel_pho;
+//  int save_frm, save_to;
+  int current_page;
+  int startf;
+  gboolean full_match;
+  gboolean tsin_buffer_editing;
+
+  int last_cursor_idx;
+  int pho_menu_idx;
+} PHO_ST;
+extern PHO_ST pho_st;
 
 typedef struct {
   char pinyin[7];

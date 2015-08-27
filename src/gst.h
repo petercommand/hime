@@ -14,7 +14,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
+#ifndef GST_H
+#define GST_H
 
 
 typedef enum {
@@ -23,15 +24,7 @@ typedef enum {
   SAME_PHO_QUERY_pho_select = 2,
 } SAME_PHO_QUERY;
 
-typedef struct {
-  int ityp3_pho;
-  int cpg, maxi;
-  int start_idx, stop_idx;
-  char typ_pho[4];
-  char inph[8];
-  SAME_PHO_QUERY same_pho_query_state;
-} PHO_ST;
-extern PHO_ST poo;
+
 
 #define MAX_TAB_KEY_NUM64_6 (10)
 
@@ -43,3 +36,6 @@ typedef struct {
   KeySym inch[MAX_TAB_KEY_NUM64_6];
 } GTAB_ST;
 extern GTAB_ST gtab_st;
+
+
+#endif

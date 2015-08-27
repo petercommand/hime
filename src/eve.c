@@ -1389,7 +1389,12 @@ gboolean ProcessKeyPress(KeySym keysym, u_int kev_state)
 #if 0
   dbg("key press %x %x\n", keysym, kev_state);
 #endif
-  destroy_phrase_save_menu();
+  if(current_CS->in_method == method_type_MODULE) {
+    HIME_EVENT event;
+    event.type = HIME_INPUT_METHOD_ENGINE_EVENT_TYPE;
+    event.input_method_engine_event.type = HIME_DESTROY_PHRASE_SAVE_MENU;
+    hime_event_module_dispatch(event, NULL);
+  }
 
   disp_win_kbm_capslock();
   check_CS();

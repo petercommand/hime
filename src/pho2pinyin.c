@@ -27,7 +27,7 @@ static gboolean b_pinyin;
 PIN_JUYIN *pin_juyin;
 int pin_juyinN;
 PHOKBM phkbm;
-PHO_ST poo;
+PHO_ST pho_st;
 
 int text_pho_N;
 
