@@ -54,6 +54,27 @@ gboolean pho_has_input()
   return !typ_pho_empty() || same_query_show_pho_win();
 }
 
+
+
+static void pho_prbuf()
+{
+  int i;
+
+//  dbg("pho_prbuf\n");
+  for(i=0;i<pho_st.c_len;i++)
+    if (!(pho_st.chpho[i].flag & FLAG_CHPHO_PHO_PHRASE))
+      pho_st.chpho[i].ch=pho_st.chpho[i].cha;
+
+  for(i=0; i < pho_st.c_len; i++)
+    disp_char_chbuf(i);
+
+  for(i=pho_st.c_len; i < MAX_PH_BF_EXT; i++) {
+    hide_char(i);
+  }
+
+  drawcursor();
+}
+
 phokey_t pho2key(char typ_pho[])
 {
   phokey_t key=typ_pho[0];
@@ -80,6 +101,37 @@ void key_typ_pho(phokey_t phokey, u_char rtyp_pho[])
   rtyp_pho[0] = phokey;
 }
 
+void ch_pho_cpy(CHPHO *pchpho, char *utf8, phokey_t *phos, int len)
+{
+  int i;
+
+  for(i=0; i < len; i++) {
+    int len = utf8cpy(pchpho[i].cha, utf8);
+    utf8+=len;
+    pchpho[i].pho = phos[i];
+    pchpho[i].flag &= ~FLAG_CHPHO_PHO_PHRASE;
+  }
+}
+
+
+void set_chpho_ch(CHPHO *pchpho, char *utf8, int len, gboolean is_pho_phrase)
+{
+  int i;
+
+  for(i=0; i < len; i++) {
+    int u8len;
+    if (is_pho_phrase) {
+      pchpho[i].ch = utf8;
+      pchpho[i].flag |= FLAG_CHPHO_PHO_PHRASE;
+    } else {
+      u8len = utf8cpy(pchpho[i].cha, utf8);
+      pchpho[i].ch = pchpho[i].cha;
+      pchpho[i].flag &= ~FLAG_CHPHO_PHO_PHRASE;
+    }
+
+    utf8+=u8len;
+  }
+}
 
 void mask_key_typ_pho(phokey_t *key)
 {
@@ -427,7 +479,7 @@ void putkey_pho(u_short key, int idx)
 }
 
 void load_pin_juyin();
-void recreate_win1_if_nessary();
+void recreate_win1_if_necessary();
 
 void load_tab_pho_file()
 {
@@ -486,7 +538,7 @@ void load_tab_pho_file()
 
   dbg("pho_selkey %s\n", pho_selkey);
 
-  recreate_win1_if_nessary();
+  recreate_win1_if_necessary();
 #if 0
   for(i='A'; i <= 'z'; i++)
     dbg("%c %d %d\n", i, phkbm.phokbm[i][0].num, phkbm.phokbm[i][0].typ);
@@ -548,8 +600,8 @@ gboolean add_to_pho_buf(char *str, phokey_t *pho, int len)
 
   pho_st.c_len+=len;
 
-  clrin_pho_tsin();
-  disp_in_area_pho_tsin();
+  clrin_pho();
+  disp_in_area_pho();
 
   prbuf();
 

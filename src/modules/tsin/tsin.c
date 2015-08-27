@@ -48,10 +48,7 @@ static gboolean key_press_alt;
 
 void module_get_win_geom()
 {
-  if (!gwin0)
-    return;
-  gtk_window_get_position(GTK_WINDOW(gwin0), &win_x, &win_y);
-  get_win_size(gwin0, &win_xl, &win_yl);
+  get_win0_geom();
 }
 
 int module_win_visible()
@@ -126,7 +123,7 @@ gboolean add_to_tsin_buf(char *str, phokey_t *pho, int len)
   clrin_pho_tsin();
   disp_in_area_pho_tsin();
 
-  prbuf();
+  tsin_prbuf();
 
   tsin_set_fixed(tss.c_idx, len);
 #if 1
@@ -601,7 +598,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
     tss.chpho[tss.c_idx].pho=tphokeys[0];
     tss.c_idx++;
     if (tss.c_idx < tss.c_len)
-      prbuf();
+      tsin_prbuf();
 
     if (hime_pop_up_win)
       show_win0();
@@ -960,11 +957,7 @@ gboolean tsin_has_input()
 
 void disp_char(int index, char *ch);
 
-static void disp_char_chbuf(int idx)
-{
-//  dbg("disp_char_chbuf %d '%s' '%s'\n", idx, tss.chpho[idx].ch, tss.chpho[idx].cha);
-  disp_char(idx, tss.chpho[idx].ch);
-}
+
 
 static void init_chpho_i(int i)
 {
@@ -1118,11 +1111,11 @@ static void putbuf(int len)
 
 void hide_char(int index);
 
-static void prbuf()
+static void tsin_disp_char_chbuf()
 {
   int i;
 
-//  dbg("prbuf\n");
+//  dbg("tsin_prbuf\n");
   for(i=0;i<tss.c_len;i++)
     if (!(tss.chpho[i].flag & FLAG_CHPHO_PHO_PHRASE))
       tss.chpho[i].ch=tss.chpho[i].cha;
@@ -1221,7 +1214,7 @@ void compact_win0();
 
 void tsin_reset_in_pho0()
 {
-//  prbuf();
+//  tsin_prbuf();
   clr_in_area_pho_tsin();
   close_selection_win();
   hime_preedit_win_state.pre_selN = 0;
@@ -1406,7 +1399,7 @@ static void tsin_shift_ins()
     }
     tss.c_idx-=ofs;
     tss.c_len-=ofs;
-    prbuf();
+    tsin_prbuf();
   }
 
 
@@ -1428,7 +1421,7 @@ static void tsin_shift_ins()
   compact_win0();
 
 #if 0
-   prbuf();
+   tsin_prbuf();
    dbg("leave shift_ins\n");
 #endif
 }
@@ -1466,7 +1459,7 @@ static void tsin_put_u8_char(int pho_idx, phokey_t key, gboolean b_tone)
 
 #if 0
    if (tss.c_idx < tss.c_len) {
-     prbuf();
+     tsin_prbuf();
    }
 #endif
 }
@@ -1773,9 +1766,9 @@ void hide_pre_sel()
 
 static void call_tsin_parse()
 {
-  prbuf();
+  tsin_prbuf();
   tsin_parse();
-  prbuf();
+  tsin_prbuf();
 }
 
 void disp_ph_sta_idx(int idx)
@@ -1820,7 +1813,7 @@ void set_chpho_ch(CHPHO *pchpho, char *utf8, int len, gboolean is_pho_phrase)
 }
 
 
-#if 1
+
 static void set_phrase_link(int idx, int len)
 {
   int j;
@@ -1834,7 +1827,7 @@ static void set_phrase_link(int idx, int len)
 
   tss.chpho[idx].flag |= FLAG_CHPHO_PHRASE_HEAD;
 }
-#endif
+
 
 
 // should be used only if it is a real phrase
@@ -1874,7 +1867,7 @@ gboolean add_to_tsin_buf_phsta(char *str, phokey_t *pho, int len)
   clrin_pho_tsin();
   disp_in_area_pho_tsin();
 
-  prbuf();
+  tsin_prbuf();
 #if 1
   set_phrase_link(idx, len);
 #endif
@@ -2161,7 +2154,7 @@ int tsin_pho_sel(int c)
   }
 
   if (len) {
-    prbuf();
+    tsin_prbuf();
     tss.current_page=tss.sel_pho= pho_st.ityp3_pho=0;
     if (len == 1) {
       hide_selections_win();

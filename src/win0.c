@@ -424,7 +424,6 @@ static void mouse_button_callback( GtkWidget *widget,GdkEventButton *event, gpoi
 
 
 void hime_toggle_eng_ch();
-void set_no_focus();
 
 
 void create_win0()
@@ -472,7 +471,7 @@ static void create_cursor_attr()
   pango_attr_list_insert (attr_list, white_fg);
 }
 
-void init_tsin_selection_win();
+void init_hime_selection_win();
 
 static void set_win0_bg()
 {
@@ -550,7 +549,7 @@ static void create_win0_gui()
 //  gdk_flush();
   gtk_widget_hide(gwin0);
 
-  init_tsin_selection_win();
+  init_hime_selection_win();
 
   set_win0_bg();
 
@@ -624,6 +623,12 @@ void show_win0()
   }
 }
 
+static void disp_char_chbuf(int idx)
+{
+//  dbg("disp_char_chbuf %d '%s' '%s'\n", idx, tss.chpho[idx].ch, tss.chpho[idx].cha);
+  disp_char(idx, tss.chpho[idx].ch);
+}
+
 void hide_selections_win();
 void hide_win0()
 {
@@ -643,44 +648,7 @@ void hide_win0()
 void bell();
 
 
-#if USE_TSIN
-void change_tsin_font_size()
-{
-  if (!top_bin)
-    return;
 
-  GdkColor fg;
-  gdk_color_parse(hime_win_color_fg, &fg);
-
-  set_label_font_size(label_pho, hime_font_size_tsin_pho_in);
-
-  int i;
-  for(i=0; i < MAX_PH_BF_EXT; i++) {
-    GtkWidget *label = chars[i].label;
-    if (!label)
-      continue;
-
-    set_label_font_size(label, hime_font_size);
-
-    if (hime_win_color_use) {
-#if !GTK_CHECK_VERSION(2,91,6)
-      gtk_widget_modify_fg(label, GTK_STATE_NORMAL, &fg);
-#else
-      GdkRGBA rgbfg;
-      gdk_rgba_parse(&rgbfg, gdk_color_to_string(&fg));
-      gtk_widget_override_color(label, GTK_STATE_FLAG_NORMAL, &rgbfg);
-#endif
-    }
-  }
-
-  compact_win0();
-
-//  change_win1_font();
-
-  set_win0_bg();
-//  change_tsin_line_color();
-}
-#endif
 
 
 

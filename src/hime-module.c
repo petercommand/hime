@@ -25,7 +25,7 @@
 #include "win-sym.h"
 #include "eve.h"
 
-void init_tsin_selection_win(),disp_selections(int x, int y),hide_selections_win();
+void init_hime_selection_win(),disp_selections(int x, int y),hide_selections_win();
 void disp_arrow_up(),disp_arrow_down(), set_hime_pho_mode();
 void set_sele_text(int tN, int i, char *text, int len);
 void hime_set_eng_ch(int nmod);
@@ -45,7 +45,7 @@ void init_HIME_module_main_functions(HIME_module_main_functions *func)
   func->mf_move_win_sym = move_win_sym;
   func->mf_toggle_win_sym = toggle_win_sym;
 
-  func->mf_init_tsin_selection_win = init_tsin_selection_win;
+  func->mf_init_hime_selection_win = init_hime_selection_win;
   func->mf_clear_sele = clear_sele;
   func->mf_disp_selections = disp_selections;
   func->mf_hide_selections_win = hide_selections_win;

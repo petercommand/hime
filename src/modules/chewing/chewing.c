@@ -550,7 +550,7 @@ module_init_win (HIME_module_main_functions *pFuncs)
 
     gtk_widget_show_all (g_pWinChewing);
 
-    g_himeModMainFuncs.mf_init_tsin_selection_win ();
+    g_himeModMainFuncs.mf_init_hime_selection_win();
 
     module_change_font_size ();
 

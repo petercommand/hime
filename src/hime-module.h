@@ -29,8 +29,8 @@ typedef struct {
   void (*mf_move_win_sym)();
   void (*mf_toggle_win_sym)();
 
-  // display in tsin's selection window
-  void (*mf_init_tsin_selection_win)();
+  // display in win1
+  void (*mf_init_hime_selection_win)();
   void (*mf_clear_sele)();
   void (*mf_disp_selections)(int x, int y);
   void (*mf_hide_selections_win)();

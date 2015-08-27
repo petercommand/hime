@@ -334,7 +334,7 @@ void set_gtab_input_method_name(char *s)
 }
 
 gboolean use_tsin_sel_win();
-void init_tsin_selection_win();
+void init_hime_selection_win();
 
 void create_win_gtab()
 {
@@ -349,7 +349,7 @@ void create_win_gtab()
   set_no_focus(gwin_gtab);
 
   if (use_tsin_sel_win())
-    init_tsin_selection_win();
+    init_hime_selection_win();
 }
 
 void exec_hime_setup();

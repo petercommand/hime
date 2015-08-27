@@ -972,7 +972,7 @@ void get_win_gtab_geom();
 void disp_selections(int x, int y);
 
 gboolean use_tsin_sel_win();
-void init_tsin_selection_win();
+void init_hime_selection_win();
 
 static int gtab_pre_select_phrase_len;
 
@@ -1037,7 +1037,7 @@ void gtab_scan_pre_select(gboolean b_incr)
 	if (gwin1)
       clear_sele();
 	else
-      init_tsin_selection_win();
+      init_hime_selection_win();
 
     int i;
     for(i=0;i<hime_preedit_win_state.pre_selN; i++)

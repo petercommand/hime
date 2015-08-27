@@ -1299,7 +1299,7 @@ int module_init_win(HIME_module_main_functions *funcs)
 
   gtk_widget_show_all(win_anthy);
 
-  gmf.mf_init_tsin_selection_win();
+  gmf.mf_init_hime_selection_win();
 
   module_change_font_size();
 

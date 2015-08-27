@@ -40,8 +40,8 @@ chewing-module.so: $(chewing_module_obj) $(chewing_module_so)
 tsin-module_obj = tsin/phrase-save-menu.pico
 tsin-module_so = tsin/tsin.pico
 tsin-module.so: $(tsin_module_so)
- 	@echo "linking $@ ..."
- 	@$(CCLD) $(SO_FLAGS) -o $@ $(tsin_module_obj) $(tsin_module_so) $(LDFLAGS)
+	@echo "linking $@ ..."
+	@$(CCLD) $(SO_FLAGS) -o $@ $(tsin_module_obj) $(tsin_module_so) $(LDFLAGS)
 
 
 install:

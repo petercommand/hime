@@ -213,7 +213,7 @@ void create_win1_gui()
   change_win1_font();
 }
 
-void init_tsin_selection_win()
+void init_hime_selection_win()
 {
   create_win1();
   create_win1_gui();
@@ -352,7 +352,6 @@ void disp_arrow_down()
   gtk_widget_show(arrow_down);
 }
 
-#if USE_TSIN
 void destroy_win1()
 {
   if (!gwin1)
@@ -361,7 +360,7 @@ void destroy_win1()
   frame=NULL;
   gwin1 = NULL;
 }
-#endif
+
 
 void change_win1_font()
 {
@@ -398,7 +397,7 @@ void change_win1_font()
   change_win_bg(gwin1);
 }
 
-void recreate_win1_if_nessary()
+void recreate_win1_if_necessary()
 {
 //  dbg("%x %x\n", current_config(), c_config);
 
@@ -425,6 +424,6 @@ void set_wselkey(char *s)
     memset (wselkey, 0x00, 16);
     memcpy (wselkey, s, strlen (s));
     wselkeyN = strlen (s);
-    recreate_win1_if_nessary ();
+    recreate_win1_if_necessary();
   }
 }
