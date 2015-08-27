@@ -1,3 +1,7 @@
+#include <sys/types.h>
+#include "../../pho.h"
+#include "../../hime.h"
+
 /* Copyright (C) 2010 Edward Der-Hua Liu, Hsin-Chu, Taiwan
  *
  * This library is free software; you can redistribute it and/or

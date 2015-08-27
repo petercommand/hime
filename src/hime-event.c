@@ -3,6 +3,7 @@
 #include "hime-event.h"
 #include "hime-module-cb.h"
 #include "eve.h"
+#include "gtab.h"
 
 static event_list* event_notify_list[HIME_EVENT_N];
 
@@ -71,15 +72,42 @@ void hime_event_connect(HIME_EVENT_TYPE event, HIME_EVENT_HANDLER_RETURN_TYPE (*
 }
 
 
+int hime_event_module_dispatch(HIME_EVENT event, INMD* input_method, void (*default_handler)()) {
+  //This function is similiar to hime_event_current_module_dispatch, however, it uses the given input_method instead of the give current_CS input method
 
-int hime_event_module_dispatch(HIME_EVENT event, void (*default_handler)()) {
+  if(!(input_method->mod_cb_funcs =init_HIME_module_callback_functions(input_method))) {
+    if(default_handler) {
+      default_handler();
+    }
+    return 0;
+  }
+  if(input_method->mod_cb_funcs->module_event_handler) {
+    if(!input_method->mod_cb_funcs->module_event_handler(event)) {
+      if(default_handler != NULL) {
+        default_handler();
+      }
+      return 0;
+    }
+    else {
+      return 1;
+    }
+  }
+  else {
+    if(default_handler != NULL) {
+      default_handler();
+    }
+    return 0;
+  }
+}
+
+int hime_event_current_module_dispatch(HIME_EVENT event, void (*default_handler)()) {
   //This function uses module_cb() from eve.c, make sure that current_CS is valid, current input method is a module, and that the module has been initialized before using this function
   //Dispatches the optional event to currently loaded module, if target returns false, default_handler is called
   //default_handler can be null if there is no default action
   //return false if the module want the default_handler to be evaluated, or the module does not implement module_event_handler()
   //return true if the module return true from module_event_handler, which means that default_handler is not called
   if(module_cb()->module_event_handler) {
-    if(!module_cb()->module_event_handler(event)) {//false
+    if(module_cb()->module_event_handler(event) == HIME_EVENT_RETURN_NOT_PROCESSED) {//false
       if (default_handler != NULL) {
         default_handler();
       }

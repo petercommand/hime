@@ -22,6 +22,8 @@
 #include "gst.h"
 #include "lang.h"
 #include "modules/tsin/tsin.h"
+#include "../../hime.h"
+#include "../../pho.h"
 
 int hashidx[TSIN_HASH_N];
 //static int *phidx;
@@ -235,7 +237,7 @@ static int phseq(u_char *a, u_char *b)
   return 0;
 }
 
-void inc_dec_tsin_use_count(void *pho, char *ch, int N);
+
 
 static gboolean saved_phrase;
 

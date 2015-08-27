@@ -484,7 +484,7 @@ void set_hime_pho_mode()
     HIME_EVENT event;
     event.type = HIME_INPUT_METHOD_ENGINE_EVENT_TYPE;
     event.input_method_engine_event.type = HIME_SET_PHO_MODE;
-    hime_event_module_dispatch(event, NULL);
+    hime_event_current_module_dispatch(event, NULL);
   }
 }
 void move_in_win(ClientState *cs, int x, int y)
@@ -781,7 +781,7 @@ void toggle_im_enabled()
         HIME_EVENT event;
         event.type = HIME_INPUT_METHOD_ENGINE_EVENT_TYPE;
         event.input_method_engine_event.type = HIME_SET_EN_CH;
-        hime_event_module_dispatch(event, NULL);
+        hime_event_current_module_dispatch(event, NULL);
       }
 #if TRAY_ENABLED
       disp_tray_icon();
@@ -888,7 +888,7 @@ void init_tab_pho();
 
 extern char *TableDir;
 void set_gtab_input_method_name(char *s);
-HIME_module_callback_functions *init_HIME_module_callback_functions(char *sofile);
+
 time_t find_tab_file(char *fname, char *out_file);
 
 
@@ -928,16 +928,11 @@ gboolean init_in_method(int in_no)
     {
       HIME_module_main_functions gmf;
       init_HIME_module_main_functions(&gmf);
-      if (!inmd[in_no].mod_cb_funcs) {
-        char module_filename[256];
-        strcpy(module_filename, inmd[in_no].filename);
-
-        dbg("module %s\n", module_filename);
-        if (!(inmd[in_no].mod_cb_funcs = init_HIME_module_callback_functions(module_filename))) {
-          dbg("module not found\n");
-          return FALSE;
-        }
+      if (!(inmd[in_no].mod_cb_funcs = init_HIME_module_callback_functions(&inmd[in_no]))) {
+        dbg("module not found\n");
+        return FALSE;
       }
+
 
       if (inmd[in_no].mod_cb_funcs->module_init_win(&gmf)) {
         current_CS->in_method = in_no;
@@ -1393,7 +1388,7 @@ gboolean ProcessKeyPress(KeySym keysym, u_int kev_state)
     HIME_EVENT event;
     event.type = HIME_INPUT_METHOD_ENGINE_EVENT_TYPE;
     event.input_method_engine_event.type = HIME_DESTROY_PHRASE_SAVE_MENU;
-    hime_event_module_dispatch(event, NULL);
+    hime_event_current_module_dispatch(event, NULL);
   }
 
   disp_win_kbm_capslock();
@@ -1816,7 +1811,7 @@ void hime_set_eng_ch(int nmod) {
     HIME_EVENT event;
     event.type = HIME_INPUT_METHOD_ENGINE_EVENT_TYPE;
     event.input_method_engine_event.type = HIME_SET_EN_CH;
-    hime_event_module_dispatch(event, NULL);
+    hime_event_current_module_dispatch(event, NULL);
   }
 
 

@@ -30,7 +30,7 @@ typedef unsigned int u_int32_t;
 
 void init_TableDir();
 void init_gtab(int inmdno);
-gboolean init_tsin_table_fname(INMD *p, char *fname);
+gboolean init_phrase_table_fname(INMD *p, char *fname);
 void load_tsin_db0(char *infname, gboolean is_gtab_i);
 
 INMD *pinmd;
@@ -444,7 +444,7 @@ int main(int argc, char **argv)
     dbg("gtab filename %s\n", pinmd->filename);
     init_gtab(default_input_method);
     is_gtab = TRUE;
-    init_tsin_table_fname(pinmd, gtab_tsin_fname);
+    init_phrase_table_fname(pinmd, gtab_tsin_fname);
     load_tsin_db0(gtab_tsin_fname, TRUE);
   } else
     p_err("Your default input method %s doesn't use phrase database",

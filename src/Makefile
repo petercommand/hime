@@ -22,7 +22,7 @@ hime_event_o = hime-event.o
 
 OBJS      = hime.o eve.o util.o hime-conf.o hime-settings.o locale.o \
 	hime-icon.o about.o \
-	hime-exec-script.o pho-play.o cache.o gtk_bug_fix.o \
+	hime-exec-script.o pho-play.o gtk_bug_fix.o \
 	$(hime_pho_o) $(hime_gtab_o) $(hime_signal_o) $(hime_event_o)\
 	hime-common.o phrase.o t2s-lookup.o gtab-use-count.o \
 	unix-exec.o pho-kbm-name.o statistic.o \
@@ -31,7 +31,7 @@ OBJS      = hime.o eve.o util.o hime-conf.o hime-settings.o locale.o \
 	win-message.o win-sym.o win-inmd-switch.o pinyin.o \
 	win-pho-near.o win-kbm.o pho2pinyin.o
 
-OBJS_TSLEARN = hime-tslearn.o util.o hime-conf.o pho-util.o tsin-util.o \
+OBJS_TSLEARN = hime-tslearn.o util.o hime-conf.o pho-util.o \
 	pho-sym.o table-update.o locale.o \
 	hime-settings.o hime-common.o hime-icon.o pho-dbg.o \
 	pho2pinyin.o pinyin.o lang.o gtab-list.o gtab-init.o fullchar.o \
@@ -105,14 +105,14 @@ CFLAGS     += -DHIME_i18n_message=1
 endif
 
 ifeq ($(USE_TSIN),Y)
-hime_tsin_o = tsin-util.o hime_preedit_win.o hime_selection_win.o tsin-parse.o
+hime_tsin_o = hime_preedit_win.o hime_selection_win.o
 CFLAGS     += -DUSE_TSIN=1
 OBJS       += $(hime_tsin_o)
 endif
 
 # Temporary workaround to turn off Tsin, will be fixed later
 ifeq ($(USE_TSIN),N)
-OBJS       += tsin-util.o hime_preedit_win.o hime_selection_win.o tsin-parse.o
+OBJS       += hime_preedit_win.o hime_selection_win.o
 endif
 
 ifeq ($(MAC_OS),1)

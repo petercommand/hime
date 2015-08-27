@@ -111,7 +111,7 @@ static void mouse_char_callback( GtkWidget *widget,GdkEventButton *event, gpoint
         HIME_EVENT event;
         event.type = HIME_INPUT_METHOD_ENGINE_EVENT_TYPE;
         event.input_method_engine_event.type = HIME_CREATE_PHRASE_SAVE_MENU;
-        hime_event_module_dispatch(event, NULL);
+        hime_event_current_module_dispatch(event, NULL);
       }
       break;
     }

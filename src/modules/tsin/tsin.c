@@ -41,6 +41,8 @@
 #include "../../pho-status.h"
 #include "phrase-save-menu.h"
 #include "../../hime_preedit_win.h"
+#include "../../gtab.h"
+#include "tsin-util.h"
 
 extern GtkWidget *gwin_int;
 static HIME_module_main_functions gmf;
@@ -880,6 +882,12 @@ int module_event_handler(HIME_EVENT event)
     case HIME_HALF_FULL_EVENT_TYPE:
       return 0;//not handled
       break;
+    case HIME_INCREASE_USE_COUNT_EVENT_TYPE: {
+      HIME_INCREASE_USE_COUNT_EVENT inc_event = event.increase_use_count_event;
+      if(inc_event.source->method_type == method_type_GTAB) {
+        inc_dec_tsin_use_count(inc_event.pho, inc_event.ch, inc_event.len);
+      }
+    }
     case HIME_INPUT_METHOD_ENGINE_EVENT_TYPE: {
       switch (event.input_method_engine_event.type) {
         case HIME_SET_EN_CH:

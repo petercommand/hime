@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "hime.h"
+#include "gtab.h"
 
 typedef enum {
   HIME_EVENT_RETURN_NOT_PROCESSED=0,
@@ -13,6 +14,7 @@ typedef enum {
 
 typedef enum {
   HIME_INPUT_METHOD_ENGINE_EVENT_TYPE,
+  HIME_INCREASE_USE_COUNT_EVENT_TYPE,
   HIME_INPUT_METHOD_EVENT_TYPE,
   HIME_KEY_EVENT_TYPE,
   HIME_PREEDIT_EVENT_TYPE,
@@ -31,6 +33,17 @@ typedef enum {
 typedef struct HIME_INPUT_METHOD_ENGINE_EVENT {
   HIME_INPUT_METHOD_ENGINE_EVENT_SUBTYPE type;
 } HIME_INPUT_METHOD_ENGINE_EVENT;
+
+
+
+
+typedef struct HIME_INCREASE_USE_COUNT_EVENT {
+  INMD* source;
+  void* pho;
+  char* ch;
+  int len;
+} HIME_INCREASE_USE_COUNT_EVENT;
+
 
 typedef enum {
   HIME_KEY_PRESS,
@@ -65,6 +78,7 @@ typedef struct HIME_EVENT {
   HIME_EVENT_TYPE type;
   union {
     HIME_INPUT_METHOD_ENGINE_EVENT input_method_engine_event;
+    HIME_INCREASE_USE_COUNT_EVENT increase_use_count_event;
     HIME_KEY_EVENT key_event;
     HIME_PREEDIT_EVENT preedit_event;
     HIME_HALF_FULL_CHANGED_EVENT half_full_event;
@@ -95,7 +109,8 @@ void event_list_free(event_list* list);
 
 void hime_event_connect(HIME_EVENT_TYPE event, HIME_EVENT_HANDLER_RETURN_TYPE (*func_cb) (HIME_EVENT, void*), void*);
 int hime_event_dispatch(HIME_EVENT event);
-int hime_event_module_dispatch(HIME_EVENT event, void (*default_handler)());
+int hime_event_module_dispatch(HIME_EVENT event, INMD* input_method, void (*default_handler)());
+int hime_event_current_module_dispatch(HIME_EVENT event, void (*default_handler)());
 
 
 

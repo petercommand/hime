@@ -37,8 +37,22 @@
 	*(void **) (&st.fn) = dlsym(handle, # fn); \
 	if(st.fn == NULL) { dbg("[W] %s doesn't provide callback: %s\n", sofile, # fn); } } while(0)
 
+HIME_module_callback_functions *init_HIME_module_callback_functions_(char *sofile);
 
-HIME_module_callback_functions *init_HIME_module_callback_functions(char *sofile)
+HIME_module_callback_functions *init_HIME_module_callback_functions(INMD *inmd) {
+  if (!inmd->mod_cb_funcs) {
+    char module_filename[256];
+    strcpy(module_filename, inmd->filename);
+    dbg("module %s\n", module_filename);
+    if (!(inmd->mod_cb_funcs = init_HIME_module_callback_functions_(module_filename))) {
+      dbg("module not found\n");
+      return NULL;
+    }
+  }
+  return inmd->mod_cb_funcs;
+}
+
+HIME_module_callback_functions *init_HIME_module_callback_functions_(char *sofile)
 {
   void *handle;
   char *error;

@@ -62,4 +62,6 @@ typedef struct _HIME_module_callback_functions {
   void (*module_setup_window_create)();
 } HIME_module_callback_functions;
 
+HIME_module_callback_functions *init_HIME_module_callback_functions(INMD *inmd);
+
 #endif //HIME_MODULE_CB_H

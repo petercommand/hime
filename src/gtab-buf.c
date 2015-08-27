@@ -20,12 +20,15 @@
 #include "hime-conf.h"
 #include "hime-endian.h"
 #include "pho.h"
-#include "tsin-parse.h"
 #include "win-save-phrase.h"
 #include "gtab-buf.h"
 #include "gst.h"
 #include "chpho.h"
-#include "tsin-util.h"
+#include "hime-event.h"
+#include "hime-client-state.h"
+#include "modules/tsin/tsin-util.h"
+#include "modules/tsin/tsin-parse.h"
+
 
 void disp_gbuf(), ClrIn(), clear_after_put();
 gboolean gtab_phrase_on();
@@ -33,7 +36,7 @@ int page_len();
 void show_win_gtab();
 void disp_selection0(gboolean phrase_selected, gboolean force_disp);
 void disp_gtab_sel(char *s);
-void add_cache(int start, int usecount, TSIN_PARSE *out, short match_phr_N, short no_match_ch_N, int tc_len);
+
 int ch_pos_find(char *ch, int pos);
 void inc_gtab_usecount(char *str), ClrSelArea();
 void lookup_gtabn(char *ch, char *out);
@@ -348,20 +351,30 @@ gboolean output_gbuf()
 
   int i;
   for(i=0; i < gtab_st.gbufN;) {
-    char t[MAX_CIN_PHR+1];
-    t[0]=0;
+    char ch[MAX_CIN_PHR+1];
+    ch[0]=0;
     inc_gtab_use_count(gbuf[i].ch);
 
     int j;
     for(j=i; j < i+gbuf[i].plen; j++)
-      strcat(t, gbuf[j].ch);
+      strcat(ch, gbuf[j].ch);
 
     if (!gbuf[i].plen)
       i++;
     else {
-      u_int64_t kk[MAX_PHRASE_LEN];
-	  extract_gtab_key(i, gbuf[i].plen, kk);
-	  inc_dec_tsin_use_count(kk, t, gbuf[i].plen);
+      u_int64_t pho[MAX_PHRASE_LEN];
+	  extract_gtab_key(i, gbuf[i].plen, pho);
+      HIME_EVENT event;
+      event.type = HIME_INCREASE_USE_COUNT_EVENT_TYPE;
+      event.increase_use_count_event.source = &inmd[current_CS->in_method];
+      event.increase_use_count_event.pho = pho;
+      event.increase_use_count_event.ch = ch;
+      event.increase_use_count_event.len = gbuf[i].plen;
+      int j;
+      for(j=0;j<inmdN;j++) {
+        hime_event_module_dispatch(event, event.increase_use_count_event.source, NULL);
+      }
+
       i+=gbuf[i].plen;
     }
   }
@@ -952,7 +965,7 @@ gboolean save_gtab_buf_shift_enter()
 
 
 void load_tsin_db0(char *infname, gboolean is_gtab_i);
-gboolean init_tsin_table_fname(INMD *p, char *fname);
+gboolean init_phrase_table_fname(INMD *p, char *fname);
 
 void init_tsin_table()
 {
@@ -960,7 +973,7 @@ void init_tsin_table()
   if (!current_CS)
     return;
 
-  init_tsin_table_fname(&inmd[current_CS->in_method], fname);
+  init_phrase_table_fname(&inmd[current_CS->in_method], fname);
   load_tsin_db0(fname, TRUE);
 }
 
