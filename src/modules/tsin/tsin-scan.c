@@ -15,15 +15,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <string.h>
+#include <glib.h>
 #include "hime.h"
 #include "pho.h"
 
 #include "gtab.h"
 #include "gst.h"
-#include "win0.h"
+#include "hime_preedit_win.h"
 #include "tsin-util.h"
 #include "modules/tsin/tsin.h"
 #include "chpho.h"
+#include "../../hime_preedit_win.h"
+#include "../../tsin-util.h"
+#include "tsin.h"
 
 static int qcmp_pre_sel_usecount(const void *aa, const void *bb)
 {

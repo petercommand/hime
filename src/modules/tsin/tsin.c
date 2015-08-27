@@ -28,18 +28,19 @@
 #include "gst.h"
 #include "gtab.h"
 #include "pho-status.h"
-#include "win1.h"
+#include "hime_selection_win.h"
 #include "../../hime-module.h"
 #include "../../hime.h"
-#include "../../win0.h"
+#include "hime_preedit_win.h"
 #include "../../hime-client-state.h"
 #include "../../hime-event.h"
-#include "../../win1.h"
+#include "hime_selection_win.h"
 #include "../../eve.h"
 #include "../../chpho.h"
 
 #include "../../pho-status.h"
 #include "phrase-save-menu.h"
+#include "../../hime_preedit_win.h"
 
 extern GtkWidget *gwin_int;
 static HIME_module_main_functions gmf;
@@ -48,24 +49,24 @@ static gboolean key_press_alt;
 
 void module_get_win_geom()
 {
-  get_win0_geom();
+  get_hime_preedit_win_geom();
 }
 
 int module_win_visible()
 {
-  return gwin0 && GTK_WIDGET_VISIBLE(gwin0);
+  return hime_preedit_win_handle && GTK_WIDGET_VISIBLE(hime_preedit_win_handle);
 }
 
 void module_move_win(int x, int y)
 {
-  move_win0(x, y);
+  move_hime_preedit_win(x, y);
 }
 
 
 
 void module_show_win()
 {
-  show_win0();
+  show_hime_preedit_win();
 }
 
 
@@ -93,7 +94,7 @@ int module_init_win(HIME_module_main_functions *funcs)
     clear_ch_buf_sel_area();
 
   if (!hime_pop_up_win)
-    show_win0();
+    module_show_win();
   return TRUE;
 }
 
@@ -198,7 +199,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
   }
 
   if (!hime_pho_mode() && !tss.c_len && hime_pop_up_win && xkey!=XK_Caps_Lock) {
-    hide_win0();
+    hide_hime_preedit_win();
     gboolean is_ascii = (xkey>=' ' && xkey<0x7f) && !ctrl_m;
 
     if (caps_eng_tog && is_ascii) {
@@ -441,7 +442,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
           if (tss.c_len) {
             clear_tsin_buffer();
             if (hime_pop_up_win)
-              hide_win0();
+              hide_hime_preedit_win();
             return 1;
           } else
             return 0;
@@ -601,7 +602,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
       tsin_prbuf();
 
     if (hime_pop_up_win)
-      show_win0();
+      show_hime_preedit_win();
 
     drawcursor();
     return 1;
@@ -620,7 +621,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
   llll1:
   status = inph_typ_pho(xkey);
   if (hime_pop_up_win)
-    show_win0();
+    show_hime_preedit_win();
 
   if (pho_st.typ_pho[3] || (status&PHO_STATUS_OK_NEW))
     ctyp = 3;
@@ -773,7 +774,7 @@ int module_get_preedit(char *str, HIME_PREEDIT_ATTR attr[], int *cursor, int *co
 
   *cursor = tss.c_idx;
   *comp_flag = !typ_pho_empty();
-  if (gwin1 && GTK_WIDGET_VISIBLE(gwin1))
+  if (ghime_selection_win && GTK_WIDGET_VISIBLE(ghime_selection_win))
     *comp_flag|=2;
   if (tss.c_len && !ap_only)
     *comp_flag|=4;
@@ -819,11 +820,11 @@ int module_flush_input()
   tsin_reset_in_pho();
 
   if (hime_pop_up_win)
-    hide_win0();
+    hide_hime_preedit_win();
 
   if (tss.c_len) {
     putbuf(tss.c_len);
-    compact_win0();
+    compact_hime_preedit_win();
     clear_ch_buf_sel_area();
     clear_tsin_buffer();
     return;
@@ -837,12 +838,12 @@ void
 module_hide_win()
 {
   hide_win_kbm();
-  hide_win0();
+  hide_hime_preedit_win();
 }
 
 int module_reset()
 {
-  if (!gwin0)
+  if (!hime_preedit_win_handle)
     return 0;
   int v = tss.c_len > 0;
   tsin_reset_in_pho0();
@@ -851,12 +852,12 @@ int module_reset()
   return v;
 }
 
-void module_set_win1_cb()
+void module_set_hime_selection_win_cb()
 {
-  set_win1_cb((cb_selec_by_idx_t)tsin_sele_by_idx, (cb_page_ud_t)tsin_page_up, (cb_page_ud_t)tsin_page_down);
+  set_hime_selection_win_cb((cb_selec_by_idx_t)tsin_sele_by_idx, (cb_page_ud_t)tsin_page_up, (cb_page_ud_t)tsin_page_down);
 }
 
-void moudule_set_win0_cb()
+void moudule_set_hime_preedit_win_cb()
 {
 
 }
@@ -867,7 +868,7 @@ static void clrin_pho_tsin()
   clrin_pho();
 
   if (!tsin_has_input() && hime_pop_up_win)
-    hide_win0();
+    hide_hime_preedit_win();
 }
 
 void show_tsin_stat()
@@ -909,7 +910,7 @@ int module_event_handler(HIME_EVENT event)
 
 
 
-extern GtkWidget *gwin1;
+extern GtkWidget *hime_selection_win_handle;
 gboolean key_press_alt, key_press_ctrl;
 extern gboolean b_hsu_kbm;
 extern gboolean test_mode;
@@ -927,7 +928,7 @@ extern PHOKBM phkbm;
 extern int hashidx[TSIN_HASH_N];
 // gboolean eng_ph=TRUE;  // english(FALSE) <-> pho(juyin, TRUE)
 
-void clrin_pho(), hide_win0();
+void clrin_pho(), hide_hime_preedit_win();
 void show_tsin_stat();
 void save_CS_current_to_temp();
 
@@ -1209,7 +1210,7 @@ static void clear_tsin_buffer()
 
 void clr_in_area_pho_tsin();
 void close_win_pho_near();
-void compact_win0();
+void compact_preedit_win();
 
 
 void tsin_reset_in_pho0()
@@ -1418,7 +1419,7 @@ static void tsin_shift_ins()
   }
 
   tss.c_len++;
-  compact_win0();
+  compact_preedit_win();
 
 #if 0
    tsin_prbuf();
@@ -2084,7 +2085,7 @@ static int cursor_backspace()
     tsin_scan_pre_select(TRUE);
 
     if (!tss.c_len && hime_pop_up_win && typ_pho_empty())
-      hide_win0();
+      hide_hime_preedit_win();
     return 1;
   }
 
@@ -2105,7 +2106,7 @@ static int cursor_backspace()
   tss.c_len--;
   init_chpho_i(tss.c_len);
   call_tsin_parse();
-  compact_win0();
+  compact_preedit_win();
 
   if (!tss.c_idx) {
     clear_match();
@@ -2116,7 +2117,7 @@ static int cursor_backspace()
   disp_ph_sta();
 
   if (!tss.c_len && hime_pop_up_win)
-    hide_win0();
+    hide_hime_preedit_win();
 
   return 1;
 }
@@ -2301,7 +2302,7 @@ int tsin_get_preedit(char *str, HIME_PREEDIT_ATTR attr[], int *cursor, int *comp
 
   *cursor = tss.c_idx;
   *comp_flag = !typ_pho_empty();
-  if (gwin1 && GTK_WIDGET_VISIBLE(gwin1))
+  if (hime_selection_win_handle && GTK_WIDGET_VISIBLE(hime_selection_win_handle))
     *comp_flag|=2;
 #if 1
   if (tss.c_len && !ap_only)

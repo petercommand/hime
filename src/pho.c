@@ -456,7 +456,7 @@ gboolean is_gtab_query_mode();
 void set_gtab_target_displayed();
 
 #include "gtab-buf.h"
-#include "win0.h"
+#include "hime_preedit_win.h"
 
 void putkey_pho(u_short key, int idx)
 {
@@ -479,7 +479,7 @@ void putkey_pho(u_short key, int idx)
 }
 
 void load_pin_juyin();
-void recreate_win1_if_necessary();
+void recreate_hime_selection_win_if_necessary();
 
 void load_tab_pho_file()
 {
@@ -538,7 +538,7 @@ void load_tab_pho_file()
 
   dbg("pho_selkey %s\n", pho_selkey);
 
-  recreate_win1_if_necessary();
+  recreate_hime_selection_win_if_necessary();
 #if 0
   for(i='A'; i <= 'z'; i++)
     dbg("%c %d %d\n", i, phkbm.phokbm[i][0].num, phkbm.phokbm[i][0].typ);
@@ -621,7 +621,7 @@ gboolean add_to_pho_buf(char *str, phokey_t *pho, int len)
   pho_st.ph_sta=-1;
 
   if (hime_pop_up_win)
-    show_win0();
+    show_hime_preedit_win();
 
   return TRUE;
 }

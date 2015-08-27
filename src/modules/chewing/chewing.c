@@ -484,7 +484,7 @@ module_init_win (HIME_module_main_functions *pFuncs)
     g_himeModMainFuncs = *pFuncs;
 
     g_himeModMainFuncs.mf_set_hime_pho_mode();
-    g_himeModMainFuncs.mf_set_win1_cb ((cb_selec_by_idx_t)select_idx,
+    g_himeModMainFuncs.mf_set_hime_selection_win_cb ((cb_selec_by_idx_t)select_idx,
                                         prev_page,
                                         next_page);
 

@@ -66,9 +66,9 @@ void *memdup(void *p, int n);
 extern Display *dpy;
 
 extern char *TableDir;
-extern GtkWidget *gwin0;
-extern GdkWindow *gdkwin0;
-extern Window xwin0;
+extern GtkWidget *hime_preedit_win_handle;
+extern GdkWindow *gdkhime_preedit_win;
+extern Window xhime_preedit_win;
 extern Window root;
 void loadIC();
 IC *FindIC(CARD16 icid);

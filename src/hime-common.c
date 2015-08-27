@@ -134,9 +134,9 @@ void set_no_focus(GtkWidget *win)
 #if !USE_TSIN
 void change_tsin_color(){}
 void change_tsin_font_size(){}
-void change_win0_style(){}
-void destroy_win0(){}
-void destroy_win1(){}
+void change_hime_preedit_win_style(){}
+void destroy_hime_preedit_win(){}
+void destroy_hime_selection_win(){}
 void free_tsin(){}
 void load_tsin_db(){}
 void tsin_reset_in_pho(){}

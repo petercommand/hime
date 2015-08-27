@@ -29,7 +29,7 @@ typedef struct {
   void (*mf_move_win_sym)();
   void (*mf_toggle_win_sym)();
 
-  // display in win1
+  // display in hime_selection_win
   void (*mf_init_hime_selection_win)();
   void (*mf_clear_sele)();
   void (*mf_disp_selections)(int x, int y);

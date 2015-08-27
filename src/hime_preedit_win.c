@@ -18,7 +18,7 @@
 #include "hime.h"
 #include "pho.h"
 #include "win-sym.h"
-#include "win0.h"
+#include "hime_preedit_win.h"
 #include "hime-client-state.h"
 #include "gtab.h"
 #include "hime-event.h"
@@ -32,8 +32,8 @@ int destroy_window = TRUE;
 int destroy_window = FALSE;
 #endif
 
-GtkWidget *gwin0 = NULL;
-extern GtkWidget *gwin1;
+GtkWidget *hime_preedit_win_handle = NULL;
+extern GtkWidget *hime_selection_win_handle;
 extern Display *dpy;
 static GtkWidget *top_bin;
 int current_hime_inner_frame;
@@ -42,9 +42,9 @@ static GtkWidget *hbox_edit;
 static PangoAttrList* attr_list, *attr_list_blank;
 extern gboolean test_mode;
 
-void compact_win0();
-void move_win0(int x, int y);
-void get_win0_geom();
+void compact_preedit_win();
+void move_hime_preedit_win(int x, int y);
+void get_hime_preedit_win_geom();
 
 static struct {
   GtkWidget *vbox;
@@ -61,18 +61,18 @@ extern int text_pho_N;
 static GtkWidget *button_eng_ph;
 //static int max_yl;
 
-static void create_win0_gui();
+static void create_hime_preedit_win_gui();
 
-static void recreate_win0()
+static void recreate_hime_preedit_win()
 {
   bzero(chars, sizeof(chars));
   label_pho = NULL;
 
-  create_win0_gui();
+  create_hime_preedit_win_gui();
 }
 
 #if USE_TSIN
-void change_win0_style()
+void change_hime_preedit_win_style()
 {
   if (!top_bin || current_hime_inner_frame == hime_inner_frame)
     return;
@@ -81,7 +81,7 @@ void change_win0_style()
   top_bin = NULL;
 
   current_hime_inner_frame = hime_inner_frame;
-  recreate_win0();
+  recreate_hime_preedit_win();
 }
 #endif
 
@@ -171,14 +171,14 @@ extern gboolean b_use_full_space;
 
 void set_label_space(GtkWidget *label);
 
-void show_win0();
+void show_hime_preedit_win();
 
 void disp_char(int index, char *ch)
 {
   if (hime_edit_display_ap_only())
     return;
   if (!top_bin)
-    show_win0();
+    show_hime_preedit_win();
 
 //  dbg("disp_char %d %s\n", index, ch);
   create_char(index);
@@ -192,9 +192,9 @@ void disp_char(int index, char *ch)
     }
   }
 
-  get_win0_geom();
+  get_hime_preedit_win_geom();
   if (win_x + win_xl >= dpy_xl)
-    move_win0(dpy_xl - win_xl, win_y);
+    move_hime_preedit_win(dpy_xl - win_xl, win_y);
 
   gtk_widget_show_all(chars[index].vbox);
 }
@@ -215,7 +215,7 @@ void clear_chars_all()
     hide_char(i);
   }
 
-  compact_win0();
+  compact_preedit_win();
 }
 
 void set_cursor_tsin(int index)
@@ -241,13 +241,13 @@ void clr_tsin_cursor(int index)
 }
 
 void disp_pho_sub(GtkWidget *label, int index, char *pho);
-void hide_win0();
+void hide_hime_preedit_win();
 
 void disp_tsin_pho(int index, char *pho)
 {
   if (hime_display_on_the_spot_key()) {
-    if (gwin0 && GTK_WIDGET_VISIBLE(gwin0))
-      hide_win0();
+    if (hime_preedit_win_handle && GTK_WIDGET_VISIBLE(hime_preedit_win_handle))
+      hide_hime_preedit_win();
     return;
   }
 
@@ -323,15 +323,15 @@ void disp_tsin_select(int index)
       gtk_widget_show(chars[i].vbox);
       gtk_main_iteration_do(FALSE);
 
-      int tx = get_widget_xy(gwin0, chars[i].vbox, &x, &y);
+      int tx = get_widget_xy(hime_preedit_win_handle, chars[i].vbox, &x, &y);
 
       if (tx>=0)
         break;
     }
 #else
-	get_widget_xy(gwin0, chars[index].vbox, &x, &y);
+	get_widget_xy(hime_preedit_win_handle, chars[index].vbox, &x, &y);
 #endif
-	get_win0_geom();
+	get_hime_preedit_win_geom();
   }
   disp_selections(x, y);
 }
@@ -344,23 +344,23 @@ static void raw_move(int x, int y)
 {
   int xl, yl;
 
-  if (!gwin0)
+  if (!hime_preedit_win_handle)
     return;
 
-  get_win_size(gwin0, &xl, &yl);
+  get_win_size(hime_preedit_win_handle, &xl, &yl);
 
   if (x + xl > dpy_xl)
     x = dpy_xl - xl;
   if (y + yl > dpy_yl)
     y = dpy_yl - yl;
 
-  gtk_window_move(GTK_WINDOW(gwin0), x, y);
-//  dbg("gwin0:%x raw_move %d,%d\n", gwin0, x, y);
+  gtk_window_move(GTK_WINDOW(hime_preedit_win_handle), x, y);
+//  dbg("hime_preedit_win_handle:%x raw_move %d,%d\n", hime_preedit_win_handle, x, y);
 }
 
-void compact_win0()
+void compact_preedit_win()
 {
-  if (!gwin0)
+  if (!hime_preedit_win_handle)
     return;
 
 //  max_yl = 0;
@@ -370,14 +370,14 @@ void compact_win0()
 gboolean tsin_has_input();
 GtkWidget *gwin_sym;
 
-void move_win0(int x, int y)
+void move_hime_preedit_win(int x, int y)
 {
-//  dbg("--- gwin0:%x move_win0 %d,%d\n", gwin0, x,y);
+//  dbg("--- hime_preedit_win_handle:%x move_hime_preedit_win %d,%d\n", hime_preedit_win_handle, x,y);
   best_win_x = x;
   best_win_y = y;
 
-  if (gwin0)
-    gtk_window_get_size(GTK_WINDOW(gwin0), &win_xl, &win_yl);
+  if (hime_preedit_win_handle)
+    gtk_window_get_size(GTK_WINDOW(hime_preedit_win_handle), &win_xl, &win_yl);
 
   if (x + win_xl > dpy_xl)
     x = dpy_xl - win_xl;
@@ -389,12 +389,12 @@ void move_win0(int x, int y)
   if (y < 0)
     y = 0;
 
-//  dbg("move_win0 %d,%d\n",x, y);
+//  dbg("move_hime_preedit_win %d,%d\n",x, y);
 
-  if (gwin0)
-    gtk_window_move(GTK_WINDOW(gwin0), x, y);
+  if (hime_preedit_win_handle)
+    gtk_window_move(GTK_WINDOW(hime_preedit_win_handle), x, y);
 
-//  dbg("move_win0 %d %d\n",x,y);
+//  dbg("move_hime_preedit_win %d %d\n",x,y);
   win_x = x;
   win_y = y;
 
@@ -426,22 +426,21 @@ static void mouse_button_callback( GtkWidget *widget,GdkEventButton *event, gpoi
 void hime_toggle_eng_ch();
 
 
-void create_win0()
+void create_hime_preedit_win()
 {
-  if (gwin0)
+  if (hime_preedit_win_handle)
     return;
 #if _DEBUG && 0
-  dbg("create_win0\n");
+  dbg("create_hime_preedit_win\n");
 #endif
-  gwin0 = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_has_resize_grip(GTK_WINDOW(gwin0), FALSE);
-  gtk_container_set_border_width (GTK_CONTAINER (gwin0), 0);
-  gtk_widget_realize (gwin0);
-  set_no_focus(gwin0);
+  hime_preedit_win_handle = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_has_resize_grip(GTK_WINDOW(hime_preedit_win_handle), FALSE);
+  gtk_container_set_border_width (GTK_CONTAINER (hime_preedit_win_handle), 0);
+  gtk_widget_realize (hime_preedit_win_handle);
+  set_no_focus(hime_preedit_win_handle);
 }
 
 
-void create_win1();
 
 static void create_cursor_attr()
 {
@@ -473,44 +472,44 @@ static void create_cursor_attr()
 
 void init_hime_selection_win();
 
-static void set_win0_bg()
+static void set_hime_preedit_win_bg()
 {
 #if 1
-  change_win_bg(gwin0);
+  change_win_bg(hime_preedit_win_handle);
 #endif
 }
 
-void change_win1_font();
+void change_hime_selection_win_font();
 
-static void create_win0_gui()
+static void create_hime_preedit_win_gui()
 {
   if (top_bin)
     return;
 
   GtkWidget *vbox_top = gtk_vbox_new (FALSE, 0);
   gtk_orientable_set_orientation(GTK_ORIENTABLE(vbox_top), GTK_ORIENTATION_VERTICAL);
-  gtk_container_set_border_width (GTK_CONTAINER (gwin0), 0);
+  gtk_container_set_border_width (GTK_CONTAINER (hime_preedit_win_handle), 0);
 
   if (hime_inner_frame) {
     GtkWidget *frame;
     top_bin = frame = gtk_frame_new(NULL);
     gtk_container_set_border_width (GTK_CONTAINER (frame), 0);
-    gtk_container_add (GTK_CONTAINER(gwin0), frame);
+    gtk_container_add (GTK_CONTAINER(hime_preedit_win_handle), frame);
     gtk_container_add (GTK_CONTAINER (frame), vbox_top);
   } else {
     top_bin = vbox_top;
-    gtk_container_add (GTK_CONTAINER (gwin0), vbox_top);
+    gtk_container_add (GTK_CONTAINER (hime_preedit_win_handle), vbox_top);
   }
 
   bzero(chars, sizeof(chars));
 
   GtkWidget *hbox_row1 = gtk_hbox_new (FALSE, 0);
-  /* This packs the button into the gwin0 (a gtk container). */
+  /* This packs the button into the hime_preedit_win_handle (a gtk container). */
   gtk_box_pack_start (GTK_BOX (vbox_top), hbox_row1, FALSE, FALSE, 0);
 
   hbox_edit = gtk_hbox_new (FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (hbox_edit), 0);
-  /* This packs the button into the gwin0 (a gtk container). */
+  /* This packs the button into the hime_preedit_win_handle (a gtk container). */
   gtk_box_pack_start (GTK_BOX (hbox_row1), hbox_edit, FALSE, FALSE, 0);
 
   create_cursor_attr();
@@ -545,15 +544,15 @@ static void create_win0_gui()
 
   clr_in_area_pho_tsin();
 
-  gtk_widget_show_all (gwin0);
+  gtk_widget_show_all (hime_preedit_win_handle);
 //  gdk_flush();
-  gtk_widget_hide(gwin0);
+  gtk_widget_hide(hime_preedit_win_handle);
 
   init_hime_selection_win();
 
-  set_win0_bg();
+  set_hime_preedit_win_bg();
 
-//  change_win1_font();
+//  change_hime_selection_win_font();
 }
 
 static void destroy_top_bin()
@@ -570,35 +569,35 @@ static void destroy_top_bin()
 }
 
 #if USE_TSIN
-void destroy_win0()
+void destroy_hime_preedit_win()
 {
-  if (!gwin0)
+  if (!hime_preedit_win_handle)
     return;
   destroy_top_bin();
-  gtk_widget_destroy(gwin0);
-  gwin0 = NULL;
+  gtk_widget_destroy(hime_preedit_win_handle);
+  hime_preedit_win_handle = NULL;
 }
 #endif
 
-void get_win0_geom()
+void get_hime_preedit_win_geom()
 {
-  if (!gwin0)
+  if (!hime_preedit_win_handle)
     return;
-  gtk_window_get_position(GTK_WINDOW(gwin0), &win_x, &win_y);
-  get_win_size(gwin0, &win_xl, &win_yl);
+  gtk_window_get_position(GTK_WINDOW(hime_preedit_win_handle), &win_x, &win_y);
+  get_win_size(hime_preedit_win_handle, &win_xl, &win_yl);
 }
 
 gboolean tsin_has_input();
 extern gboolean force_show;
 void raise_tsin_selection_win();
 
-void show_win0()
+void show_hime_preedit_win()
 {
 #if _DEBUG && 1
-	dbg("show_win0 pop:%d in:%d for:%d \n", hime_pop_up_win, tsin_has_input(), force_show);
+	dbg("show_hime_preedit_win pop:%d in:%d for:%d \n", hime_pop_up_win, tsin_has_input(), force_show);
 #endif
-  create_win0();
-  create_win0_gui();
+  create_hime_preedit_win();
+  create_hime_preedit_win_gui();
 
   if (hime_pop_up_win && !tsin_has_input() && !force_show) {
 //    dbg("show ret\n");
@@ -606,19 +605,19 @@ void show_win0()
   }
 
 #if 0
-  if (!GTK_WIDGET_VISIBLE(gwin0))
+  if (!GTK_WIDGET_VISIBLE(hime_preedit_win_handle))
 #endif
   {
-//    dbg("gtk_widget_show %x\n", gwin0);
-    move_win0(win_x, win_y);
-    gtk_widget_show(gwin0);
+//    dbg("gtk_widget_show %x\n", hime_preedit_win_handle);
+    move_hime_preedit_win(win_x, win_y);
+    gtk_widget_show(hime_preedit_win_handle);
   }
 
   show_win_sym();
 
   if (current_CS->b_raise_window)
   {
-    gtk_window_present(GTK_WINDOW(gwin0));
+    gtk_window_present(GTK_WINDOW(hime_preedit_win_handle));
     raise_tsin_selection_win();
   }
 }
@@ -630,14 +629,14 @@ static void disp_char_chbuf(int idx)
 }
 
 void hide_selections_win();
-void hide_win0()
+void hide_hime_preedit_win()
 {
-  if (!gwin0)
+  if (!hime_preedit_win_handle)
     return;
 
-  gtk_widget_hide(gwin0);
+  gtk_widget_hide(hime_preedit_win_handle);
   if (destroy_window)
-    destroy_win0();
+    destroy_hime_preedit_win();
   else
     destroy_top_bin();
 
@@ -661,7 +660,7 @@ void show_button_pho(gboolean bshow)
     gtk_widget_show(button_pho);
   else {
     gtk_widget_hide(button_pho);
-    compact_win0();
+    compact_preedit_win();
   }
 }
 
@@ -670,13 +669,13 @@ char *get_full_str();
 void win_tsin_disp_half_full()
 {
   if (label_pho==NULL)
-    show_win0();
+    show_hime_preedit_win();
 
   if (hime_win_color_use)
     gtk_label_set_markup(GTK_LABEL(label_pho), get_full_str());
   else
     gtk_label_set_text(GTK_LABEL(label_pho), get_full_str());
-  compact_win0();
+  compact_preedit_win();
 }
 
 

@@ -19,7 +19,7 @@
 #include "gtab.h"
 #include "win-sym.h"
 #include "gst.h"
-#include "win0.h"
+#include "hime_preedit_win.h"
 
 static int current_hime_inner_frame;
 static int current_gtab_in_row1;

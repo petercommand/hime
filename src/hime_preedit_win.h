@@ -1,10 +1,10 @@
 #ifndef HIME_WIN0_H
 #define HIME_WIN0_H
 #include "pho.h"
-void show_win0();
-void move_win0(int x, int y);
+void show_hime_preedit_win();
+void move_hime_preedit_win(int x, int y);
 void show_button_pho(gboolean bshow);
-void compact_win0();
+void compact_preedit_win();
 typedef struct {
   struct PRE_SEL *pre_sel;
   int pre_selN;

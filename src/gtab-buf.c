@@ -811,7 +811,7 @@ void gbuf_next_pg()
 }
 
 #include "im-client/hime-im-client-attr.h"
-#include "win0.h"
+#include "hime_preedit_win.h"
 
 int get_DispInArea_str(char *out);
 
@@ -977,7 +977,7 @@ void init_hime_selection_win();
 static int gtab_pre_select_phrase_len;
 
 void disp_gtab_pre_sel(char *s);
-extern GtkWidget *gwin1;
+extern GtkWidget *hime_selection_win_handle;
 
 void gtab_scan_pre_select(gboolean b_incr)
 {
@@ -1034,7 +1034,7 @@ void gtab_scan_pre_select(gboolean b_incr)
 //  dbg("selN %d %d\n",selN, hime_preedit_win_state.pre_selN);
 
   if (use_tsin_sel_win()) {
-	if (gwin1)
+	if (hime_selection_win_handle)
       clear_sele();
 	else
       init_hime_selection_win();
@@ -1140,9 +1140,9 @@ int feedkey_gtab_release(KeySym xkey, int kbstate)
   }
 }
 
-#include "win1.h"
+#include "hime_selection_win.h"
 
-void gtab_set_win1_cb()
+void gtab_set_hime_selection_win_cb()
 {
-  set_win1_cb((cb_selec_by_idx_t)gtab_pre_select_idx, NULL, NULL);
+  set_hime_selection_win_cb((cb_selec_by_idx_t)gtab_pre_select_idx, NULL, NULL);
 }

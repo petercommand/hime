@@ -1232,7 +1232,7 @@ static void mouse_button_callback( GtkWidget *widget,GdkEventButton *event, gpoi
 
 #include <dlfcn.h>
 
-void create_win1(), create_win1_gui(), load_tab_pho_file();
+void create_hime_selection_win(), create_hime_selection_win_gui(), load_tab_pho_file();
 int module_init_win(HIME_module_main_functions *funcs)
 {
   gmf = *funcs;
@@ -1240,7 +1240,7 @@ int module_init_win(HIME_module_main_functions *funcs)
 //  dbg("module_init_win\n");
 
   gmf.mf_set_hime_pho_mode();
-  gmf.mf_set_win1_cb((cb_selec_by_idx_t)select_idx, prev_page, next_page);
+  gmf.mf_set_hime_selection_win_cb((cb_selec_by_idx_t)select_idx, prev_page, next_page);
 
   if (win_anthy)
     return TRUE;

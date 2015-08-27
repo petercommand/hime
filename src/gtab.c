@@ -25,7 +25,7 @@
 #include "gtab-buf.h"
 
 #include "gst.h"
-#include "win0.h"
+#include "hime_preedit_win.h"
 #include "eve.h"
 
 extern gboolean test_mode;

@@ -266,14 +266,14 @@ void load_tsin_db();
 void load_tsin_conf(), load_settings(), load_tab_pho_file();
 
 void disp_hide_tsin_status_row(), update_win_kbm_inited();
-void change_tsin_line_color(), change_win0_style(), change_tsin_color();
+void change_tsin_line_color(), change_hime_preedit_win_style(), change_tsin_color();
 void change_win_gtab_style();
 #if TRAY_ENABLED
 void update_item_active_all();
 #endif
 void destroy_inmd_menu();
 void load_gtab_list(gboolean);
-void change_win1_font();
+void change_hime_selection_win_font();
 void set_wselkey(char *s);
 void create_win_gtab();
 
@@ -326,8 +326,8 @@ static void reload_data()
   load_settings();
 
 //  load_tsin_db();
-  change_win0_style();
-  change_win1_font();
+  change_hime_preedit_win_style();
+  change_hime_selection_win_font();
   create_win_gtab();
   change_win_gtab_style();
 //  change_win_pho_style();
@@ -376,10 +376,10 @@ static void change_font_size()
   change_gtab_font_size();
   change_pho_font_size();
   change_win_sym_font_size();
-  change_win0_style();
+  change_hime_preedit_win_style();
   change_win_gtab_style();
   update_win_kbm_inited();
-  change_win1_font();
+  change_hime_selection_win_font();
 //  change_win_pho_style();
   change_module_font_size();
 }
@@ -506,9 +506,9 @@ void init_atom_property()
   XSetSelectionOwner(dpy, hime_atom, xim_xwin, CurrentTime);
 }
 
-void hide_win0();
-void destroy_win0();
-void destroy_win1();
+void hide_hime_preedit_win();
+void destroy_hime_preedit_win();
+void destroy_hime_selection_win();
 void destroy_win_gtab();
 void free_pho_mem(),free_tsin(),free_all_IC(), free_gtab(), free_phrase();
 #if TRAY_ENABLED
@@ -528,8 +528,8 @@ void do_exit()
   free_phrase();
 
 #if 1
-  destroy_win0();
-  destroy_win1();
+  destroy_hime_preedit_win();
+  destroy_hime_selection_win();
   destroy_win_gtab();
 #endif
 

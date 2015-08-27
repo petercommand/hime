@@ -18,14 +18,14 @@
 #include "hime.h"
 #include "pho.h"
 #include "gst.h"
-#include "win1.h"
+#include "hime_selection_win.h"
 #include "modules/tsin/tsin.h"
 
-GtkWidget *gwin1;
+GtkWidget *hime_selection_win_handle;
 static GtkWidget *frame;
 static char wselkey[16];
 static int wselkeyN;
-//Window xwin1;
+//Window xhime_selection_win;
 
 #define SELEN (15)
 
@@ -74,22 +74,22 @@ static gboolean button_scroll_event_tsin(GtkWidget *widget,GdkEventScroll *event
 
 
 
-void create_win1()
+void create_hime_selection_win()
 {
-  if (gwin1)
+  if (hime_selection_win_handle)
     return;
 
-  gwin1 = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_has_resize_grip(GTK_WINDOW(gwin1), FALSE);
-  gtk_widget_realize (gwin1);
+  hime_selection_win_handle = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_has_resize_grip(GTK_WINDOW(hime_selection_win_handle), FALSE);
+  gtk_widget_realize (hime_selection_win_handle);
 
-  set_no_focus(gwin1);
+  set_no_focus(hime_selection_win_handle);
 
-  g_signal_connect (G_OBJECT (gwin1), "scroll-event", G_CALLBACK (button_scroll_event_tsin), NULL);
+  g_signal_connect (G_OBJECT (hime_selection_win_handle), "scroll-event", G_CALLBACK (button_scroll_event_tsin), NULL);
 }
 
 
-void change_win1_font(), force_preedit_shift();
+void change_hime_selection_win_font(), force_preedit_shift();
 
 
 static cb_selec_by_idx_t cb_sele_by_idx;
@@ -119,21 +119,21 @@ static void cb_arrow_down (GtkWidget *button, gpointer user_data)
    cb_page_down();
 }
 
-void set_win1_cb(cb_selec_by_idx_t sele_by_idx, cb_page_ud_t page_up, cb_page_ud_t page_down)
+void set_hime_selection_win_cb(cb_selec_by_idx_t sele_by_idx, cb_page_ud_t page_up, cb_page_ud_t page_down)
 {
   cb_sele_by_idx = sele_by_idx;
   cb_page_up = page_up;
   cb_page_down = page_down;
 }
 
-void create_win1_gui()
+void create_hime_selection_win_gui()
 {
   if (frame)
     return;
-//  dbg("create_win1_gui %s\n", wselkey);
+//  dbg("create_hime_selection_win_gui %s\n", wselkey);
 
   frame = gtk_frame_new(NULL);
-  gtk_container_add (GTK_CONTAINER(gwin1), frame);
+  gtk_container_add (GTK_CONTAINER(hime_selection_win_handle), frame);
 
   GtkWidget *vbox_top = gtk_vbox_new (FALSE, 0);
   gtk_orientable_set_orientation(GTK_ORIENTABLE(vbox_top), GTK_ORIENTATION_VERTICAL);
@@ -206,24 +206,24 @@ void create_win1_gui()
   g_signal_connect (G_OBJECT (eve_box_down), "button-press-event",
                       G_CALLBACK (cb_arrow_down), NULL);
 
-  gtk_widget_show_all(gwin1);
+  gtk_widget_show_all(hime_selection_win_handle);
 //  gdk_flush();
-  gtk_widget_hide(gwin1);
+  gtk_widget_hide(hime_selection_win_handle);
 
-  change_win1_font();
+  change_hime_selection_win_font();
 }
 
 void init_hime_selection_win()
 {
-  create_win1();
-  create_win1_gui();
+  create_hime_selection_win();
+  create_hime_selection_win_gui();
 }
 
 void clear_sele()
 {
   int i;
 
-  if (!gwin1)
+  if (!hime_selection_win_handle)
     return;
 
   for(i=0; i < wselkeyN; i++) {
@@ -293,16 +293,16 @@ void set_sele_text(int tN, int i, char *text, int len)
 
 void raise_tsin_selection_win()
 {
-  if (gwin1 && GTK_WIDGET_VISIBLE(gwin1))
-    gtk_window_present(GTK_WINDOW(gwin1));
+  if (hime_selection_win_handle && GTK_WIDGET_VISIBLE(hime_selection_win_handle))
+    gtk_window_present(GTK_WINDOW(hime_selection_win_handle));
 }
 
 
 void getRootXY(Window win, int wx, int wy, int *tx, int *ty);
 void disp_selections(int x, int y)
 {
-  if (!gwin1)
-    p_err("disp_selections !gwin1");
+  if (!hime_selection_win_handle)
+    p_err("disp_selections !hime_selection_win_handle");
 
   if (y < 0) {
 	 int tx;
@@ -313,33 +313,33 @@ void disp_selections(int x, int y)
   }
 
 
-  int win1_xl, win1_yl;
-  get_win_size(gwin1, &win1_xl, &win1_yl);
+  int hime_selection_win_xl, hime_selection_win_yl;
+  get_win_size(hime_selection_win_handle, &hime_selection_win_xl, &hime_selection_win_yl);
 
   if (x < 0) {
-    x = win_x + win_xl - win1_xl;
+    x = win_x + win_xl - hime_selection_win_xl;
     if (x < win_x)
       x = win_x;
   }
 
-  if (x + win1_xl > dpy_xl)
-    x = dpy_xl - win1_xl;
+  if (x + hime_selection_win_xl > dpy_xl)
+    x = dpy_xl - hime_selection_win_xl;
 
-  if (y + win1_yl > dpy_yl)
-    y = win_y - win1_yl;
+  if (y + hime_selection_win_yl > dpy_yl)
+    y = win_y - hime_selection_win_yl;
 
-  gtk_window_move(GTK_WINDOW(gwin1), x, y);
+  gtk_window_move(GTK_WINDOW(hime_selection_win_handle), x, y);
 
-  if (!GTK_WIDGET_VISIBLE(gwin1)) {
-    gtk_widget_show(gwin1);
+  if (!GTK_WIDGET_VISIBLE(hime_selection_win_handle)) {
+    gtk_widget_show(hime_selection_win_handle);
   }
 }
 
 void hide_selections_win()
 {
-  if (!gwin1)
+  if (!hime_selection_win_handle)
     return;
-  gtk_widget_hide(gwin1);
+  gtk_widget_hide(hime_selection_win_handle);
 }
 
 void disp_arrow_up()
@@ -352,17 +352,17 @@ void disp_arrow_down()
   gtk_widget_show(arrow_down);
 }
 
-void destroy_win1()
+void destroy_hime_selection_win()
 {
-  if (!gwin1)
+  if (!hime_selection_win_handle)
     return;
-  gtk_widget_destroy(gwin1);
+  gtk_widget_destroy(hime_selection_win_handle);
   frame=NULL;
-  gwin1 = NULL;
+  hime_selection_win_handle = NULL;
 }
 
 
-void change_win1_font()
+void change_hime_selection_win_font()
 {
   int i;
   if (!frame)
@@ -394,14 +394,14 @@ void change_win1_font()
       change_win_bg(eve_seleR[i]);
   }
 
-  change_win_bg(gwin1);
+  change_win_bg(hime_selection_win_handle);
 }
 
-void recreate_win1_if_necessary()
+void recreate_hime_selection_win_if_necessary()
 {
 //  dbg("%x %x\n", current_config(), c_config);
 
-  if (!gwin1)
+  if (!hime_selection_win_handle)
     return;
 
   if (current_config() != c_config) {
@@ -412,7 +412,7 @@ void recreate_win1_if_necessary()
     bzero(eve_sele, sizeof(eve_sele));
     bzero(eve_seleR, sizeof(eve_seleR));
     gtk_widget_destroy(frame); frame = NULL;
-    create_win1_gui();
+    create_hime_selection_win_gui();
   }
 }
 
@@ -424,6 +424,6 @@ void set_wselkey(char *s)
     memset (wselkey, 0x00, 16);
     memcpy (wselkey, s, strlen (s));
     wselkeyN = strlen (s);
-    recreate_win1_if_necessary();
+    recreate_hime_selection_win_if_necessary();
   }
 }

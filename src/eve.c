@@ -27,7 +27,7 @@
 #include "win-sym.h"
 #include "hime-event.h"
 #include "hime-client-state.h"
-#include "win0.h"
+#include "hime_preedit_win.h"
 
 #define STRBUFLEN 64
 
@@ -51,7 +51,7 @@ int output_bufferN;
 static char *output_buffer_raw, *output_buffer_raw_bak;
 static int output_buffer_rawN;
 void set_wselkey(char *s);
-void gtab_set_win1_cb();
+void gtab_set_hime_selection_win_cb();
 void toggle_symbol_table();
 
 gboolean old_capslock_on;
@@ -338,7 +338,7 @@ static void bounce_back_key()
 }
 #endif
 
-void hide_win0();
+void hide_hime_preedit_win();
 void hide_win_gtab();
 void hide_win_pho();
 
@@ -813,7 +813,7 @@ void update_active_in_win_geom()
   }
 }
 
-extern GtkWidget *gwin_pho, *gwin0, *gwin_gtab, *gwin_sym;
+extern GtkWidget *gwin_pho, *hime_preedit_win_handle, *gwin_gtab, *gwin_sym;
 
 gboolean win_is_visible()
 {
@@ -1012,7 +1012,7 @@ gboolean init_in_method(int in_no)
 
   if (inmd[current_CS->in_method].selkey) {
     set_wselkey(inmd[current_CS->in_method].selkey);
-    gtab_set_win1_cb();
+    gtab_set_hime_selection_win_cb();
 //    dbg("aa selkey %s\n", inmd[current_CS->in_method].selkey);
   }
 
@@ -1105,7 +1105,7 @@ gboolean timeout_raise_window(gpointer data)
   return FALSE;
 }
 
-extern Window xwin_pho, xwin0, xwin_gtab;
+extern Window xwin_pho, xhime_preedit_win, xwin_gtab;
 void win_kbm_disp_caplock();
 
 #if !GTK_CHECK_VERSION(2,16,0)
@@ -1586,8 +1586,8 @@ int hime_FocusIn(ClientState *cs)
     set_wselkey(inmd[cs->in_method].selkey);
   else {
     set_wselkey(pho_selkey);
-    gtab_set_win1_cb();
-    tsin_set_win1_cb();
+    gtab_set_hime_selection_win_cb();
+    tsin_set_hime_selection_win_cb();
   }
 */
   update_win_kbm();
@@ -1801,7 +1801,7 @@ gboolean hime_pho_mode()
 
 void hime_toggle_eng_ch()
 {
-  compact_win0();
+  compact_preedit_win();
   hime_set_eng_ch(!hime_pho_mode());
 }
 
