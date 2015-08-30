@@ -20,6 +20,8 @@
 // optional functions/data for hime module to use, please refer to anthy.cpp
 #include "pho.h"
 #include "hime-im-client-attr.h"
+#include "hime_preedit_win.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -29,6 +31,7 @@ typedef struct {
   void (*mf_move_win_sym)();
   void (*mf_toggle_win_sym)();
 
+  HIME_PREEDIT_WIN_MODULE_FUNCTIONS mf_hime_preedit_win_funcs;
   // display in hime_selection_win
   void (*mf_init_hime_selection_win)();
   void (*mf_clear_sele)();

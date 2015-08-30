@@ -407,7 +407,7 @@ Display *dpy;
 
 void do_exit()
 {
-  send_hime_message(dpy, RELOAD_TSIN_DB);
+  send_hime_message(dpy, HIME_EXIT_MESSAGE);
   exit(0);
 }
 

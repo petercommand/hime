@@ -19,6 +19,7 @@
 #include "config.h"
 #include "gtab.h"
 #include <signal.h>
+#include "hime-module-cb.h"
 #if HIME_i18n_message
 #include <libintl.h>
 #endif
@@ -332,7 +333,7 @@ static void reload_data()
   change_win_gtab_style();
 //  change_win_pho_style();
   load_tab_pho_file();
-  change_tsin_color();
+
   update_win_kbm_inited();
 
   destroy_inmd_menu();
@@ -361,7 +362,7 @@ static void reload_data()
   current_CS->im_state = temp_current_CS_im_state;
 }
 
-void change_tsin_font_size();
+
 void change_gtab_font_size();
 void change_pho_font_size();
 void change_win_sym_font_size();
@@ -372,7 +373,6 @@ extern void change_module_font_size();
 static void change_font_size()
 {
   load_settings();
-  change_tsin_font_size();
   change_gtab_font_size();
   change_pho_font_size();
   change_win_sym_font_size();
@@ -466,13 +466,11 @@ void message_cb(char *message)
      disp_tray_icon();
    } else
 #endif
-   if (!strcmp(message, RELOAD_TSIN_DB)) {
-     reload_tsin_db();
-   } else
    if (!strcmp(message, HIME_EXIT_MESSAGE)) {
      do_exit();
-   } else
+   } else {
      reload_data();
+   }
 }
 
 static GdkFilterReturn my_gdk_filter(GdkXEvent *xevent,
@@ -510,7 +508,7 @@ void hide_hime_preedit_win();
 void destroy_hime_preedit_win();
 void destroy_hime_selection_win();
 void destroy_win_gtab();
-void free_pho_mem(),free_tsin(),free_all_IC(), free_gtab(), free_phrase();
+void free_pho_mem(),free_all_IC(), free_gtab(), free_phrase();
 #if TRAY_ENABLED
 void destroy_tray();
 #endif
@@ -520,18 +518,26 @@ void do_exit()
   dbg("----------------- do_ exit ----------------\n");
 
   free_pho_mem();
-  free_tsin();
+  int i;
+  for(i=0;i<inmdN;i++) {
+    if(inmd[i].method_type == method_type_MODULE) {
+      if(inmd[i].mod_cb_funcs && inmd[i].mod_cb_funcs->module_cleanup) {
+        inmd[i].mod_cb_funcs->module_cleanup();
+      }
+    }
+  }
+
 #if USE_XIM
   free_all_IC();
 #endif
   free_gtab();
   free_phrase();
 
-#if 1
+
   destroy_hime_preedit_win();
   destroy_hime_selection_win();
   destroy_win_gtab();
-#endif
+
 
 #if TRAY_ENABLED
   destroy_tray();

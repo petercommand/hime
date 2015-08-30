@@ -38,6 +38,8 @@ void send_utf8_ch(char *s);
 extern gboolean force_show;
 int current_shape_mode();
 
+
+//This function is used to initialize hime module functions
 void init_HIME_module_main_functions(HIME_module_main_functions *func)
 {
   func->mf_show_win_sym = show_win_sym;
@@ -45,6 +47,13 @@ void init_HIME_module_main_functions(HIME_module_main_functions *func)
   func->mf_move_win_sym = move_win_sym;
   func->mf_toggle_win_sym = toggle_win_sym;
 
+  //hime preedit win related func
+  HIME_PREEDIT_WIN_MODULE_FUNCTIONS preedit_win_funcs;
+  preedit_win_funcs.change_hime_preedit_win_font_size = hime_preedit_win_change_font_size;\
+  preedit_win_funcs.hime_preedit_win_disp_char = hime_preedit_win_disp_char;
+  func->mf_hime_preedit_win_funcs = preedit_win_funcs;
+
+  //hime seleciton win related module
   func->mf_init_hime_selection_win = init_hime_selection_win;
   func->mf_clear_sele = clear_sele;
   func->mf_disp_selections = disp_selections;

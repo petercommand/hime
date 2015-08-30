@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include "gtab.h"
 #include "gst.h"
+#include "hime_preedit_win.h"
 #include "pho-status.h"
 
 PHO_ST pho_st;
@@ -65,8 +66,9 @@ static void pho_prbuf()
     if (!(pho_st.chpho[i].flag & FLAG_CHPHO_PHO_PHRASE))
       pho_st.chpho[i].ch=pho_st.chpho[i].cha;
 
-  for(i=0; i < pho_st.c_len; i++)
-    disp_char_chbuf(i);
+  for(i=0; i < pho_st.c_len; i++) {
+    hime_preedit_win_disp_char(i, pho_st.chpho[i].ch);
+  }
 
   for(i=pho_st.c_len; i < MAX_PH_BF_EXT; i++) {
     hide_char(i);
@@ -621,7 +623,7 @@ gboolean add_to_pho_buf(char *str, phokey_t *pho, int len)
   pho_st.ph_sta=-1;
 
   if (hime_pop_up_win)
-    show_hime_preedit_win();
+    hime_preedit_win_show();
 
   return TRUE;
 }

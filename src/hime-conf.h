@@ -4,7 +4,6 @@
 #define TRAD_OUTPUT_TOGGLE "gb output trad"
 #define KBM_TOGGLE "kbm toggle"
 #define UPDATE_TRAY "update tray"
-#define RELOAD_TSIN_DB "reload tsin db"
 #define HIME_EXIT_MESSAGE "hime exit"
 
 

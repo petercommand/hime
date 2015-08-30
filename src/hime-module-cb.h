@@ -24,6 +24,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void module_cleanup();
   int module_init_win(HIME_module_main_functions *funcs);
   void module_win_geom();
   int module_reset();
@@ -42,6 +43,7 @@ extern "C" {
 
 ///////// for hime main() only
 typedef struct _HIME_module_callback_functions {
+  void (*module_cleanup)();
   int (*module_init_win)(HIME_module_main_functions *funcs);
   //Initialize the input method module & its corresponding window, do not show the input method window after this function is call (hide the window), wait for module_show_win() to show the input method window
   void (*module_get_win_geom)();

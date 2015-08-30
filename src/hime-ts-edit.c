@@ -520,7 +520,7 @@ Display *dpy;
 
 void do_exit()
 {
-  send_hime_message(dpy, RELOAD_TSIN_DB);
+  send_hime_message(dpy, HIME_EXIT_MESSAGE);
   exit(0);
 }
 
@@ -599,7 +599,7 @@ int main(int argc, char **argv)
 
   pinmd = &inmd[default_input_method];
 
-  if (pinmd->method_type == method_type_TSIN) {
+  if (pinmd->method_type == method_type_MODULE && pinmd->cname ==) {
     dbg("is tsin\n");
     pho_load();
     load_tsin_db();

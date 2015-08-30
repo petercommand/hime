@@ -1,9 +1,12 @@
 #ifndef HIME_WIN0_H
 #define HIME_WIN0_H
 #include "pho.h"
-void show_hime_preedit_win();
-void move_hime_preedit_win(int x, int y);
+void hime_preedit_win_show();
+void hime_preedit_win_move(int x, int y);
 void show_button_pho(gboolean bshow);
+void hime_preedit_win_change_font_size();
+void hide_char(int index);
+void hime_preedit_win_disp_char(int index, char *ch);
 void compact_preedit_win();
 typedef struct {
   struct PRE_SEL *pre_sel;
@@ -20,6 +23,10 @@ typedef struct PRE_SEL {
   usecount_t usecount;
 } PRE_SEL;
 
+typedef struct HIME_PREEDIT_WIN_MODULE_FUNCTIONS {
+  void (*change_hime_preedit_win_font_size)();
+  void (*hime_preedit_win_disp_char)(int index, char *ch);
+} HIME_PREEDIT_WIN_MODULE_FUNCTIONS;
 
 extern HIME_PREEDIT_WIN_STATE hime_preedit_win_state;
 #endif //HIME_WIN0_H

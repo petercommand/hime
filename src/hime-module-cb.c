@@ -73,6 +73,8 @@ HIME_module_callback_functions *init_HIME_module_callback_functions_(char *sofil
 
   HIME_module_callback_functions st;
 
+
+  SETUP_CB(module_cleanup);
   SETUP_CB(module_init_win);
   SETUP_CB(module_get_win_geom);
   SETUP_CB(module_reset);

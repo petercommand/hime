@@ -61,20 +61,21 @@ int module_win_visible()
 
 void module_move_win(int x, int y)
 {
-  move_hime_preedit_win(x, y);
+  hime_preedit_win_move(x, y);
 }
 
 
 
 void module_show_win()
 {
-  show_hime_preedit_win();
+  hime_preedit_win_show();
 }
 
 
 int module_init_win(HIME_module_main_functions *funcs)
 {
   gmf = *funcs;
+  change_tsin_color();
   set_wselkey(pho_selkey);
   if (!tss.chpho)
     tss.chpho=tzmalloc(CHPHO, MAX_PH_BF_EXT);
@@ -101,7 +102,10 @@ int module_init_win(HIME_module_main_functions *funcs)
 }
 
 
-
+static void disp_char_chbuf(int idx) {
+//  dbg("disp_char_chbuf %d '%s' '%s'\n", idx, tss.chpho[idx].ch, tss.chpho[idx].cha);
+  gmf.mf_hime_preedit_win_funcs.hime_preedit_win_disp_char(idx, tss.chpho[idx].ch);
+}
 
 gboolean add_to_tsin_buf(char *str, phokey_t *pho, int len)
 {
@@ -604,7 +608,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
       tsin_prbuf();
 
     if (hime_pop_up_win)
-      show_hime_preedit_win();
+      hime_preedit_win_show();
 
     drawcursor();
     return 1;
@@ -623,7 +627,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
   llll1:
   status = inph_typ_pho(xkey);
   if (hime_pop_up_win)
-    show_hime_preedit_win();
+    hime_preedit_win_show();
 
   if (pho_st.typ_pho[3] || (status&PHO_STATUS_OK_NEW))
     ctyp = 3;
@@ -732,6 +736,56 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
   return 1;
 }
 
+void module_cleanup()
+{
+  free(current_tsin_fname); current_tsin_fname=NULL;
+
+  if (fph) {
+    fclose(fph); fph = NULL;
+  }
+
+  if (fp_phidx) {
+    fclose(fp_phidx); fp_phidx=NULL;
+  }
+}
+
+void change_module_font_size()
+{
+  hime_preedit_win_change_font_size();
+  if (!top_bin)
+    return;
+
+  GdkColor fg;
+  gdk_color_parse(hime_win_color_fg, &fg);
+
+  set_label_font_size(label_pho, hime_font_size_tsin_pho_in);
+
+  int i;
+  for(i=0; i < MAX_PH_BF_EXT; i++) {
+    GtkWidget *label = chars[i].label;
+    if (!label)
+      continue;
+
+    set_label_font_size(label, hime_font_size);
+
+    if (hime_win_color_use) {
+#if !GTK_CHECK_VERSION(2,91,6)
+      gtk_widget_modify_fg(label, GTK_STATE_NORMAL, &fg);
+#else
+      GdkRGBA rgbfg;
+      gdk_rgba_parse(&rgbfg, gdk_color_to_string(&fg));
+      gtk_widget_override_color(label, GTK_STATE_FLAG_NORMAL, &rgbfg);
+#endif
+    }
+  }
+
+  compact_win0();
+
+//  change_win1_font();
+
+  set_win0_bg();
+//  change_tsin_line_color();
+}
 
 int module_get_preedit(char *str, HIME_PREEDIT_ATTR attr[], int *cursor, int *comp_flag)
 {
@@ -964,7 +1018,7 @@ gboolean tsin_has_input()
 }
 
 
-void disp_char(int index, char *ch);
+void hime_preedit_win_disp_char(int index, char *ch);
 
 
 
@@ -998,10 +1052,10 @@ void drawcursor()
   if (tss.c_idx == tss.c_len) {
     if (!hime_pho_mode()) {
       if (gmf.current_shape_mode()) {
-        disp_char(tss.c_idx,"  ");
+        hime_preedit_win_disp_char(tss.c_idx, "  ");
         set_cursor_tsin(tss.c_idx);
       } else {
-        disp_char(tss.c_idx, " ");
+        hime_preedit_win_disp_char(tss.c_idx, " ");
         set_cursor_tsin(tss.c_idx);
       }
     }
@@ -1120,7 +1174,7 @@ static void putbuf(int len)
 
 void hide_char(int index);
 
-static void tsin_disp_char_chbuf()
+static void tsin_prbuf()
 {
   int i;
 

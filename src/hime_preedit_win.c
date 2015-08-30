@@ -43,7 +43,7 @@ static PangoAttrList* attr_list, *attr_list_blank;
 extern gboolean test_mode;
 
 void compact_preedit_win();
-void move_hime_preedit_win(int x, int y);
+void hime_preedit_win_move(int x, int y);
 void get_hime_preedit_win_geom();
 
 static struct {
@@ -171,16 +171,16 @@ extern gboolean b_use_full_space;
 
 void set_label_space(GtkWidget *label);
 
-void show_hime_preedit_win();
+void hime_preedit_win_show();
 
-void disp_char(int index, char *ch)
+void hime_preedit_win_disp_char(int index, char *ch)
 {
   if (hime_edit_display_ap_only())
     return;
   if (!top_bin)
-    show_hime_preedit_win();
+    hime_preedit_win_show();
 
-//  dbg("disp_char %d %s\n", index, ch);
+//  dbg("hime_preedit_win_disp_char %d %s\n", index, ch);
   create_char(index);
   GtkWidget *label = chars[index].label;
 
@@ -194,7 +194,7 @@ void disp_char(int index, char *ch)
 
   get_hime_preedit_win_geom();
   if (win_x + win_xl >= dpy_xl)
-    move_hime_preedit_win(dpy_xl - win_xl, win_y);
+    hime_preedit_win_move(dpy_xl - win_xl, win_y);
 
   gtk_widget_show_all(chars[index].vbox);
 }
@@ -258,7 +258,6 @@ void disp_tsin_pho(int index, char *pho)
   disp_pho_sub(label_pho, index, pho);
 }
 
-void disp_tsin_pho(int index, char *pho);
 void clr_in_area_pho_tsin()
 {
   int i;
@@ -370,9 +369,9 @@ void compact_preedit_win()
 gboolean tsin_has_input();
 GtkWidget *gwin_sym;
 
-void move_hime_preedit_win(int x, int y)
+void hime_preedit_win_move(int x, int y)
 {
-//  dbg("--- hime_preedit_win_handle:%x move_hime_preedit_win %d,%d\n", hime_preedit_win_handle, x,y);
+//  dbg("--- hime_preedit_win_handle:%x hime_preedit_win_move %d,%d\n", hime_preedit_win_handle, x,y);
   best_win_x = x;
   best_win_y = y;
 
@@ -389,12 +388,12 @@ void move_hime_preedit_win(int x, int y)
   if (y < 0)
     y = 0;
 
-//  dbg("move_hime_preedit_win %d,%d\n",x, y);
+//  dbg("hime_preedit_win_move %d,%d\n",x, y);
 
   if (hime_preedit_win_handle)
     gtk_window_move(GTK_WINDOW(hime_preedit_win_handle), x, y);
 
-//  dbg("move_hime_preedit_win %d %d\n",x,y);
+//  dbg("hime_preedit_win_move %d %d\n",x,y);
   win_x = x;
   win_y = y;
 
@@ -591,7 +590,7 @@ gboolean tsin_has_input();
 extern gboolean force_show;
 void raise_tsin_selection_win();
 
-void show_hime_preedit_win()
+void hime_preedit_win_show()
 {
 #if _DEBUG && 1
 	dbg("show_hime_preedit_win pop:%d in:%d for:%d \n", hime_pop_up_win, tsin_has_input(), force_show);
@@ -609,7 +608,7 @@ void show_hime_preedit_win()
 #endif
   {
 //    dbg("gtk_widget_show %x\n", hime_preedit_win_handle);
-    move_hime_preedit_win(win_x, win_y);
+    hime_preedit_win_move(win_x, win_y);
     gtk_widget_show(hime_preedit_win_handle);
   }
 
@@ -622,11 +621,7 @@ void show_hime_preedit_win()
   }
 }
 
-static void disp_char_chbuf(int idx)
-{
-//  dbg("disp_char_chbuf %d '%s' '%s'\n", idx, tss.chpho[idx].ch, tss.chpho[idx].cha);
-  disp_char(idx, tss.chpho[idx].ch);
-}
+
 
 void hide_selections_win();
 void hide_hime_preedit_win()
@@ -645,7 +640,37 @@ void hide_hime_preedit_win()
 }
 
 void bell();
+void hime_preedit_win_change_font_size() {
+  if (!top_bin)
+    return;
 
+  GdkColor fg;
+  gdk_color_parse(hime_win_color_fg, &fg);
+
+  set_label_font_size(label_pho, hime_font_size_tsin_pho_in);
+
+  int i;
+  for(i=0; i < MAX_PH_BF_EXT; i++) {
+    GtkWidget *label = chars[i].label;
+    if (!label)
+      continue;
+
+    set_label_font_size(label, hime_font_size);
+
+    if (hime_win_color_use) {
+#if !GTK_CHECK_VERSION(2,91,6)
+      gtk_widget_modify_fg(label, GTK_STATE_NORMAL, &fg);
+#else
+      GdkRGBA rgbfg;
+      gdk_rgba_parse(&rgbfg, gdk_color_to_string(&fg));
+      gtk_widget_override_color(label, GTK_STATE_FLAG_NORMAL, &rgbfg);
+#endif
+    }
+  }
+
+  compact_preedit_win();
+  set_hime_preedit_win_bg();
+}
 
 
 
@@ -669,7 +694,7 @@ char *get_full_str();
 void win_tsin_disp_half_full()
 {
   if (label_pho==NULL)
-    show_hime_preedit_win();
+    hime_preedit_win_show();
 
   if (hime_win_color_use)
     gtk_label_set_markup(GTK_LABEL(label_pho), get_full_str());
