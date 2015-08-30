@@ -1032,18 +1032,18 @@ static void init_chpho_i(int i)
   tss.chpho[i].psta=-1;
 }
 
-void clr_tsin_cursor(int index);
+void clear_hime_preedit_win_cursor(int index);
 
 static void clrcursor()
 {
-  clr_tsin_cursor(tss.c_idx);
+  clear_hime_preedit_win_cursor(tss.c_idx);
 }
 
-void set_cursor_tsin(int index);
+void set_hime_preedit_win_cursor(int index);
 
 void drawcursor()
 {
-  clr_tsin_cursor(tss.last_cursor_idx);
+  clear_hime_preedit_win_cursor(tss.last_cursor_idx);
   tss.last_cursor_idx = tss.c_idx;
 
   if (!tss.c_len)
@@ -1052,16 +1052,16 @@ void drawcursor()
   if (tss.c_idx == tss.c_len) {
     if (!hime_pho_mode()) {
       if (gmf.current_shape_mode()) {
-        hime_preedit_win_disp_char(tss.c_idx, "  ");
-        set_cursor_tsin(tss.c_idx);
+        gmf.mf_hime_preedit_win_funcs.hime_preedit_win_disp_char(tss.c_idx, "  ");
+        set_hime_preedit_win_cursor(tss.c_idx);
       } else {
-        hime_preedit_win_disp_char(tss.c_idx, " ");
-        set_cursor_tsin(tss.c_idx);
+        gmf.mf_hime_preedit_win_funcs.hime_preedit_win_disp_char(tss.c_idx, " ");
+        gmf.mf_hime_preedit_win_funcs.set_hime_preedit_win_cursor(tss.c_idx);
       }
     }
   }
   else {
-    set_cursor_tsin(tss.c_idx);
+    set_hime_preedit_win_cursor(tss.c_idx);
   }
 }
 

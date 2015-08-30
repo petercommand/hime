@@ -49,8 +49,10 @@ void init_HIME_module_main_functions(HIME_module_main_functions *func)
 
   //hime preedit win related func
   HIME_PREEDIT_WIN_MODULE_FUNCTIONS preedit_win_funcs;
-  preedit_win_funcs.change_hime_preedit_win_font_size = hime_preedit_win_change_font_size;\
+  preedit_win_funcs.change_hime_preedit_win_font_size = hime_preedit_win_change_font_size;
   preedit_win_funcs.hime_preedit_win_disp_char = hime_preedit_win_disp_char;
+  preedit_win_funcs.clear_hime_preedit_win_cursor = clear_hime_preedit_win_cursor;
+  preedit_win_funcs.set_hime_preedit_win_cursor = set_hime_preedit_win_cursor;
   func->mf_hime_preedit_win_funcs = preedit_win_funcs;
 
   //hime seleciton win related module

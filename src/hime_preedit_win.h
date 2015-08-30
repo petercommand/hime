@@ -7,6 +7,8 @@ void show_button_pho(gboolean bshow);
 void hime_preedit_win_change_font_size();
 void hide_char(int index);
 void hime_preedit_win_disp_char(int index, char *ch);
+void set_hime_preedit_win_cursor(int index);
+void clear_hime_preedit_win_cursor(int index);
 void compact_preedit_win();
 typedef struct {
   struct PRE_SEL *pre_sel;
@@ -25,6 +27,8 @@ typedef struct PRE_SEL {
 
 typedef struct HIME_PREEDIT_WIN_MODULE_FUNCTIONS {
   void (*change_hime_preedit_win_font_size)();
+  void (*set_hime_preedit_win_cursor)(int index);
+  void (*clear_hime_preedit_win_cursor)(int index);
   void (*hime_preedit_win_disp_char)(int index, char *ch);
 } HIME_PREEDIT_WIN_MODULE_FUNCTIONS;
 
