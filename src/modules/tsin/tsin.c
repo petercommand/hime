@@ -299,10 +299,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
         return 0;
     case XK_Tab:
       close_selection_win();
-      if (hime_chinese_english_toggle_key == HIME_CHINESE_ENGLISH_TOGGLE_KEY_Tab) {
-        hime_toggle_eng_ch();
-        return 1;
-      }
+
 
       if (tsin_tab_phrase_end && tss.c_len > 1) {
         tab_phrase_end:
@@ -377,7 +374,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
 
       if (tsin_space_opt == TSIN_SPACE_OPT_INPUT && !pho_st.typ_pho[0] && !pho_st.typ_pho[1] && !pho_st.typ_pho[2] && !pho_st.ityp3_pho && !tss.sel_pho) {
         if (tss.c_len)
-          flush_tsin_buffer();
+          module_flush_input();
 
         close_selection_win();
         goto asc_char;
@@ -883,10 +880,10 @@ int module_flush_input()
     compact_hime_preedit_win();
     clear_ch_buf_sel_area();
     clear_tsin_buffer();
-    return;
+    return TRUE;
   }
 
-  return;
+  return TRUE;
 }
 
 
@@ -1045,49 +1042,6 @@ void drawcursor()
   }
 }
 
-void chpho_extract(CHPHO *chph, int len, phokey_t *pho, char *ch)
-{
-  int i;
-  int ofs=0;
-  ch[0]=0;
-
-  for(i=0; i < len; i++) {
-    if (pho)
-      pho[i] = chph[i].pho;
-
-    char *str = chph[i].ch;
-    strcat(ch + ofs, str);
-    ofs+=strlen(str);
-  }
-//   dbg("chpho_extract %s\n", ch);
-}
-
-// in tsin db, # of phokey = # of character, use this to extract only the first characer
-static void chpho_extract_cha(CHPHO *chph, int len, phokey_t *pho, char *ch)
-{
-  int i;
-  int ofs=0;
-
-  for(i=0; i < len; i++) {
-    if (pho)
-      pho[i] = chph[i].pho;
-    ofs += u8cpy(ch + ofs, chph[i].ch);
-  }
-
-  ch[ofs]=0;
-//   dbg("chpho_extract %s\n", ch);
-}
-
-void chpho_get_str(int idx, int len, char *ch)
-{
-  int ofs=0, i;
-  for(i=0; i < len; i++) {
-    int u8len = u8cpy(&ch[ofs], tss.chpho[idx+i].ch);
-    ofs+=u8len;
-  }
-
-  ch[ofs]=0;
-}
 
 
 void inc_pho_count(phokey_t key, int ch_idx);
@@ -1252,7 +1206,7 @@ static void clear_tsin_buffer()
 
 void clr_in_area_pho_tsin();
 void close_win_pho_near();
-void compact_preedit_win();
+void compact_hime_preedit_win();
 
 
 void tsin_reset_in_pho0()
@@ -1461,7 +1415,7 @@ static void tsin_shift_ins()
   }
 
   tss.c_len++;
-  compact_preedit_win();
+  compact_hime_preedit_win();
 
 #if 0
    tsin_prbuf();
@@ -2149,7 +2103,7 @@ static int cursor_backspace()
   tss.c_len--;
   init_chpho_i(tss.c_len);
   call_tsin_parse();
-  compact_preedit_win();
+  compact_hime_preedit_win();
 
   if (!tss.c_idx) {
     clear_match();

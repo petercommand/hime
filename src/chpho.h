@@ -1,7 +1,9 @@
 #ifndef HIME_CHPHO_H
 #define HIME_CHPHO_H
+#define CH_SZ (4)
 
-#include "pho.h"
+#include <sys/types.h>
+
 typedef u_short phokey_t;
 typedef struct CHPHO {
   char *ch;
@@ -22,5 +24,5 @@ enum {
   FLAG_CHPHO_GTAB_BUF_EN_NO_SPC=128,
   FLAG_CHPHO_PHRASE_TAIL=0x100,
 };
-
+void chpho_extract(CHPHO *chph, int len, phokey_t *pho, char *ch);
 #endif //HIME_CHPHO_H

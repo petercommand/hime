@@ -110,6 +110,7 @@ void event_list_free(event_list* list);
 void hime_event_connect(HIME_EVENT_TYPE event, HIME_EVENT_HANDLER_RETURN_TYPE (*func_cb) (HIME_EVENT, void*), void*);
 int hime_event_dispatch(HIME_EVENT event);
 int hime_event_module_dispatch(HIME_EVENT event, INMD* input_method, void (*default_handler)());
+void hime_event_module_dispatch_all(HIME_EVENT event, void (*default_handler)());
 int hime_event_current_module_dispatch(HIME_EVENT event, void (*default_handler)());
 
 

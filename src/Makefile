@@ -15,7 +15,7 @@ CFLAGS= -DUNIX=1 $(WALL) $(OPTFLAGS) $(GTKINC) -I./IMdkit/include -I./im-client 
 
 OBJ_IMSRV = im-addr.o im-dispatch.o im-srv.o hime-crypt.o
 
-hime_pho_o  = win-pho.o pho.o pho-util.o pho-sym.o table-update.o pho-dbg.o
+hime_pho_o  = win-pho.o chpho.o pho.o pho-util.o pho-sym.o table-update.o pho-dbg.o
 hime_gtab_o = gtab.o win-gtab.o gtab-util.o gtab-list.o gtab-buf.o
 hime_signal_o = hime-signal.o
 hime_event_o = hime-event.o

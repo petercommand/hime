@@ -370,11 +370,7 @@ gboolean output_gbuf()
       event.increase_use_count_event.pho = pho;
       event.increase_use_count_event.ch = ch;
       event.increase_use_count_event.len = gbuf[i].plen;
-      int j;
-      for(j=0;j<inmdN;j++) {
-        hime_event_module_dispatch(event, event.increase_use_count_event.source, NULL);
-      }
-
+      hime_event_module_dispatch_all(event, NULL);
       i+=gbuf[i].plen;
     }
   }

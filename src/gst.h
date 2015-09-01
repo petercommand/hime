@@ -18,6 +18,10 @@
 #define GST_H
 
 
+#include <X11/X.h>
+#include <glib.h>
+#include <sys/types.h>
+
 typedef enum {
   SAME_PHO_QUERY_none = 0,
   SAME_PHO_QUERY_gtab_input = 1,

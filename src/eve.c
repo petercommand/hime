@@ -1086,7 +1086,7 @@ gboolean full_char_processor(KeySym keysym)
   return 1;
 }
 
-int feedkey_pho(KeySym xkey, int kbstate);
+int feedkey_pho(KeySym keysym, int keystate);
 int feedkey_gtab(KeySym key, int kbstate);
 int feed_phrase(KeySym ksym, int state);
 
@@ -1796,7 +1796,7 @@ gboolean hime_pho_mode()
 
 void hime_toggle_eng_ch()
 {
-  compact_preedit_win();
+  compact_hime_preedit_win();
   hime_set_eng_ch(!hime_pho_mode());
 }
 

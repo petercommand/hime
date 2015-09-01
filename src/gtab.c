@@ -853,7 +853,7 @@ static char *ptr_selkey(KeySym key)
 
 
 void init_gtab_pho_query_win();
-int feedkey_pho(KeySym xkey, int state);
+int feedkey_pho(KeySym keysym, int keystate);
 
 void set_gtab_target_displayed()
 {

@@ -222,7 +222,7 @@ empty:
 }
 
 void hide_pre_sel();
-void chpho_get_str(int idx, int len, char *ch);
+void chpho_get_str(CHPHO *chpho, int len, char *ch, int idx);
 void disp_pre_sel_page();
 
 void tsin_scan_pre_select(gboolean b_incr)
@@ -272,7 +272,7 @@ void tsin_scan_pre_select(gboolean b_incr)
 //  dbg("selN:%d %d\n", selN, hime_preedit_win_state.pre_selN);
   if (selN==1 && hime_preedit_win_state.pre_sel[0].len==max_len) {
     char out[MAX_PHRASE_LEN * CH_SZ + 1];
-    chpho_get_str(tss.c_len - max_len, max_len, out);
+    chpho_get_str(tss.chpho, max_len, out, tss.c_len - max_len);
     if (!strcmp(out, hime_preedit_win_state.pre_sel[0].str))
       return;
   }

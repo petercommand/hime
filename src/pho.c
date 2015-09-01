@@ -23,6 +23,9 @@
 #include "gst.h"
 #include "hime_preedit_win.h"
 #include "pho-status.h"
+#include "gtab-buf.h"
+#include "hime_selection_win.h"
+#include "hime-event.h"
 
 PHO_ST pho_st;
 
@@ -312,6 +315,27 @@ int inph_typ_pho(KeySym newkey)
   return PHO_STATUS_REJECT;
 }
 
+static void close_selection_win()
+{
+  hide_hime_selection_win();
+  pho_st.current_page=pho_st.sel_pho=hime_preedit_win_state.ctrl_pre_sel = 0;
+  hime_preedit_win_state.pre_selN = 0;
+}
+
+void tsin_reset_in_pho()
+{
+  clrin_pho();
+
+  if (!pho_has_input() && hime_pop_up_win)
+    hide_hime_preedit_win();
+
+  clr_in_area_pho_tsin();
+  close_selection_win();
+  hime_preedit_win_state.pre_selN = 0;
+
+  drawcursor();
+  close_win_pho_near();
+}
 
 void clrin_pho()
 {
@@ -460,10 +484,7 @@ void lookup_gtab(char *ch);
 gboolean is_gtab_query_mode();
 void set_gtab_target_displayed();
 
-#include "gtab-buf.h"
-#include "hime_preedit_win.h"
-#include "eve.h"
-#include "hime_selection_win.h"
+
 
 void putkey_pho(u_short key, int idx)
 {
@@ -599,6 +620,29 @@ void hide_pre_sel()
   hide_hime_selection_win();
 }
 
+static void disp_char_chbuf(int idx) {
+//  dbg("disp_char_chbuf %d '%s' '%s'\n", idx, pho_st.chpho[idx].ch, pho_st.chpho[idx].cha);
+  hime_preedit_win_disp_char(idx, pho_st.chpho[idx].ch);
+}
+
+static void pho_prbuf()
+{
+  int i;
+
+  for(i=0;i<pho_st.c_len;i++)
+    if (!(pho_st.chpho[i].flag & FLAG_CHPHO_PHO_PHRASE))
+      pho_st.chpho[i].ch=pho_st.chpho[i].cha;
+
+  for(i=0; i < pho_st.c_len; i++)
+    disp_char_chbuf(i);
+
+  for(i=pho_st.c_len; i < MAX_PH_BF_EXT; i++) {
+    hide_char(i);
+  }
+
+  drawcursor();
+}
+
 gboolean add_to_pho_buf(char *str, phokey_t *pho, int len)
 {
   int i;
@@ -644,27 +688,89 @@ gboolean add_to_pho_buf(char *str, phokey_t *pho, int len)
   return TRUE;
 }
 
-static void disp_char_chbuf(int idx) {
-//  dbg("disp_char_chbuf %d '%s' '%s'\n", idx, pho_st.chpho[idx].ch, pho_st.chpho[idx].cha);
-  hime_preedit_win_disp_char(idx, pho_st.chpho[idx].ch);
+gboolean pho_cursor_end()
+{
+  return pho_st.c_idx==pho_st.c_len;
 }
 
-static void pho_prbuf()
+static void putbuf(int len)
 {
-  int i;
+  u_char tt[CH_SZ * (MAX_PH_BF_EXT+1) + 1];
+  int i,idx;
 
-  for(i=0;i<pho_st.c_len;i++)
-    if (!(pho_st.chpho[i].flag & FLAG_CHPHO_PHO_PHRASE))
-      pho_st.chpho[i].ch=pho_st.chpho[i].cha;
+//  dbg("putbuf:%d\n", len);
+#if 1
+  // update phrase reference count
+  if (len >= 2) {
+    for(i=0; i < len; i++) {
+//      dbg("flag %d %x\n", i, pho_st.chpho[i].flag);
+      if (!BITON(pho_st.chpho[i].flag, FLAG_CHPHO_PHRASE_HEAD)) {
+        continue;
+      }
 
-  for(i=0; i < pho_st.c_len; i++)
-    disp_char_chbuf(i);
+      int j;
+      for(j=i+1; j < len; j++)
+        if (pho_st.chpho[j].psta != i)
+          break;
 
-  for(i=pho_st.c_len; i < MAX_PH_BF_EXT; i++) {
-    hide_char(i);
+      int phrlen = j - i;
+      if (phrlen < 1)
+        continue;
+
+      phokey_t pho[MAX_PHRASE_LEN];
+      char ch[MAX_PHRASE_LEN * CH_SZ * 2];
+
+      chpho_extract(&pho_st.chpho[i], phrlen, pho, ch);
+
+      HIME_EVENT event;
+      event.type = HIME_INCREASE_USE_COUNT_EVENT_TYPE;
+      event.increase_use_count_event.source = &inmd[current_CS->in_method];
+      event.increase_use_count_event.pho = pho;
+      event.increase_use_count_event.ch = ch;
+      event.increase_use_count_event.len = phrlen;
+      hime_event_module_dispatch_all(event, NULL);
+    }
+  }
+#endif
+
+  for(idx=i=0;i<len;i++) {
+#if 0
+    int len = utf8_sz(pho_st.chpho[i].ch);
+#else
+    int len = strlen(pho_st.chpho[i].ch);
+#endif
+
+    if (pho_st.chpho[i].pho && len > 1) {
+      int pho_idx = ch_key_to_ch_pho_idx(pho_st.chpho[i].pho, pho_st.chpho[i].ch);
+      if (pho_idx >= 0)
+        inc_pho_count(pho_st.chpho[i].pho, pho_idx);
+    }
+
+    memcpy(&tt[idx], pho_st.chpho[i].ch, len);
+    idx += len;
   }
 
-  drawcursor();
+  tt[idx]=0;
+  send_text((char *)tt);
+  lookup_gtabn((char *)tt, NULL);
+}
+
+int pho_flush_input()
+{
+  tsin_reset_in_pho();
+
+  if (hime_pop_up_win)
+    hide_hime_preedit_win();
+
+  if (pho_st.c_len) {
+    putbuf(pho_st.c_len);
+    compact_hime_preedit_win();
+    clear_ch_buf_sel_area();
+    clear_tsin_buffer();
+    return TRUE;
+  }
+
+  return TRUE;
 }
 
 static gboolean pre_punctuation_sub(KeySym xkey, char shift_punc[], unich_t *chars[])
@@ -682,7 +788,7 @@ static gboolean pre_punctuation_sub(KeySym xkey, char shift_punc[], unich_t *cha
     keys[0] = 0;
     utf8_pho_keys(pchar, keys);
     add_to_pho_buf(pchar, &keys[0], 1);
-    if (hime_punc_auto_send && tsin_cursor_end()) {
+    if (hime_punc_auto_send && pho_cursor_end()) {
       pho_flush_input();
     }
 
@@ -707,7 +813,7 @@ gboolean pre_punctuation_hsu(KeySym xkey)
   return pre_punctuation_sub(xkey, hsu_punc, chars);
 }
 
-int feedkey_pho(KeySym xkey, int kbstate)
+int feedkey_pho(KeySym keysym, int keystate)
 {
   int ctyp = 0;
   static unsigned int vv, ii;
@@ -717,26 +823,26 @@ int feedkey_pho(KeySym xkey, int kbstate)
   int i,j,jj=0,kk=0;
   char out_buffer[512];
   int out_bufferN;
-  int shift_m=kbstate&ShiftMask;
-  int ctrl_m=kbstate&ControlMask;
+  int shift_m= keystate &ShiftMask;
+  int ctrl_m= keystate &ControlMask;
 
   if (ctrl_m)
     return 0;
 
 
-  if (kbstate&LockMask) {
-    if (xkey >= 0x7e || xkey < ' ')
+  if (keystate &LockMask) {
+    if (keysym >= 0x7e || keysym < ' ')
       return FALSE;
     if (hime_capslock_lower)
-      case_inverse(&xkey, shift_m);
-    send_ascii(xkey);
+      case_inverse(&keysym, shift_m);
+    send_ascii(keysym);
     return 1;
   }
 
-  if (xkey >= 'A' && xkey <='Z' && pho_st.typ_pho[0]!=BACK_QUOTE_NO)
-    xkey+=0x20;
+  if (keysym >= 'A' && keysym <='Z' && pho_st.typ_pho[0]!=BACK_QUOTE_NO)
+    keysym +=0x20;
 
-  switch (xkey) {
+  switch (keysym) {
     case XK_Escape:
       if (typ_pho_empty())
         return 0;
@@ -763,7 +869,7 @@ int feedkey_pho(KeySym xkey, int kbstate)
       goto llll3;
     case '<':
        if (!pho_st.ityp3_pho) {
-         return pre_punctuation(xkey);
+         return pre_punctuation(keysym);
        }
        if (pho_st.cpg >= phkbm.selkeyN)
          pho_st.cpg -= phkbm.selkeyN;
@@ -771,7 +877,7 @@ int feedkey_pho(KeySym xkey, int kbstate)
     case ' ':
       if (!pho_st.typ_pho[0] && !pho_st.typ_pho[1] && !pho_st.typ_pho[2]) {
         if (current_CS->b_half_full_char)
-          return full_char_processor(xkey);
+          return full_char_processor(keysym);
         return 0;
       }
 
@@ -798,19 +904,19 @@ int feedkey_pho(KeySym xkey, int kbstate)
 
       goto disp;
    default:
-      if (xkey >= 127 || xkey < ' ')
+      if (keysym >= 127 || keysym < ' ')
         return 0;
 
       if (shift_m) {
-//        return shift_char_proc(xkey, kbstate);
-        if (pre_punctuation(xkey))
+//        return shift_char_proc(keysym, keystate);
+        if (pre_punctuation(keysym))
           return 1;
         return 0;
       }
 
 //    dbg("pho_st.maxi:%d  %d\n", pho_st.maxi, pho_st.cpg);
 
-      if ((pp=strchr(pho_selkey, xkey)) && pho_st.maxi && pho_st.ityp3_pho) {
+      if ((pp=strchr(pho_selkey, keysym)) && pho_st.maxi && pho_st.ityp3_pho) {
         int c=pp-pho_selkey;
 
         if (c< pho_st.maxi) {
@@ -828,7 +934,7 @@ int feedkey_pho(KeySym xkey, int kbstate)
   }
 
 lll1:
-  inph_typ_pho(xkey);
+  inph_typ_pho(keysym);
 //  dbg("typ_pho %x %x\n", pho_st.typ_pho[0], pho_st.typ_pho[1]);
 
   if (hime_pop_up_win)
@@ -851,7 +957,7 @@ llll3:
   dbg("pho_st.typ_pho %d %d %d %d\n", pho_st.typ_pho[0], pho_st.typ_pho[1], pho_st.typ_pho[2], pho_st.typ_pho[3]);
 #endif
   if (!key) {
-    return pre_punctuation_hsu(xkey);
+    return pre_punctuation_hsu(keysym);
   }
 
   pho_play(key);

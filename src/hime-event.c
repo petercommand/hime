@@ -75,6 +75,12 @@ void hime_event_connect(HIME_EVENT_TYPE event, HIME_EVENT_HANDLER_RETURN_TYPE (*
 int hime_event_module_dispatch(HIME_EVENT event, INMD* input_method, void (*default_handler)()) {
   //This function is similiar to hime_event_current_module_dispatch, however, it uses the given input_method instead of the give current_CS input method
 
+  if(input_method->method_type != method_type_MODULE) {
+    if(default_handler) {
+      default_handler();
+    }
+    return 0;
+  }
   if(!(input_method->mod_cb_funcs =init_HIME_module_callback_functions(input_method))) {
     if(default_handler) {
       default_handler();
@@ -122,6 +128,13 @@ int hime_event_current_module_dispatch(HIME_EVENT event, void (*default_handler)
       default_handler();
     }
     return 0;
+  }
+}
+
+void hime_event_module_dispatch_all(HIME_EVENT event, void (*default_handler)()) {
+  int j;
+  for(j=0;j<inmdN;j++) {
+    hime_event_module_dispatch(event, event.increase_use_count_event.source, NULL);
   }
 }
 

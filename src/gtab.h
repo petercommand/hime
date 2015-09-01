@@ -16,6 +16,9 @@
  */
 #ifndef GTAB_H
 #define GTAB_H
+
+#include "chpho.h"
+
 typedef enum {
   GTAB_space_auto_first_none=0,   // use the value set by .cin
   GTAB_space_auto_first_any=1,    // boshiamy, dayi

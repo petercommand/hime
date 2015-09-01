@@ -42,7 +42,7 @@ static GtkWidget *hbox_edit;
 static PangoAttrList* attr_list, *attr_list_blank;
 extern gboolean test_mode;
 
-void compact_preedit_win();
+void compact_hime_preedit_win();
 void hime_preedit_win_move(int x, int y);
 void get_hime_preedit_win_geom();
 
@@ -214,7 +214,7 @@ void clear_chars_all()
     hide_char(i);
   }
 
-  compact_preedit_win();
+  compact_hime_preedit_win();
 }
 
 
@@ -358,7 +358,7 @@ static void raw_move(int x, int y)
 //  dbg("hime_preedit_win_handle:%x raw_move %d,%d\n", hime_preedit_win_handle, x, y);
 }
 
-void compact_preedit_win()
+void compact_hime_preedit_win()
 {
   if (!hime_preedit_win_handle)
     return;
@@ -568,7 +568,7 @@ static void destroy_top_bin()
   bzero(chars, sizeof(chars));
 }
 
-#if USE_TSIN
+
 void destroy_hime_preedit_win()
 {
   if (!hime_preedit_win_handle)
@@ -577,7 +577,7 @@ void destroy_hime_preedit_win()
   gtk_widget_destroy(hime_preedit_win_handle);
   hime_preedit_win_handle = NULL;
 }
-#endif
+
 
 void get_hime_preedit_win_geom()
 {
@@ -669,7 +669,7 @@ void hime_preedit_win_change_font_size() {
     }
   }
 
-  compact_preedit_win();
+  compact_hime_preedit_win();
   set_hime_preedit_win_bg();
 }
 
@@ -686,7 +686,7 @@ void show_button_pho(gboolean bshow)
     gtk_widget_show(button_pho);
   else {
     gtk_widget_hide(button_pho);
-    compact_preedit_win();
+    compact_hime_preedit_win();
   }
 }
 
@@ -701,7 +701,7 @@ void win_tsin_disp_half_full()
     gtk_label_set_markup(GTK_LABEL(label_pho), get_full_str());
   else
     gtk_label_set_text(GTK_LABEL(label_pho), get_full_str());
-  compact_preedit_win();
+  compact_hime_preedit_win();
 }
 
 

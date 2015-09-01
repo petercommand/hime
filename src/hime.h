@@ -45,7 +45,7 @@ typedef enum {
 /* change 3 to 4 if you want to use 4-byte UTF-8 characters, but you must
    regenerate *.gtab tsin
 */
-#define CH_SZ (4)
+
 
 
 #include "IC.h"

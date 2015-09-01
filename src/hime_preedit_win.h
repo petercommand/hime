@@ -9,7 +9,8 @@ void hide_char(int index);
 void hime_preedit_win_disp_char(int index, char *ch);
 void set_hime_preedit_win_cursor(int index);
 void clear_hime_preedit_win_cursor(int index);
-void compact_preedit_win();
+void hide_hime_preedit_win();
+void compact_hime_preedit_win();
 typedef struct {
   struct PRE_SEL *pre_sel;
   int pre_selN;
