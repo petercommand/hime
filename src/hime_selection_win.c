@@ -33,7 +33,7 @@ static GtkWidget *labels_sele[SELEN], *labels_seleR[SELEN];
 static GtkWidget *eve_sele[SELEN], *eve_seleR[SELEN];
 static GtkWidget *arrow_up, *arrow_down;
 
-void hide_selections_win();
+void hide_hime_selection_win();
 static cb_page_ud_t cb_page_up, cb_page_down;
 static int c_config;
 
@@ -234,7 +234,7 @@ void clear_sele()
 
   gtk_widget_hide(arrow_up);
   gtk_widget_hide(arrow_down);
-  hide_selections_win();
+  hide_hime_selection_win();
 }
 
 char *htmlspecialchars(char *s, char out[]);
@@ -335,7 +335,7 @@ void disp_selections(int x, int y)
   }
 }
 
-void hide_selections_win()
+void hide_hime_selection_win()
 {
   if (!hime_selection_win_handle)
     return;

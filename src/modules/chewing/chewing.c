@@ -288,7 +288,7 @@ hime_buffer_label_show (void)
     // check if the composing is valid or not
     if (chewing_buffer_Check (g_pChewingCtx))
     {
-        g_himeModMainFuncs.mf_hide_selections_win ();
+        g_himeModMainFuncs.mf_hide_hime_selection_win();
         pszTmp = chewing_buffer_String (g_pChewingCtx);
 
         // init cand_no
@@ -747,7 +747,7 @@ void
 module_hide_win (void)
 {
     gtk_widget_hide (g_pWinChewing);
-    g_himeModMainFuncs.mf_hide_selections_win ();
+    g_himeModMainFuncs.mf_hide_hime_selection_win();
     g_himeModMainFuncs.mf_hide_win_sym ();
 }
 

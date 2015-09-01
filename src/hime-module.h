@@ -36,7 +36,7 @@ typedef struct {
   void (*mf_init_hime_selection_win)();
   void (*mf_clear_sele)();
   void (*mf_disp_selections)(int x, int y);
-  void (*mf_hide_selections_win)();
+  void (*mf_hide_hime_selection_win)();
   void (*mf_disp_arrow_up)();
   void (*mf_disp_arrow_down)();
   void (*mf_set_sele_text)(int selN, int sel_idx, char *text, int len);

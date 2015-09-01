@@ -56,25 +56,28 @@ gboolean pho_has_input()
 }
 
 
-
-static void pho_prbuf()
+void drawcursor()
 {
-  int i;
+  clear_hime_preedit_win_cursor(pho_st.last_cursor_idx);
+  pho_st.last_cursor_idx = pho_st.c_idx;
 
-//  dbg("pho_prbuf\n");
-  for(i=0;i<pho_st.c_len;i++)
-    if (!(pho_st.chpho[i].flag & FLAG_CHPHO_PHO_PHRASE))
-      pho_st.chpho[i].ch=pho_st.chpho[i].cha;
+  if (!pho_st.c_len)
+    return;
 
-  for(i=0; i < pho_st.c_len; i++) {
-    hime_preedit_win_disp_char(i, pho_st.chpho[i].ch);
+  if (pho_st.c_idx == pho_st.c_len) {
+    if (!hime_pho_mode()) {
+      if (current_shape_mode()) {
+        hime_preedit_win_disp_char(pho_st.c_idx, "  ");
+        set_hime_preedit_win_cursor(pho_st.c_idx);
+      } else {
+        hime_preedit_win_disp_char(pho_st.c_idx, " ");
+        set_hime_preedit_win_cursor(pho_st.c_idx);
+      }
+    }
   }
-
-  for(i=pho_st.c_len; i < MAX_PH_BF_EXT; i++) {
-    hide_char(i);
+  else {
+    set_hime_preedit_win_cursor(pho_st.c_idx);
   }
-
-  drawcursor();
 }
 
 phokey_t pho2key(char typ_pho[])
@@ -459,6 +462,8 @@ void set_gtab_target_displayed();
 
 #include "gtab-buf.h"
 #include "hime_preedit_win.h"
+#include "eve.h"
+#include "hime_selection_win.h"
 
 void putkey_pho(u_short key, int idx)
 {
@@ -579,8 +584,20 @@ void close_gtab_pho_win();
 gboolean pre_punctuation_hsu(KeySym xkey);
 void case_inverse(KeySym *xkey, int shift_m);
 
+static void pho_set_fixed(int idx, int len)
+{
+  int i;
+  for(i=idx; i < idx+len; i++) {
+    pho_st.chpho[i].flag |= FLAG_CHPHO_FIXED;
+    pho_st.chpho[i].flag &= ~FLAG_CHPHO_PHRASE_USER_HEAD;
+  }
+}
 
-
+void hide_pre_sel()
+{
+  hime_preedit_win_state.pre_selN = 0;
+  hide_hime_selection_win();
+}
 
 gboolean add_to_pho_buf(char *str, phokey_t *pho, int len)
 {
@@ -605,9 +622,9 @@ gboolean add_to_pho_buf(char *str, phokey_t *pho, int len)
   clrin_pho();
   disp_in_area_pho();
 
-  prbuf();
+  pho_prbuf();
 
-  tsin_set_fixed(pho_st.c_idx, len);
+  pho_set_fixed(pho_st.c_idx, len);
 #if 1
   for(i=1;i < len; i++) {
     pho_st.chpho[pho_st.c_idx+i].psta= pho_st.c_idx;
@@ -618,7 +635,6 @@ gboolean add_to_pho_buf(char *str, phokey_t *pho, int len)
       pho_st.chpho[pho_st.c_idx].flag |= FLAG_CHPHO_PHRASE_HEAD;
 #endif
   drawcursor();
-  disp_ph_sta();
   hide_pre_sel();
   pho_st.ph_sta=-1;
 
@@ -627,6 +643,30 @@ gboolean add_to_pho_buf(char *str, phokey_t *pho, int len)
 
   return TRUE;
 }
+
+static void disp_char_chbuf(int idx) {
+//  dbg("disp_char_chbuf %d '%s' '%s'\n", idx, pho_st.chpho[idx].ch, pho_st.chpho[idx].cha);
+  hime_preedit_win_disp_char(idx, pho_st.chpho[idx].ch);
+}
+
+static void pho_prbuf()
+{
+  int i;
+
+  for(i=0;i<pho_st.c_len;i++)
+    if (!(pho_st.chpho[i].flag & FLAG_CHPHO_PHO_PHRASE))
+      pho_st.chpho[i].ch=pho_st.chpho[i].cha;
+
+  for(i=0; i < pho_st.c_len; i++)
+    disp_char_chbuf(i);
+
+  for(i=pho_st.c_len; i < MAX_PH_BF_EXT; i++) {
+    hide_char(i);
+  }
+
+  drawcursor();
+}
+
 static gboolean pre_punctuation_sub(KeySym xkey, char shift_punc[], unich_t *chars[])
 {
   char *p;

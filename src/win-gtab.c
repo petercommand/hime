@@ -913,12 +913,12 @@ void win_gtab_disp_half_full()
   }
 }
 
-void hide_selections_win();
+void hide_hime_selection_win();
 
 void hide_gtab_pre_sel()
 {
   if (use_tsin_sel_win())
-    hide_selections_win();
+    hide_hime_selection_win();
 
 //  dbg("hide_gtab_pre_sel %d\n", hime_preedit_win_state.ctrl_pre_sel);
   hime_preedit_win_state.pre_selN = 0;

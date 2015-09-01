@@ -91,7 +91,6 @@ void change_hime_preedit_win_style()
    We use pre-create to overcome this bug.
 */
 
-void drawcursor();
 void open_select_pho();
 
 static void mouse_char_callback( GtkWidget *widget,GdkEventButton *event, gpointer data)
@@ -217,6 +216,8 @@ void clear_chars_all()
 
   compact_preedit_win();
 }
+
+
 
 void set_hime_preedit_win_cursor(int index)
 {
@@ -623,7 +624,7 @@ void hime_preedit_win_show()
 
 
 
-void hide_selections_win();
+void hide_hime_selection_win();
 void hide_hime_preedit_win()
 {
   if (!hime_preedit_win_handle)
@@ -635,7 +636,7 @@ void hide_hime_preedit_win()
   else
     destroy_top_bin();
 
-  hide_selections_win();
+  hide_hime_selection_win();
   hide_win_sym();
 }
 
@@ -704,7 +705,7 @@ void win_tsin_disp_half_full()
 }
 
 
-void drawcursor();
+
 
 #if USE_TSIN
 void change_tsin_color()

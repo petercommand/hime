@@ -171,8 +171,8 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
   int status=0;
 
 
-//  dbg("feedkey_pp %x %x\n", xkey, kvstate);
-//  if (xkey=='1')
+//  dbg("feedkey_pp %x %x\n", keysym, kvstate);
+//  if (keysym=='1')
 //    dbg("aaa\n");
 
   if (caps_eng_tog) {
@@ -189,13 +189,13 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
   }
 
   // Shift has autorepeat on win32
-  if ((xkey==XK_Shift_L||xkey==XK_Shift_R) && !key_press_alt) {
-//	  dbg("feedkey_pp\n");
+  if ((keysym ==XK_Shift_L|| keysym ==XK_Shift_R) && !key_press_alt) {
+
     key_press_alt = TRUE;
     key_press_ctrl = FALSE;
   } else
-  if ((xkey==XK_Control_L||xkey==XK_Control_R) && !key_press_ctrl && hime_preedit_win_state.pre_selN) {
-//	  dbg("feedkey_pp\n");
+  if ((keysym ==XK_Control_L|| keysym ==XK_Control_R) && !key_press_ctrl && hime_preedit_win_state.pre_selN) {
+
     key_press_ctrl = TRUE;
     key_press_alt = FALSE;
     return TRUE;
@@ -204,19 +204,19 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
     key_press_ctrl = FALSE;
   }
 
-  if (!hime_pho_mode() && !tss.c_len && hime_pop_up_win && xkey!=XK_Caps_Lock) {
+  if (!hime_pho_mode() && !tss.c_len && hime_pop_up_win && keysym !=XK_Caps_Lock) {
     hide_hime_preedit_win();
-    gboolean is_ascii = (xkey>=' ' && xkey<0x7f) && !ctrl_m;
+    gboolean is_ascii = (keysym >=' ' && keysym <0x7f) && !ctrl_m;
 
     if (caps_eng_tog && is_ascii) {
       if (hime_capslock_lower)
-        case_inverse(&xkey, shift_m);
-      send_ascii(xkey);
+        case_inverse(&keysym, shift_m);
+      send_ascii(keysym);
       return 1;
     }
     else {
       if (gmf.current_shape_mode() && is_ascii) {
-        send_text(half_char_to_full_char(xkey));
+        send_text(half_char_to_full_char(keysym));
         return 1;
       }
       else {
@@ -228,7 +228,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
   int o_sel_pho = tss.sel_pho;
   close_win_pho_near();
 
-  switch (xkey) {
+  switch (keysym) {
     case XK_Escape:
       tsin_reset_in_pho0();
       if (typ_pho_empty()) {
@@ -358,7 +358,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
     case XK_Prior:
     case XK_KP_Prior:
     case XK_KP_Subtract:
-      if (!tss.sel_pho && tss.c_len && xkey == XK_KP_Subtract) {
+      if (!tss.sel_pho && tss.c_len && keysym == XK_KP_Subtract) {
         send_text("-");
         return TRUE;
       } else {
@@ -387,11 +387,11 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
         goto asc_char;
     case XK_Down:
     case XK_KP_Down:
-      if (xkey==XK_space && !pho_st.ityp3_pho && (pho_st.typ_pho[0]|| pho_st.typ_pho[1]|| pho_st.typ_pho[2])) {
+      if (keysym ==XK_space && !pho_st.ityp3_pho && (pho_st.typ_pho[0]|| pho_st.typ_pho[1]|| pho_st.typ_pho[2])) {
         kno=0;
 #if 1
         ctyp=3;
-//         status = inph_typ_pho(xkey);
+//         status = inph_typ_pho(keysym);
 #endif
         goto llll1;
       }
@@ -410,7 +410,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
         int N = phrase_count + pho_count - tss.current_page;
         if (N > phkbm.selkeyN)
           N = phkbm.selkeyN;
-        if (tss.pho_menu_idx == N-1 || xkey == XK_space)
+        if (tss.pho_menu_idx == N-1 || keysym == XK_space)
           tsin_page_down();
         else {
           tss.pho_menu_idx = (tss.pho_menu_idx+1) % N;
@@ -421,7 +421,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
     case XK_Next:
     case XK_KP_Next:
     case XK_KP_Add:
-      if (!tss.sel_pho && tss.c_len && xkey == XK_KP_Add) {
+      if (!tss.sel_pho && tss.c_len && keysym == XK_KP_Add) {
         send_text("+");
         return TRUE;
       } else {
@@ -432,10 +432,10 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
         return win_sym_page_down();
       }
     case '\'':  // single quote
-      if (phkbm.phokbm[xkey][0].num && !pin_juyin)
+      if (phkbm.phokbm[keysym][0].num && !pin_juyin)
         goto other_keys;
       else {
-        return pre_punctuation_hsu(xkey);
+        return pre_punctuation_hsu(keysym);
       }
     case 'q':
     case 'Q':
@@ -444,7 +444,7 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
     default:
     other_keys:
       if ((kvstate & ControlMask)) {
-        if (xkey=='u') {
+        if (keysym =='u') {
           if (tss.c_len) {
             clear_tsin_buffer();
             if (hime_pop_up_win)
@@ -452,17 +452,17 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
             return 1;
           } else
             return 0;
-        } else if (tsin_buffer_editing_mode && xkey == 'e') { //ctrl+e only works when user enabled tsin_buffer_editing_mode
+        } else if (tsin_buffer_editing_mode && keysym == 'e') { //ctrl+e only works when user enabled tsin_buffer_editing_mode
           //toggler
           tss.tsin_buffer_editing ^= 1;
           return 1;
-        } else if (xkey>='1' && xkey<='9') {
+        } else if (keysym >='1' && keysym <='9') {
           if (!tss.c_len)
             return 0;
           if (!tss.c_idx)
             return 1;
 
-          int len = xkey - '0';
+          int len = keysym - '0';
           int idx0 = tss.c_idx - len;
 
           if (idx0 < 0)
@@ -475,13 +475,13 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
         }
       }
 
-      char xkey_lcase = xkey;
-      if ('A' <= xkey && xkey <= 'Z') {
-        xkey_lcase = tolower(xkey);
+      char xkey_lcase = keysym;
+      if ('A' <= keysym && keysym <= 'Z') {
+        xkey_lcase = tolower(keysym);
       }
 
 
-      if (tsin_buffer_editing_mode && xkey == '\\') {
+      if (tsin_buffer_editing_mode && keysym == '\\') {
         tss.tsin_buffer_editing ^= 1;
         if (tss.tsin_buffer_editing && tss.c_idx==tss.c_len)
           cursor_left();
@@ -504,11 +504,11 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
           return TRUE;
       }
 
-      if (xkey >= XK_KP_0 && xkey<=XK_KP_9)
-        xkey_lcase = xkey - XK_KP_0 + '0';
+      if (keysym >= XK_KP_0 && keysym <=XK_KP_9)
+        xkey_lcase = keysym - XK_KP_0 + '0';
 
       gboolean use_pre_sel;
-      use_pre_sel = hime_preedit_win_state.pre_selN && !tss.sel_pho && xkey < 127 && !phkbm.phokbm[xkey][0].num;
+      use_pre_sel = hime_preedit_win_state.pre_selN && !tss.sel_pho && keysym < 127 && !phkbm.phokbm[keysym][0].num;
 
       char *pp;
       if ((pp=strchr(pho_selkey,xkey_lcase)) && (tss.sel_pho || hime_preedit_win_state.ctrl_pre_sel || use_pre_sel)) {
@@ -534,55 +534,55 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
   }
 
   KeySym key_pad;
-  key_pad = keypad_proc(xkey);
+  key_pad = keypad_proc(keysym);
 
-  if (!xkey || (xkey > 0x7e && !key_pad))
+  if (!keysym || (keysym > 0x7e && !key_pad))
     return 0;
 
   if (key_pad && !tss.c_len && !gmf.current_shape_mode())
     return 0;
 
   if (!hime_pho_mode() || (pho_st.typ_pho[0]!=BACK_QUOTE_NO && (shift_m || key_pad ||
-                                                             (!phkbm.phokbm[xkey][0].num && !phkbm.phokbm[xkey][0].typ)))) {
-    if (hime_pho_mode() && !shift_m && strchr(hsu_punc, xkey) && !phkbm.phokbm[xkey][0].num) {
-      if (pre_punctuation_hsu(xkey))
+                                                             (!phkbm.phokbm[keysym][0].num && !phkbm.phokbm[keysym][0].typ)))) {
+    if (hime_pho_mode() && !shift_m && strchr(hsu_punc, keysym) && !phkbm.phokbm[keysym][0].num) {
+      if (pre_punctuation_hsu(keysym))
         return 1;
     }
 
     if (key_pad)
-      xkey = key_pad;
+      keysym = key_pad;
     asc_char:
     if (shift_m) {
-      if (pre_sel_handler(xkey)) {
+      if (pre_sel_handler(keysym)) {
         call_tsin_parse();
         return 1;
       }
 
-      if (hime_pho_mode() && pre_punctuation(xkey))
+      if (hime_pho_mode() && pre_punctuation(keysym))
         return 1;
     }
 
     if (shift_m && hime_pho_mode())  {
-      char *ppp=strchr(ochars,xkey);
+      char *ppp=strchr(ochars, keysym);
 
       if (!(kvstate &LockMask) && ppp && !((ppp-ochars) & 1))
-        xkey=*(ppp+1);
+        keysym =*(ppp+1);
 
     } else {
       if (!hime_pho_mode() && caps_eng_tog && hime_capslock_lower) {
-        case_inverse(&xkey, shift_m);
+        case_inverse(&keysym, shift_m);
       }
     }
 
-    if (xkey > 127)
+    if (keysym > 127)
       return 0;
     char tstr[CH_SZ + 1];
     bzero(tstr, sizeof(tstr));
 
-    u_char tt=xkey;
+    u_char tt= keysym;
 
     if (gmf.current_shape_mode()) {
-      strcpy(tstr, half_char_to_full_char(xkey));
+      strcpy(tstr, half_char_to_full_char(keysym));
     } else {
       tstr[0] = tt;
     }
@@ -615,17 +615,17 @@ gboolean module_feedkey(KeySym keysym, u_int kvstate)
   }
 
 
-  if (xkey > 127) {
+  if (keysym > 127) {
     return 0;
   }
 
   // for hsu & et26
-  if (xkey >= 'A' && xkey <='Z' && pho_st.typ_pho[0]!=BACK_QUOTE_NO)
-    xkey+=0x20;
-//     printf("bbbb %c\n", xkey);
+  if (keysym >= 'A' && keysym <='Z' && pho_st.typ_pho[0]!=BACK_QUOTE_NO)
+    keysym +=0x20;
+//     printf("bbbb %c\n", keysym);
 
   llll1:
-  status = inph_typ_pho(xkey);
+  status = inph_typ_pho(keysym);
   if (hime_pop_up_win)
     hime_preedit_win_show();
 
@@ -981,19 +981,12 @@ extern char *pho_chars[];
 
 TSIN_ST tss;
 
-gboolean typ_pho_empty();
-void mask_tone(phokey_t *pho, int plen, char *tone_off);
 
 extern u_short hash_pho[];
 extern PHOKBM phkbm;
 
 extern int hashidx[TSIN_HASH_N];
 // gboolean eng_ph=TRUE;  // english(FALSE) <-> pho(juyin, TRUE)
-
-void clrin_pho(), hide_hime_preedit_win();
-void show_tsin_stat();
-void save_CS_current_to_temp();
-
 
 
 
@@ -1005,21 +998,12 @@ gboolean tsin_cursor_end()
 
 
 
-gboolean tsin_has_input();
-
-gboolean pho_has_input();
-gboolean hime_edit_display_ap_only();
-
 gboolean tsin_has_input()
 {
   gboolean v = (!hime_edit_display_ap_only() && tss.c_len) || pho_has_input();
 //  dbg("tsin_has_input %d\n", v);
   return v;
 }
-
-
-void hime_preedit_win_disp_char(int index, char *ch);
-
 
 
 static void init_chpho_i(int i)
@@ -1032,14 +1016,10 @@ static void init_chpho_i(int i)
   tss.chpho[i].psta=-1;
 }
 
-void clear_hime_preedit_win_cursor(int index);
-
 static void clrcursor()
 {
   clear_hime_preedit_win_cursor(tss.c_idx);
 }
-
-void set_hime_preedit_win_cursor(int index);
 
 void drawcursor()
 {
@@ -1061,7 +1041,7 @@ void drawcursor()
     }
   }
   else {
-    set_hime_preedit_win_cursor(tss.c_idx);
+    gmf.mf_hime_preedit_win_funcs.set_hime_preedit_win_cursor(tss.c_idx);
   }
 }
 
@@ -1775,7 +1755,7 @@ static u_char scanphr(int chpho_idx, int plen, gboolean pho_incr)
 }
 #endif
 
-void hide_selections_win();
+void hide_hime_selection_win();
 
 void disp_pre_sel_page()
 {
@@ -1804,7 +1784,7 @@ void disp_pre_sel_page()
 
 static void close_selection_win()
 {
-  hide_selections_win();
+  hide_hime_selection_win();
   tss.current_page=tss.sel_pho=hime_preedit_win_state.ctrl_pre_sel = 0;
   hime_preedit_win_state.pre_selN = 0;
 }
@@ -1823,7 +1803,7 @@ static char ochars[]="<,>.?/:;\"'{[}]_-+=|\\";
 void hide_pre_sel()
 {
   hime_preedit_win_state.pre_selN = 0;
-  hide_selections_win();
+  gmf.mf_hide_hime_selection_win();
 }
 
 
@@ -2146,8 +2126,9 @@ static int cursor_backspace()
     disp_in_area_pho_tsin();
     tsin_scan_pre_select(TRUE);
 
-    if (!tss.c_len && hime_pop_up_win && typ_pho_empty())
+    if (!tss.c_len && hime_pop_up_win && typ_pho_empty()) {
       hide_hime_preedit_win();
+    }
     return 1;
   }
 
@@ -2220,14 +2201,14 @@ int tsin_pho_sel(int c)
     tsin_prbuf();
     tss.current_page=tss.sel_pho= pho_st.ityp3_pho=0;
     if (len == 1) {
-      hide_selections_win();
+      gmf.mf_hide_hime_selection_win();
       tss.ph_sta = -1;
       return 0;
     }
     else
       tss.ph_sta=-1;
 
-    hide_selections_win();
+    gmf.mf_hide_hime_selection_win();
   }
 
   return 1;

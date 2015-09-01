@@ -871,11 +871,11 @@ static void prev_page()
   disp_select();
 }
 
-void hide_selections_win();
+void hide_hime_selection_win();
 
 int module_flush_input()
 {
-  gmf.mf_hide_selections_win();
+  gmf.mf_hide_hime_selection_win();
 
   int val;
   if (anthy_state.type == STATE_CONVERT) {
@@ -927,7 +927,7 @@ static gboolean select_idx(int c)
     sel_seg[sidx].len = len;
 
     anthy_state.type = STATE_CONVERT;
-    gmf.mf_hide_selections_win();
+    gmf.mf_hide_hime_selection_win();
     return (segN==1);
   }
 
@@ -1035,7 +1035,7 @@ send:
         return FALSE;
       }
 
-      gmf.mf_hide_selections_win();
+      gmf.mf_hide_hime_selection_win();
 
       if (anthy_state.type &(STATE_CONVERT|STATE_SELECT)) {
 rom:
@@ -1331,7 +1331,7 @@ void module_hide_win()
 {
   if (anthy_state.type == STATE_SELECT) {
     anthy_state.type = STATE_CONVERT;
-    gmf.mf_hide_selections_win();
+    gmf.mf_hide_hime_selection_win();
   }
   gtk_widget_hide(win_anthy);
   gmf.mf_hide_win_sym();
@@ -1402,7 +1402,7 @@ int module_feedkey_release(KeySym xkey, int kbstate)
           && key_press_alt) {
           module_flush_input();
           key_press_alt = FALSE;
-          gmf.mf_hide_selections_win();
+          gmf.mf_hide_hime_selection_win();
           gmf.mf_tsin_set_eng_ch(!gmf.mf_hime_pho_mode());
           return 1;
         } else
