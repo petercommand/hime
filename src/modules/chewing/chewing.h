@@ -67,7 +67,7 @@ int module_reset (void);
 int module_get_preedit (char *pszStr, HIME_PREEDIT_ATTR attr[],
                         int *pnCursor, int *pCompFlag);
 gboolean module_feedkey(unsigned long keysym, unsigned int kvstate);
-int module_feedkey_release (KeySym xkey, int nKbState);
+int module_feedkey_release (KeySym keysym, int nKbState);
 void module_move_win(int x, int y);
 void module_change_font_size (void);
 void module_show_win (void);

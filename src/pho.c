@@ -322,6 +322,17 @@ static void close_selection_win()
   hime_preedit_win_state.pre_selN = 0;
 }
 
+void clrin_pho()
+{
+  bzero(pho_st.typ_pho,sizeof(pho_st.typ_pho));
+  bzero(pho_st.inph,sizeof(pho_st.inph));
+  pho_st.maxi= pho_st.ityp3_pho=0;
+  pho_st.cpg=0;
+
+  if (hime_pop_up_win && !same_query_show_pho_win())
+    hide_win_pho();
+}
+
 void tsin_reset_in_pho()
 {
   clrin_pho();
@@ -335,17 +346,6 @@ void tsin_reset_in_pho()
 
   drawcursor();
   close_win_pho_near();
-}
-
-void clrin_pho()
-{
-  bzero(pho_st.typ_pho,sizeof(pho_st.typ_pho));
-  bzero(pho_st.inph,sizeof(pho_st.inph));
-  pho_st.maxi= pho_st.ityp3_pho=0;
-  pho_st.cpg=0;
-
-  if (hime_pop_up_win && !same_query_show_pho_win())
-    hide_win_pho();
 }
 
 void disp_pho(int index, char *phochar);
@@ -692,6 +692,16 @@ gboolean pho_cursor_end()
 {
   return pho_st.c_idx==pho_st.c_len;
 }
+
+static void clear_ch_buf_sel_area()
+{
+  clear_chars_all();
+  pho_st.c_len=pho_st.c_idx=0; pho_st.ph_sta=-1;
+  pho_st.full_match = FALSE;
+  clr_ch_buf(pho_st.chpho, &pho_st.ph_sta);
+  drawcursor();
+}
+
 
 static void putbuf(int len)
 {

@@ -25,4 +25,6 @@ enum {
   FLAG_CHPHO_PHRASE_TAIL=0x100,
 };
 void chpho_extract(CHPHO *chph, int len, phokey_t *pho, char *ch);
+void init_chpho_i(CHPHO *chpho, int i);
+void clr_ch_buf(CHPHO *chpho, int *phrase_start);
 #endif //HIME_CHPHO_H

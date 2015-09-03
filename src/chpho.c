@@ -1,5 +1,6 @@
 #include "chpho.h"
 #include "hime.h"
+#include "pho.h"
 
 
 void chpho_extract(CHPHO *chph, int len, phokey_t *pho, char *ch)
@@ -17,6 +18,21 @@ void chpho_extract(CHPHO *chph, int len, phokey_t *pho, char *ch)
     ofs+=strlen(str);
   }
 //   dbg("chpho_extract %s\n", ch);
+}
+
+void init_chpho_i(CHPHO *chpho, int i)
+{
+//  dbg("init_chpho_i %d\n", i);
+  chpho[i].ch = chpho[i].cha;
+  chpho[i].ch[0]=' ';
+  chpho[i].ch[1]=0;
+  chpho[i].flag=0;
+  chpho[i].psta=-1;
+}
+
+void clear_match(int *phrase_start)
+{
+  *phrase_start = -1;
 }
 
 // in tsin db, # of phokey = # of character, use this to extract only the first characer
@@ -44,4 +60,14 @@ void chpho_get_str(CHPHO *chpho, int len, char *ch, int idx)
   }
 
   ch[ofs]=0;
+}
+
+void clr_ch_buf(CHPHO *chpho, int *phrase_start)
+{
+  int i;
+  for(i=0; i < MAX_PH_BF_EXT; i++) {
+    init_chpho_i(chpho, i);
+  }
+
+  clear_match(phrase_start);
 }
