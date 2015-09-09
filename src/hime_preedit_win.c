@@ -61,14 +61,14 @@ extern int text_pho_N;
 static GtkWidget *button_eng_ph;
 //static int max_yl;
 
-static void create_hime_preedit_win_gui();
+static void create_hime_preedit_win_content();
 
 static void recreate_hime_preedit_win()
 {
   bzero(chars, sizeof(chars));
   label_pho = NULL;
 
-  create_hime_preedit_win_gui();
+  create_hime_preedit_win_content();
 }
 
 #if USE_TSIN
@@ -367,7 +367,6 @@ void compact_hime_preedit_win()
   raw_move(best_win_x, best_win_y);
 }
 
-gboolean tsin_has_input();
 GtkWidget *gwin_sym;
 
 void hime_preedit_win_move(int x, int y)
@@ -481,7 +480,7 @@ static void set_hime_preedit_win_bg()
 
 void change_hime_selection_win_font();
 
-static void create_hime_preedit_win_gui()
+static void create_hime_preedit_win_content()
 {
   if (top_bin)
     return;
@@ -587,19 +586,16 @@ void get_hime_preedit_win_geom()
   get_win_size(hime_preedit_win_handle, &win_xl, &win_yl);
 }
 
-gboolean tsin_has_input();
 extern gboolean force_show;
-void raise_tsin_selection_win();
+void raise_hime_selection_win();
 
 void hime_preedit_win_show()
 {
-#if _DEBUG && 1
-	dbg("show_hime_preedit_win pop:%d in:%d for:%d \n", hime_pop_up_win, tsin_has_input(), force_show);
-#endif
-  create_hime_preedit_win();
-  create_hime_preedit_win_gui();
 
-  if (hime_pop_up_win && !tsin_has_input() && !force_show) {
+  create_hime_preedit_win();
+  create_hime_preedit_win_content();
+
+  if (hime_pop_up_win && !force_show) {
 //    dbg("show ret\n");
     return;
   }
@@ -618,7 +614,7 @@ void hime_preedit_win_show()
   if (current_CS->b_raise_window)
   {
     gtk_window_present(GTK_WINDOW(hime_preedit_win_handle));
-    raise_tsin_selection_win();
+    raise_hime_selection_win();
   }
 }
 

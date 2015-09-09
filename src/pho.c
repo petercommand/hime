@@ -688,11 +688,6 @@ gboolean add_to_pho_buf(char *str, phokey_t *pho, int len)
   return TRUE;
 }
 
-gboolean pho_cursor_end()
-{
-  return pho_st.c_idx==pho_st.c_len;
-}
-
 static void clear_ch_buf_sel_area()
 {
   clear_chars_all();
@@ -700,6 +695,19 @@ static void clear_ch_buf_sel_area()
   pho_st.full_match = FALSE;
   clr_ch_buf(pho_st.chpho, &pho_st.ph_sta);
   drawcursor();
+}
+
+static void clear_pho_buffer()
+{
+  clear_ch_buf_sel_area();
+  close_selection_win();
+  hime_preedit_win_state.pre_selN = 0;
+  pho_st.pho_buffer_editing = 0; //buffer editing is finished
+}
+
+gboolean pho_cursor_end()
+{
+  return pho_st.c_idx==pho_st.c_len;
 }
 
 
@@ -776,7 +784,7 @@ int pho_flush_input()
     putbuf(pho_st.c_len);
     compact_hime_preedit_win();
     clear_ch_buf_sel_area();
-    clear_tsin_buffer();
+    clear_pho_buffer();
     return TRUE;
   }
 

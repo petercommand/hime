@@ -16,17 +16,10 @@
  */
 
 #include <string.h>
-#include "hime.h"
-#include "pho.h"
-
-#include "hime-conf.h"
 #include <math.h>
 #include "tsin-parse.h"
 #include "gtab-buf.h"
-#include "gst.h"
-#include "chpho.h"
 #include "tsin-util.h"
-#include "modules/tsin/tsin.h"
 
 #define DBG (0)
 extern gboolean tsin_is_gtab;

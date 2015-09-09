@@ -20,6 +20,7 @@
 #include "win-save-phrase.h"
 #include "gtab.h"
 
+
 extern int c_len;
 extern gboolean test_mode;
 
@@ -74,7 +75,7 @@ static gint delete_event( GtkWidget *widget,
 }
 #endif
 
-extern int ph_key_sz;
+
 
 static gboolean cb_ok(GtkWidget *widget, gpointer data)
 {

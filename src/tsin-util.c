@@ -16,14 +16,8 @@
  */
 
 #include "hime.h"
-#include "pho.h"
+#include "pho.h"28
 
-#include "gtab.h"
-#include "gst.h"
-#include "lang.h"
-#include "modules/tsin/tsin.h"
-#include "../../hime.h"
-#include "../../pho.h"
 
 int hashidx[TSIN_HASH_N];
 //static int *phidx;

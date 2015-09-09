@@ -25,9 +25,8 @@
 #include "gst.h"
 #include "chpho.h"
 #include "hime-event.h"
-#include "hime-client-state.h"
-#include "modules/tsin/tsin-util.h"
-#include "modules/tsin/tsin-parse.h"
+#include "tsin-util.h"
+#include "tsin-parse.h"
 
 
 void disp_gbuf(), ClrIn(), clear_after_put();
@@ -326,7 +325,6 @@ int gbuf_cursor_end()
 }
 
 void inc_gtab_use_count(char *s);
-void inc_dec_tsin_use_count(void *pho, char *ch, int N);
 
 gboolean output_gbuf()
 {
@@ -960,7 +958,6 @@ gboolean save_gtab_buf_shift_enter()
 }
 
 
-void load_tsin_db0(char *infname, gboolean is_gtab_i);
 gboolean init_phrase_table_fname(INMD *p, char *fname);
 
 void init_tsin_table()

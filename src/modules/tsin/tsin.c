@@ -1959,34 +1959,7 @@ gboolean pre_punctuation_hsu(KeySym xkey)
 
 int inph_typ_pho(KeySym newkey);
 
-KeySym keypad_proc(KeySym xkey)
-{
-  if (xkey <= XK_KP_9 && xkey >= XK_KP_0)
-    xkey=xkey-XK_KP_0+'0';
-  else {
-    switch (xkey) {
-      case XK_KP_Add:
-        xkey = '+';
-        break;
-      case XK_KP_Subtract:
-        xkey = '-';
-        break;
-      case XK_KP_Multiply:
-        xkey = '*';
-        break;
-      case XK_KP_Divide:
-        xkey = '/';
-        break;
-      case XK_KP_Decimal:
-        xkey = '.';
-        break;
-      default:
-        return 0;
-    }
-  }
 
-  return xkey;
-}
 
 static int cursor_left()
 {

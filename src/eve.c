@@ -1794,6 +1794,35 @@ gboolean hime_pho_mode()
   return current_CS && current_CS->hime_pho_mode;
 }
 
+KeySym keypad_proc(KeySym xkey)
+{
+  if (xkey <= XK_KP_9 && xkey >= XK_KP_0)
+    xkey=xkey-XK_KP_0+'0';
+  else {
+    switch (xkey) {
+      case XK_KP_Add:
+        xkey = '+';
+        break;
+      case XK_KP_Subtract:
+        xkey = '-';
+        break;
+      case XK_KP_Multiply:
+        xkey = '*';
+        break;
+      case XK_KP_Divide:
+        xkey = '/';
+        break;
+      case XK_KP_Decimal:
+        xkey = '.';
+        break;
+      default:
+        return 0;
+    }
+  }
+
+  return xkey;
+}
+
 void hime_toggle_eng_ch()
 {
   compact_hime_preedit_win();

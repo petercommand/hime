@@ -105,14 +105,14 @@ CFLAGS     += -DHIME_i18n_message=1
 endif
 
 ifeq ($(USE_TSIN),Y)
-hime_tsin_o = hime_preedit_win.o hime_selection_win.o
+hime_tsin_o = tsin-cache.o tsin-parse.o tsin-util.o hime_preedit_win.o hime_selection_win.o
 CFLAGS     += -DUSE_TSIN=1
 OBJS       += $(hime_tsin_o)
 endif
 
 # Temporary workaround to turn off Tsin, will be fixed later
 ifeq ($(USE_TSIN),N)
-OBJS       += hime_preedit_win.o hime_selection_win.o
+OBJS       += tsin-cache.o tsin-parse.o tsin-util.o hime_preedit_win.o hime_selection_win.o
 endif
 
 ifeq ($(MAC_OS),1)

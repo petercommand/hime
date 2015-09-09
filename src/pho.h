@@ -16,6 +16,7 @@
  */
 #ifndef PHO_H
 #define PHO_H
+#include "hime.h"
 #include "chpho.h"
 #include "gst.h"
 
@@ -57,7 +58,7 @@ typedef struct {
   int current_page;
   int startf;
   gboolean full_match;
-  gboolean tsin_buffer_editing;
+  gboolean pho_buffer_editing;
 
   int last_cursor_idx;
   int pho_menu_idx;

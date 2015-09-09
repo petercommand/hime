@@ -259,17 +259,20 @@ void set_sele_text(int tN, int i, char *text, int len)
   char ul[128];
   ul[0]=0;
 
-
+/* REFACTOR_TODO: let modules that uses these color schemes set up the corresponding states
   if (tss.sel_pho && i==tss.pho_menu_idx) {
     if (hime_win_color_use)
       sprintf(ul, "foreground=\"white\" background=\"%s\"", hime_cursor_color);
     else
       strcpy(ul, "foreground=\"white\" background=\""HIME_CURSOR_COLOR_DEFAULT"\"");
-  } else {
-    if (hime_win_color_use)
+  }
+  else*/ {
+    if (hime_win_color_use) {
       sprintf(ul, "foreground=\"%s\"", hime_sel_key_color);
-    else
+    }
+    else {
       strcpy(ul, "foreground=\""HIME_SEL_KEY_COLOR_DEFAULT"\"");
+    }
   }
 
   sprintf(selma, "<span %s>%s</span>", ul, htmlspecialchars(cc, uu));
@@ -287,11 +290,11 @@ void set_sele_text(int tN, int i, char *text, int len)
   }
 
   gtk_widget_show(labels_sele[i]);
-//  dbg("tt %s\n", tt);
+
   gtk_label_set_markup(GTK_LABEL(labels_sele[i]), tt);
 }
 
-void raise_tsin_selection_win()
+void raise_hime_selection_win()
 {
   if (hime_selection_win_handle && GTK_WIDGET_VISIBLE(hime_selection_win_handle))
     gtk_window_present(GTK_WINDOW(hime_selection_win_handle));
